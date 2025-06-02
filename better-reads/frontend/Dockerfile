@@ -14,7 +14,10 @@ RUN npm install
 COPY . .
  
 # Expose the port your app runs on
-EXPOSE 3000
+EXPOSE 5173
+
+# Force it to listen on all interfaces (not just localhost): used for docker trouble shooting
+# ENV HOST=0.0.0.0
  
 # Define the command to run your app
 CMD ["npm", "start"]
