@@ -58,6 +58,98 @@
       "averageRating": 4.7,
       "genres": ["Adventure", "Thriller"],
       "isFavorite": true
+    },
+    {
+      "isbn": "978-1-00000-111-1",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
+      "title": "Island of Secrets",
+      "rating": 4,
+      "averageRating": 4.1,
+      "genres": ["Adventure", "Fantasy"],
+      "isFavorite": false
+    },
+    {
+      "isbn": "978-1-00000-222-2",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
+      "title": "Treasure of the Lost World",
+      "rating": 5,
+      "averageRating": 4.7,
+      "genres": ["Adventure", "Thriller"],
+      "isFavorite": true
+    },
+    {
+      "isbn": "978-1-00000-111-1",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
+      "title": "Island of Secrets",
+      "rating": 4,
+      "averageRating": 4.1,
+      "genres": ["Adventure", "Fantasy"],
+      "isFavorite": false
+    },
+    {
+      "isbn": "978-1-00000-222-2",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
+      "title": "Treasure of the Lost World",
+      "rating": 5,
+      "averageRating": 4.7,
+      "genres": ["Adventure", "Thriller"],
+      "isFavorite": true
+    }
+  ,
+    {
+      "isbn": "978-1-00000-111-1",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
+      "title": "Island of Secrets",
+      "rating": 4,
+      "averageRating": 4.1,
+      "genres": ["Adventure", "Fantasy"],
+      "isFavorite": false
+    },
+    {
+      "isbn": "978-1-00000-222-2",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
+      "title": "Treasure of the Lost World",
+      "rating": 5,
+      "averageRating": 4.7,
+      "genres": ["Adventure", "Thriller"],
+      "isFavorite": true
+    }
+  ,
+    {
+      "isbn": "978-1-00000-111-1",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
+      "title": "Island of Secrets",
+      "rating": 4,
+      "averageRating": 4.1,
+      "genres": ["Adventure", "Fantasy"],
+      "isFavorite": false
+    },
+    {
+      "isbn": "978-1-00000-222-2",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
+      "title": "Treasure of the Lost World",
+      "rating": 5,
+      "averageRating": 4.7,
+      "genres": ["Adventure", "Thriller"],
+      "isFavorite": true
+    },
+    {
+      "isbn": "978-1-00000-111-1",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
+      "title": "Island of Secrets",
+      "rating": 4,
+      "averageRating": 4.1,
+      "genres": ["Adventure", "Fantasy"],
+      "isFavorite": false
+    },
+    {
+      "isbn": "978-1-00000-222-2",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
+      "title": "Treasure of the Lost World",
+      "rating": 5,
+      "averageRating": 4.7,
+      "genres": ["Adventure", "Thriller"],
+      "isFavorite": true
     }
   ]
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import './BookPage.css';
 import BookPreview from './BookPreview';
 import {StarRating, GenreTags} from "./BookUtils.jsx";
+import BookGalleryManager from "./BookGalleryManager.jsx";
 
 // navLinks: [home: "/"],
 // book: { coverUrl, author, publishYear, title, summary, isbn (key), genres: [], averageRating, reviews : [] }
@@ -97,22 +98,11 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
             </div>
 
             {/* Similar Books Section */}
+
             <div className="container similar-books">
                 <div className="section-title">Readers who liked this book enjoyed:</div>
-                <div className="books-grid">
-                    {similarBooks.map((sb) => (
-                        <BookPreview
-                            key={sb.isbn}
-                            coverUrl={sb.coverUrl}
-                            isbn={sb.isbn}
-                            title={sb.title}
-                            rating={Math.round(sb.averageRating)}
-                            averageRating={sb.averageRating}
-                            genres={sb.genres}
-                            isFavorite={sb.isFavorite}
-                        />
-                    ))}
-                </div>
+                <BookGalleryManager books={similarBooks} limit="4" ></BookGalleryManager>
+
                 <div className="load-more-books">
                     <button className="btn">See more similar books...</button>
                 </div>
