@@ -61,16 +61,13 @@ header {
     background-color: #1e213d;
     display: flex;
     height: 72px;
-    width: 1728px;
     justify-content: space-between;
-    align-items: center;
     padding: 1rem 2rem;
     border-bottom: 1px solid var(--color-border);
     position: sticky;
     top: 0;
     z-index: 100;
 }
-
 
 header .logo {
     width: 178px;
@@ -89,6 +86,7 @@ header .logo {
 header nav {
     display: flex;
     align-items: center;
+    justify-items: end;
     gap: 1.5rem;
 }
 
@@ -111,13 +109,26 @@ header .user-avatar {
     cursor: pointer;
 }
 
+header .button {
+    color: #FFF;
+    font-feature-settings: 'liga' off, 'clig' off;
+    font-family: "Serif Pro";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 120%;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    align-self: end;
+}
+
 /* Main Container */
 .container {
     max-width: 1200px;
     margin: 2rem auto;
     padding: 0 1rem;
     width: 1078px;
-    height: 1181px;
     justify-content: center;
     align-items: center;
     align-content: center;
@@ -129,7 +140,6 @@ header .user-avatar {
     flex-wrap: wrap;
     gap: 28px;
     width: 1078px;
-    height: 1181px;
     justify-content: center;
     align-items: center;
     align-content: center;
@@ -187,20 +197,17 @@ header .user-avatar {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
     gap: 1rem;
-}
-
-.book-page .series-title {
-    font-size: 0.9rem;
-    color: var(--color-text-light);
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 .book-page .book-title {
     font-size: 2rem;
-    font-weight: bold;
-    color: var(--color-text);
+    font-family: "Serif Pro", Serif;
+    font-style: normal;
+    color: #000000;
+    letter-spacing: 1px;
 }
 
 .book-page .book-summary {
@@ -213,7 +220,7 @@ header .user-avatar {
 .book-page .isbn {
     font-size: 0.9rem;
     color: var(--color-text-light);
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
 }
 
 /* Genre Tags */
@@ -333,14 +340,23 @@ header .user-avatar {
 }
 
 /* Load More Reviews Button */
-.load-more-reviews {
+.load-more {
     display: flex;
     justify-content: center;
-    margin-top: 1rem;
+    align-items: center;
+    gap: 10px;
 }
 
-.load-more-reviews .btn {
-    padding: 0.5rem 1.5rem;
+.load-more .btn {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid var(#151B54);
+    font-feature-settings: 'liga' off, 'clig' off;
+    font-family: "Droid Sans";
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 120%;
 }
 
 /* Similar Books Section */
@@ -363,6 +379,48 @@ header .user-avatar {
     gap: 28px;
     flex-wrap: wrap;
 }
+.book-gallery-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+
+.scroll-arrow {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px 16px;
+    cursor: pointer;
+    z-index: 2;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.scroll-arrow.left {
+    background-image: url('../../assets/icons/arrow-left.svg');
+    position: absolute;
+    transform: scaleX(-1);
+    left: -5px;
+}
+
+.scroll-arrow.right {
+    background-image: url('../../assets/icons/arrow-right.svg');
+    position: absolute;
+    right: -5px;
+
+}
+
+.books-grid.scroll-arrow:hover {
+    background-color: #f0f0f0;
+}
+
 
 .book-card {
     background-color: var(--color-bg);
@@ -394,6 +452,7 @@ header .user-avatar {
     padding: 0.75rem 1rem;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 0.5rem;
     flex: 1;
 }
@@ -478,9 +537,8 @@ header .user-avatar {
 }
 
 .book-card .favorite-icon .icon-heart {
-    font-size: 1rem;
+    transition: fill var(--transition-fast), stroke var(--transition-fast);
     color: var(--color-text-light);
-    transition: color var(--transition-fast);
 }
 
 .book-card .favorite-icon:hover .icon-heart {
@@ -496,6 +554,7 @@ header .user-avatar {
     padding-bottom: 1rem;
     scroll-snap-type: x mandatory;
 }
+
 
 .books-row-scroll::-webkit-scrollbar {
     height: 8px;

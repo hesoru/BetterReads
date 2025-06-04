@@ -16,13 +16,13 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
     return (
         <div>
             {/* Header */}
-            <header>
-                <div className="logo">
+            <header className="header-inner">
 
+                <div className="logo">
                 </div>
                 <nav>
-                    <a href="/">Home</a>
-                    <a href="/browse">Browse Books</a>
+                    <a className="button" href="/">Home</a>
+                    <a className="button" href="/browse">Browse Books</a>
                 </nav>
                 <img
                     src={userReview.avatarUrl}
@@ -41,7 +41,10 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                         className="book-cover"
                     />
                     <StarRating rating={Math.round(book.averageRating)} />
-                    <button className="btn">Make Review</button>
+                    <div className="load-more">
+                        <button className="load-more btn">Make Review</button>
+                    </div>
+
                 </div>
 
                 <div className="book-info">
@@ -101,9 +104,9 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
 
             <div className="container similar-books">
                 <div className="section-title">Readers who liked this book enjoyed:</div>
-                <BookGalleryManager books={similarBooks} limit="4" ></BookGalleryManager>
-
-                <div className="load-more-books">
+                    <BookGalleryManager books={similarBooks} limit="4" ></BookGalleryManager>
+                    <BookGalleryManager books={similarBooks} limit="4" ></BookGalleryManager>
+                <div className="load-more btn">
                     <button className="btn">See more similar books...</button>
                 </div>
             </div>
