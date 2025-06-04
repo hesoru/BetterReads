@@ -1,0 +1,42 @@
+div {
+	align-items: center;
+	justify-content: center;
+}
+
+label {
+    font-weight: bold;
+	margin-right: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.selectGenre {
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-left: 1rem;
+} 
+
+.genre-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  gap:0.5rem;
+}
+
+@media (max-width: 600px) {
+  .genre-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .genre-row label {
+    margin-bottom: 0.5rem;
+    margin-right: 0;
+  }
+
+  .selectGenre {
+    width: 100%;
+    margin-left: 0;
+  }
+}
