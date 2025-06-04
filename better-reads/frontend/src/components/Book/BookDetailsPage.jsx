@@ -74,7 +74,6 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                             <button className="btn">Make a Review</button>
                         )}
                     </div>
-                    */}
 
                     <div className="other-reviews">
                         <div className="section-title">Review from other readers with similar taste</div>
