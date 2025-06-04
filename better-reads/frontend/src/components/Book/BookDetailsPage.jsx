@@ -3,20 +3,26 @@ import './BookPage.css';
 import BookPreview from './BookPreview';
 import {StarRating, GenreTags} from "./BookUtils.jsx";
 
-// navLinks: [home: "/",
-// book: { coverUrl, seriesTitle????, title, summary, isbn (key), genres: [], averageRating, reviews : [] }
+// navLinks: [home: "/"],
+// book: { coverUrl, author, publishYear, title, summary, isbn (key), genres: [], averageRating, reviews : [] }
 // userReview: { avatarUrl, username }
 // otherReviews: [ { id, username, avatarUrl, rating, text } ]
 // similarBooks: [ { isbn, coverUrl, title, rating, averageRating, genres: [], isFavorite } ]
-// onToggleFavorite: function(bookId)
+// onToggleFavorite: function(isbn)
 
 
-export default function BookDetailsPage({ book, userReview, otherReviews, similarBooks, onToggleFavorite }) {
+export default function BookDetailsPage({ book, userReview, otherReviews, similarBooks }) {
     return (
         <div>
             {/* Header */}
             <header>
-                <div className="logo">BetterReads</div>
+                <div >
+                    <img
+                        src="better-reads/frontend/src/assets/icons/BetterReadsLogo.svg"
+                        alt="BetterReads"
+                        className="logo"
+                    />
+                </div>
                 <nav>
                     <a href="/">Home</a>
                     <a href="/browse">Browse Books</a>
@@ -106,7 +112,6 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                             averageRating={sb.averageRating}
                             genres={sb.genres}
                             isFavorite={sb.isFavorite}
-                            onToggleFavorite={() => onToggleFavorite(sb.isbn)}
                         />
                     ))}
                 </div>

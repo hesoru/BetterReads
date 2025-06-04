@@ -58,8 +58,10 @@ p {
 
 /* Header */
 header {
-    background-color: var(--color-bg);
+    background-color: #1e213d;
     display: flex;
+    height: 72px;
+    width: 1728px;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
@@ -70,9 +72,14 @@ header {
 }
 
 header .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--color-primary);
+    font-size: 32px;
+    font-weight: 700;
+    vertical-align: middle;
+    align-content: center;
+    width: 178px;
+    height: 38px;
+    top: 17px;
+    left: 19px;
 }
 
 header nav {
@@ -83,7 +90,7 @@ header nav {
 
 header nav a {
     text-decoration: none;
-    color: var(--color-text-light);
+    color: #ffffff;
     font-size: 1rem;
     transition: color var(--transition-fast);
 }
