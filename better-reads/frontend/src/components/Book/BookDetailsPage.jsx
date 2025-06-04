@@ -54,7 +54,7 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                     <GenreTags genres={book.genres} />
 
                     {/* TODO: replace with ReviewCard */}
-                    {/* the User Review Section */}
+                    {/*
                     <div className="review-section">
                         <div className="section-title">Your review</div>
                         {userReview ? (
@@ -72,7 +72,7 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                         )}
                     </div>
 
-                    {/* Other user Reviews */}
+
                     <div className="other-reviews">
                         <div className="section-title">Review from other readers with similar taste</div>
                         {otherReviews.map((rev) => (
@@ -94,7 +94,9 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                         <div className="load-more-reviews">
                             <button className="btn">Look at more reviews...</button>
                         </div>
+
                     </div>
+                     */}
                 </div>
             </div>
 
