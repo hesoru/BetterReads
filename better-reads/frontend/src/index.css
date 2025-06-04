@@ -3,9 +3,8 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #000000; /* Black text */
+  background-color: #FFFFFF; /* PaperbackPureWhite background */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -54,15 +53,20 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Light/Dark mode preference removed for a single theme for now.
+   If you want to re-enable it, you can adjust the :root colors above
+   and the specific light/dark mode styles here.
+*/
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: #000000; /* Ensure consistency */
+    background-color: #FFFFFF; /* Ensure consistency */
   }
-  a:hover {
+  /* You might want to adjust link and button colors for light theme if needed */
+  /* a:hover {
     color: #747bff;
-  }
-  button {
+  } */
+  /* button {
     background-color: #f9f9f9;
-  }
+  } */
 }
