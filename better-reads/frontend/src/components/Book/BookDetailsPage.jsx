@@ -18,7 +18,7 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
             <header>
                 <div >
                     <img
-                        src="better-reads/frontend/src/assets/icons/BetterReadsLogo.svg"
+                        src="../../images/icons/BetterReadsLogo.svg"
                         alt="BetterReads"
                         className="logo"
                     />
@@ -55,6 +55,7 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
 
                     {/* TODO: replace with ReviewCard */}
                     {/* the User Review Section */}
+                    { /*
                     <div className="review-section">
                         <div className="section-title">Your review</div>
                         {userReview ? (
@@ -71,8 +72,9 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                             <button className="btn">Make a Review</button>
                         )}
                     </div>
+                    */}
 
-                    {/* Other user Reviews */}
+                    {/*
                     <div className="other-reviews">
                         <div className="section-title">Review from other readers with similar taste</div>
                         {otherReviews.map((rev) => (
@@ -95,6 +97,8 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                             <button className="btn">Look at more reviews...</button>
                         </div>
                     </div>
+                    */}
+
                 </div>
             </div>
 
