@@ -16,12 +16,8 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
         <div>
             {/* Header */}
             <header>
-                <div >
-                    <img
-                        src="better-reads/frontend/src/assets/icons/BetterReadsLogo.svg"
-                        alt="BetterReads"
-                        className="logo"
-                    />
+                <div className="logo">
+
                 </div>
                 <nav>
                     <a href="/">Home</a>

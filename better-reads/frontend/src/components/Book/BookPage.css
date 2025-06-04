@@ -71,16 +71,20 @@ header {
     z-index: 100;
 }
 
+
 header .logo {
-    font-size: 32px;
-    font-weight: 700;
-    vertical-align: middle;
-    align-content: center;
     width: 178px;
     height: 38px;
     top: 17px;
     left: 19px;
+    background-image: url('../../assets/icons/BetterReadsLogo.svg');
+    vertical-align: middle;
+    align-content: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
+
 
 header nav {
     display: flex;

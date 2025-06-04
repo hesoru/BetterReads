@@ -1,6 +1,6 @@
 {
   "book": {
-    "coverUrl": "https://example.com/cover-image.jpg",
+    "coverUrl": "/src/assets/icons/BookCover.svg",
     "seriesTitle": "The Great Adventures Series",
     "title": "The Mysterious Island",
     "summary": "A thrilling adventure of castaways, hidden treasures, and unexpected encounters on a remote island.",
@@ -21,21 +21,21 @@
     ]
   },
   "userReview": {
-    "avatarUrl": "https://example.com/user-avatar.jpg",
+    "avatarUrl": "/src/assets/icons/UserProfile.svg",
     "username": "MyUsername123"
   },
   "otherReviews": [
     {
       "id": 1,
       "username": "JaneDoe",
-      "avatarUrl": "https://example.com/avatar1.png",
+      "avatarUrl": "/src/assets/icons/UserProfile.svg",
       "rating": 4,
       "text": "Great read. Loved the characters!"
     },
     {
       "id": 2,
       "username": "JohnSmith",
-      "avatarUrl": "https://example.com/avatar2.png",
+      "avatarUrl": "/src/assets/icons/UserProfile.svg",
       "rating": 3,
       "text": "Enjoyable, but the pacing was off."
     }
@@ -43,7 +43,7 @@
   "similarBooks": [
     {
       "isbn": "978-1-00000-111-1",
-      "coverUrl": "https://example.com/similar-cover1.jpg",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
       "title": "Island of Secrets",
       "rating": 4,
       "averageRating": 4.1,
@@ -52,7 +52,7 @@
     },
     {
       "isbn": "978-1-00000-222-2",
-      "coverUrl": "https://example.com/similar-cover2.jpg",
+      "coverUrl": "/src/assets/icons/BookCover.svg",
       "title": "Treasure of the Lost World",
       "rating": 5,
       "averageRating": 4.7,
