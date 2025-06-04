@@ -1,0 +1,63 @@
+{
+  "book": {
+    "coverUrl": "https://example.com/cover-image.jpg",
+    "seriesTitle": "The Great Adventures Series",
+    "title": "The Mysterious Island",
+    "summary": "A thrilling adventure of castaways, hidden treasures, and unexpected encounters on a remote island.",
+    "isbn": "978-1-23456-789-7",
+    "genres": ["Adventure", "Mystery", "Classic"],
+    "averageRating": 4.2,
+    "reviews": [
+      {
+        "username": "BookLover123",
+        "rating": 5,
+        "text": "Absolutely loved the twists and turns!"
+      },
+      {
+        "username": "IslandFan",
+        "rating": 4,
+        "text": "A fun read, though some parts felt slow."
+      }
+    ]
+  },
+  "userReview": {
+    "avatarUrl": "https://example.com/user-avatar.jpg",
+    "username": "MyUsername123"
+  },
+  "otherReviews": [
+    {
+      "id": 1,
+      "username": "JaneDoe",
+      "avatarUrl": "https://example.com/avatar1.png",
+      "rating": 4,
+      "text": "Great read. Loved the characters!"
+    },
+    {
+      "id": 2,
+      "username": "JohnSmith",
+      "avatarUrl": "https://example.com/avatar2.png",
+      "rating": 3,
+      "text": "Enjoyable, but the pacing was off."
+    }
+  ],
+  "similarBooks": [
+    {
+      "isbn": "978-1-00000-111-1",
+      "coverUrl": "https://example.com/similar-cover1.jpg",
+      "title": "Island of Secrets",
+      "rating": 4,
+      "averageRating": 4.1,
+      "genres": ["Adventure", "Fantasy"],
+      "isFavorite": false
+    },
+    {
+      "isbn": "978-1-00000-222-2",
+      "coverUrl": "https://example.com/similar-cover2.jpg",
+      "title": "Treasure of the Lost World",
+      "rating": 5,
+      "averageRating": 4.7,
+      "genres": ["Adventure", "Thriller"],
+      "isFavorite": true
+    }
+  ]
+}
