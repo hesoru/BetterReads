@@ -16,9 +16,11 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
     return (
         <div>
             {/* Header */}
+
             <header className="header-inner">
 
                 <div className="logo">
+=
                 </div>
                 <nav>
                     <a className="button" href="/">Home</a>
@@ -54,6 +56,7 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                     <GenreTags genres={book.genres} />
 
                     {/* TODO: replace with ReviewCard */}
+
                     {/*
                     <div className="review-section">
                         <div className="section-title">Your review</div>
@@ -71,7 +74,7 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                             <button className="btn">Make a Review</button>
                         )}
                     </div>
-
+                    */}
 
                     <div className="other-reviews">
                         <div className="section-title">Review from other readers with similar taste</div>
@@ -96,7 +99,9 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                         </div>
 
                     </div>
+
                      */}
+
                 </div>
             </div>
 
