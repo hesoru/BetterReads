@@ -2,6 +2,7 @@ import React from 'react';
 import './BookPage.css';
 import BookPreview from './BookPreview';
 import {StarRating, GenreTags} from "./BookUtils.jsx";
+import BookGalleryManager from "./BookGalleryManager.jsx";
 
 // navLinks: [home: "/"],
 // book: { coverUrl, author, publishYear, title, summary, isbn (key), genres: [], averageRating, reviews : [] }
@@ -15,17 +16,15 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
     return (
         <div>
             {/* Header */}
-            <header>
-                <div >
-                    <img
-                        src="../../images/icons/BetterReadsLogo.svg"
-                        alt="BetterReads"
-                        className="logo"
-                    />
+
+            <header className="header-inner">
+
+                <div className="logo">
+=
                 </div>
                 <nav>
-                    <a href="/">Home</a>
-                    <a href="/browse">Browse Books</a>
+                    <a className="button" href="/">Home</a>
+                    <a className="button" href="/browse">Browse Books</a>
                 </nav>
                 <img
                     src={userReview.avatarUrl}
@@ -44,7 +43,10 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                         className="book-cover"
                     />
                     <StarRating rating={Math.round(book.averageRating)} />
-                    <button className="btn">Make Review</button>
+                    <div className="load-more">
+                        <button className="load-more btn">Make Review</button>
+                    </div>
+
                 </div>
 
                 <div className="book-info">
@@ -54,8 +56,8 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                     <GenreTags genres={book.genres} />
 
                     {/* TODO: replace with ReviewCard */}
-                    {/* the User Review Section */}
-                    { /*
+
+                    {/*
                     <div className="review-section">
                         <div className="section-title">Your review</div>
                         {userReview ? (
@@ -74,7 +76,6 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                     </div>
                     */}
 
-                    {/*
                     <div className="other-reviews">
                         <div className="section-title">Review from other readers with similar taste</div>
                         {otherReviews.map((rev) => (
@@ -96,30 +97,21 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                         <div className="load-more-reviews">
                             <button className="btn">Look at more reviews...</button>
                         </div>
+
                     </div>
-                    */}
+
+                     */}
 
                 </div>
             </div>
 
             {/* Similar Books Section */}
+
             <div className="container similar-books">
                 <div className="section-title">Readers who liked this book enjoyed:</div>
-                <div className="books-grid">
-                    {similarBooks.map((sb) => (
-                        <BookPreview
-                            key={sb.isbn}
-                            coverUrl={sb.coverUrl}
-                            isbn={sb.isbn}
-                            title={sb.title}
-                            rating={Math.round(sb.averageRating)}
-                            averageRating={sb.averageRating}
-                            genres={sb.genres}
-                            isFavorite={sb.isFavorite}
-                        />
-                    ))}
-                </div>
-                <div className="load-more-books">
+                    <BookGalleryManager books={similarBooks} limit="4" ></BookGalleryManager>
+                    <BookGalleryManager books={similarBooks} limit="4" ></BookGalleryManager>
+                <div className="load-more btn">
                     <button className="btn">See more similar books...</button>
                 </div>
             </div>
