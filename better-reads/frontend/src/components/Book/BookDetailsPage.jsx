@@ -48,7 +48,7 @@ export default function BookDetailsPage({ book, similarBooks }) {
                     />
                     <StarRating rating={Math.round(book.averageRating)} />
                     <div className="load-more">
-                        <button className="load-more btn">Make Review</button>
+                        <button className="btn">Make Review</button>
                     </div>
 
                 </div>
@@ -107,7 +107,7 @@ export default function BookDetailsPage({ book, similarBooks }) {
                 <div className="section-title">Readers who liked this book enjoyed:</div>
                     <BookGalleryManager books={similarBooks} limit="4" ></BookGalleryManager>
                     <BookGalleryManager books={similarBooks} limit="4" ></BookGalleryManager>
-                <div className="load-more btn">
+                <div className="load-more">
                     <button className="btn">See more similar books...</button>
                 </div>
             </div>

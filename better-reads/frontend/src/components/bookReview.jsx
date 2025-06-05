@@ -17,8 +17,8 @@ const BookReview = ({
     gap: '20px',
     fontFamily: 'Arial, sans-serif', // A basic font stack
     color: NoirNavy, // Default text color for the card
-    maxWidth: '600px', // Example max width
-    margin: '20px auto' // For centering the card if it's the only thing on a page
+    maxWidth: '1044px', // Example max width
+    margin: '18px auto' // 18px top/bottom for 36px spacing, auto left/right for centering
   };
 
   const leftColumnStyle = {
