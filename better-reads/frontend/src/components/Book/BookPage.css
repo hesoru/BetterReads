@@ -240,6 +240,7 @@ header .button {
     font-size: 0.85rem;
     cursor: default;
     transition: background-color var(--transition-fast), color var(--transition-fast);
+    display: inline-block;
 }
 
 .genre-tag:hover {
