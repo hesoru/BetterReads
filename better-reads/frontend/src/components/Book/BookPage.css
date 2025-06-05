@@ -174,22 +174,48 @@ header .button {
     color: #f1e132;
 }
 
-.book-page .btn {
-    background-color: var(--color-bg);
-    border: 1px solid var(--color-primary);
-    color: var(--color-primary);
+.btn {
+    background-color: transparent;
+    border: 1px solid #151B54; /* Novella Navy */
+    color: #151B54; /* Novella Navy */
     border-radius: var(--border-radius);
     padding: 0.5rem 1rem;
+    font-family: 'Albert Sans', sans-serif; /* Albert Sans */
+    font-style: italic;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: background-color var(--transition-fast), color var(--transition-fast);
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
     text-decoration: none;
     text-align: center;
+    font-weight: normal; /* Ensuring it's not bold unless specified */
 }
 
-.book-page .btn:hover {
-    background-color: var(--color-primary);
-    color: var(--color-bg);
+.btn:hover {
+    background-color: #151B54; /* Novella Navy */
+    color: #FFFFFF; /* PaperbackPureWhite */
+    border-color: #151B54; /* Ensure border stays consistent or changes as desired on hover */
+}
+
+
+/* Review Sections Layout and Styling */
+.review-section,
+.other-reviews,
+.readers-also-enjoyed { /* Assuming this class is used for the 'Readers who liked this book enjoyed' section */
+    max-width: 1044px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%; /* Take available width up to max-width */
+    padding-top: 1rem; /* Add some spacing around sections */
+    padding-bottom: 1rem;
+}
+
+.section-title {
+    font-family: 'Source Serif Pro', serif;
+    font-style: italic;
+    color: var(--color-primary);
+    font-size: 1.75rem; 
+    margin-bottom: 1rem;
+    margin-top: 1.5rem;
 }
 
 /* Book Info Section */
@@ -250,7 +276,7 @@ header .button {
 
 /* Your Review Section */
 .review-section {
-    background-color: var(--color-secondary);
+    background-color: transparent;
     border-radius: var(--border-radius);
     padding: 1rem;
     margin-top: 2rem;
@@ -296,12 +322,13 @@ header .button {
 }
 
 .review-card {
-    background-color: var(--color-secondary);
+    background-color: #DFE5EF; /* DetectiveDustyBlue */
     border-radius: var(--border-radius);
     padding: 1rem;
     display: flex;
     gap: 1rem;
-    margin-bottom: 1rem;
+    max-width: 1044px;
+    margin: 1rem auto;
 }
 
 .review-card .avatar {
@@ -340,6 +367,14 @@ header .button {
     line-height: 1.4;
 }
 
+/* Load More Reviews Button Container */
+.load-more-reviews {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem; /* Adjust as needed */
+}
+
 /* Load More Reviews Button */
 .load-more {
     display: flex;
@@ -366,9 +401,13 @@ header .button {
 }
 
 .similar-books .section-title {
+    font-family: 'Source Serif Pro', serif;
     font-style: italic;
-    color: var(--color-text-light);
+    font-weight: normal;
+    color: var(--color-text);
+    font-size: 1.5rem; /* Ensure font size is consistent */
     margin-bottom: 1rem;
+    text-align: left; /* Ensure alignment is consistent */
 }
 
 .books-grid {
@@ -580,6 +619,41 @@ header .button {
 
 .recommend-books .btn {
     padding: 0.5rem 1.5rem;
+}
+
+/* Reviews Section Layout */
+.reviews-container {
+    max-width: 1044px; /* A bit wider than BookReview's 600px to give some padding for the title */
+    margin: 2rem auto; /* Centers the container and adds top/bottom margin */
+    padding: 0 20px; /* Adds some horizontal padding if needed */
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* Adds space between "Your Review" and "Other Reviews" sections */
+}
+
+.review-section,
+.other-reviews {
+    width: 100%; /* Takes full width of the reviews-container */
+}
+
+.review-section .section-title,
+.other-reviews .section-title,
+.similar-books-section .section-title, /* Keep this for broader targeting if needed */
+.similar-books .section-title { /* Add specific target to ensure it's covered */
+    font-family: 'Source Serif Pro', serif;
+    font-style: italic;
+    font-size: 1.5rem; /* Or your preferred title size */
+    font-weight: normal;
+    color: var(--color-text); /* Using main text color (black/dark gray) */
+    margin-bottom: 1rem; /* Space between title and the first review card */
+    text-align: left; /* Aligns title to the left */
+}
+
+/* Ensure BookReview components within these sections are aligned with the left-aligned title */
+.review-section > div[style*='max-width: 600px'],
+.other-reviews > div[style*='max-width: 600px'] {
+    margin-left: 0 !important; 
+    margin-right: auto !important; /* Keeps it from stretching if content is smaller, but aligns left */
 }
 
 /* Responsive Adjustments */

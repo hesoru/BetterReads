@@ -1,10 +1,11 @@
 import React from 'react';
 import './BookPage.css';
-import {FavoriteIcon, GenreTags, StarRating} from "./BookUtils.jsx";
+import { FavoriteIcon, GenreTags } from "./BookUtils.jsx";
+import StarRating from '../ratings/starRating'; // Assuming starRating.jsx exports as default or named StarRating
 
 
 
-export default function BookPreview({ coverUrl, isbn, title, rating, averageRating, genres, isFavorite, onToggleFavorite }) {
+export default function BookPreview({ coverUrl, title, rating, averageRating, genres, isFavorite, onToggleFavorite }) {
     return (
         <div className="book-card">
             <div className="favorite-icon" onClick={onToggleFavorite} role="button" aria-label="Toggle favorite">
