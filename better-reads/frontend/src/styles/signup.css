@@ -1,0 +1,129 @@
+html,
+body {
+	height: 100%;
+	margin: 0;
+	color: white;
+	background-image: url('../images/background.svg');
+}
+
+h1 {
+	text-align: center;
+	font-size: xxx-large;
+}
+
+.better {
+	color: red;
+}
+
+.reads {
+	color: white;
+}
+
+h2 {
+	font-size: small;
+	text-align: center;
+	font-style: italic;
+	color:white;
+}
+
+.tagline {
+	font-size: 1rem;
+	font-style: italic;
+	color: white;
+	margin-bottom: 5rem;
+	text-align: center;
+}
+
+.signup-container {
+	display: flex;
+	flex-direction: column;
+	background-color: transparent;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+}
+
+.signup-form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.signup-information {
+	background-color: #1e213d;
+	padding: 2rem;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px white;
+	width: 100%;
+	max-width: 40%;
+	max-height: 60%;
+	box-sizing: border-box;
+}
+
+button {
+	padding: 0.7rem 1.3rem;
+	font-size: 0.9rem;
+	font-weight: bold;
+	border: none;
+	border-radius: 6px;
+	background-color: transparent;
+	color: white;
+	border: 2px solid white;
+}
+
+.form-row {
+	display: flex;
+	align-items: center;
+	margin-bottom: 0.5rem;
+}
+
+
+.form-row label {
+	font-weight: bold;
+	margin-right: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.signup-form input {
+	padding: 0.4rem;
+	border-radius: 0.3rem;
+	border: 1px solid #ccc;
+	margin-bottom: 1rem;
+}
+
+.button-row {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 1rem;
+	margin-top: 1rem;
+}
+
+button:hover {
+	background-color: #45a049;
+}
+
+.form-footer {
+	text-align: center;
+	margin-top: 1rem;
+	font-size: 0.9rem;
+	color: white;
+}
+
+.form-footer a {
+	color: white;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-row label {
+    width: auto;
+    margin-bottom: 0.5rem;
+  }
+}
