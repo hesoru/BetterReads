@@ -1,4 +1,10 @@
 {
+  "user": {
+    "username": "username_123",
+    "avatarUrl": "/src/assets/icons/UserProfile.svg",
+    "dateJoined": "2025-01-01",
+    "favoriteGenres": ["Fantasy", "Mystery", "Science Fiction", "Romance", "Thriller"]
+  },
   "book": {
     "coverUrl": "/src/assets/icons/BookCover.svg",
     "seriesTitle": "The Great Adventures Series",

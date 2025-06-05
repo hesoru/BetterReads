@@ -15,7 +15,7 @@ import BookGalleryManager from "./BookGalleryManager.jsx";
 export default function BookDetailsPage({ book, userReview, otherReviews, similarBooks }) {
     return (
         <div>
-            {/* Header */}
+            {/* Header
 
             <header className="header-inner">
 
@@ -26,12 +26,14 @@ export default function BookDetailsPage({ book, userReview, otherReviews, simila
                     <a className="button" href="/">Home</a>
                     <a className="button" href="/browse">Browse Books</a>
                 </nav>
-                <img
-                    src={userReview.avatarUrl}
-                    alt="User Avatar"
-                    className="user-avatar"
-                />
-            </header>
+                <a href="/profile" style={{ cursor: 'pointer' }}>
+                    <img
+                        src={userReview.avatarUrl}
+                        alt="User Avatar"
+                        className="user-avatar"
+                    />
+                </a>
+            </header> */}
 
 
             <div className="container book-page">
