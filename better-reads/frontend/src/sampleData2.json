@@ -1,0 +1,208 @@
+{
+  "user": {
+    "username": "username_123",
+    "avatarUrl": "/src/assets/icons/UserProfile.svg",
+    "dateJoined": "2025-01-01",
+    "favoriteGenres": ["Fantasy", "Mystery", "Science Fiction", "Romance", "Thriller"]
+  },
+  "books": {
+    "978-1-23456-789-7": {
+      "details": {
+        "coverUrl": "/src/assets/icons/BookCover.svg",
+        "title": "The Mysterious Island",
+        "summary": "A thrilling adventure of castaways, hidden treasures, and unexpected encounters on a remote island.",
+        "isbn": "978-1-23456-789-7",
+        "genres": ["Adventure", "Mystery", "Classic"],
+        "averageRating": 4.2
+      },
+      "userReview": {
+        "avatarUrl": "/src/assets/icons/UserProfile.svg",
+        "username": "MyUsername123",
+        "rating": 3,
+        "text": "Every chapter ended on a cliffhanger. Loved it."
+      },
+      "otherReviews": [
+        {
+          "id": 1,
+          "username": "JaneDoe",
+          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "rating": 4,
+          "text": "Great read. Loved the characters!"
+        },
+        {
+          "id": 2,
+          "username": "JohnSmith",
+          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "rating": 3,
+          "text": "Enjoyable, but the pacing was off."
+        }
+      ],
+      "similarBooks": [
+        {
+          "isbn": "978-1-00000-111-1",
+          "isFavorite": false
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        }
+      ]
+    },
+    "978-1-00000-111-1": {
+      "details": {
+        "coverUrl": "/src/assets/icons/BookCover.svg",
+        "title": "Island of Secrets",
+        "summary": "Unravel the mysteries buried deep in a forgotten island where nothing is what it seems.",
+        "isbn": "978-1-00000-111-1",
+        "genres": ["Adventure", "Fantasy"],
+        "averageRating": 4.1
+      },
+      "userReview": {
+        "avatarUrl": "/src/assets/icons/UserProfile.svg",
+        "username": "MyUsername123",
+        "rating": 3,
+        "text": "Every chapter ended on a cliffhanger. Loved it."
+      },
+      "otherReviews": [
+        {
+          "id": 1,
+          "username": "JaneDoe",
+          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "rating": 2,
+          "text": "Great read. Hated the characters!"
+        },
+        {
+          "id": 2,
+          "username": "JohnSmith1",
+          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "rating": 3.5,
+          "text": "Enjoyable, but the pacing was off."
+        }
+      ],
+      "similarBooks": [
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": false
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        }
+      ]
+    },
+    "978-1-00000-222-2": {
+      "details": {
+        "coverUrl": "/src/assets/icons/BookCover.svg",
+        "title": "Treasure of the Lost World",
+        "summary": "An elite team races against time to uncover a powerful treasure that could change the fate of the world.",
+        "isbn": "978-1-00000-222-2",
+        "genres": ["Adventure", "Thriller"],
+        "averageRating": 4.7
+      },
+      "userReview": {
+        "avatarUrl": "/src/assets/icons/UserProfile.svg",
+        "username": "MyUsername123",
+        "rating": 3,
+        "text": "Every chapter ended on a cliffhanger. Loved it."
+      },
+      "otherReviews": [
+        {
+          "id": 1,
+          "username": "JaneDoe",
+          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "rating": 4,
+          "text": "Fast-paced and explosive. Couldn’t put it down!"
+        },
+        {
+          "id": 2,
+          "username": "ThrillSeekerJane",
+          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "rating": 3,
+          "text": "Every chapter ended on a cliffhanger. Loved it."
+        }
+      ],
+      "similarBooks": [
+        {
+          "isbn": "978-1-23456-789-7",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": false
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": false
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": false
+        },
+        {
+          "isbn": "978-1-00000-222-2",
+          "isFavorite": true
+        }
+      ]
+    }
+  }
+}

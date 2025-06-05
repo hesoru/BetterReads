@@ -1,8 +1,11 @@
 import React, { useRef } from 'react';
-import BookPreview from './BookPreview';
+import {BookPreview} from './BookPreview';
+import sampleData from "../../sampleData2.json";
 
 
 const BookGalleryManager = ({ books, limit }) => {
+    const bookData = sampleData.books;
+    const uniqueBooks = Array.from(new Map(books.map(b => [b.isbn, b])).values());
 
     const scrollRef = useRef(null);
     const CARD_WIDTH = 240;
@@ -26,18 +29,25 @@ const BookGalleryManager = ({ books, limit }) => {
                 <button className="scroll-arrow left" onClick={scrollLeft} />
 
                 <div className="books-row-scroll" ref={scrollRef}>
-                    {books.map((book) => (
-                        <BookPreview
-                            key={book.isbn}
-                            coverUrl={book.coverUrl}
-                            isbn={book.isbn}
-                            title={book.title}
-                            rating={Math.round(book.averageRating)}
-                            averageRating={book.averageRating}
-                            genres={book.genres}
-                            isFavorite={book.isFavorite}
-                        />
-                    ))}
+                    {uniqueBooks.map((sim) => {
+                        const matchedBook = bookData[sim.isbn];
+                        console.log(sim)
+
+                        if (!matchedBook) return null;
+
+                        return (
+                            <BookPreview
+                                key={sim.isbn}
+                                isbn={sim.isbn}
+                                coverUrl={matchedBook.details.coverUrl}
+                                title={matchedBook.details.title}
+                                rating={Math.round(matchedBook.details.averageRating)}
+                                genres={matchedBook.details.genres}
+                                isFavorite={sim.isFavorite}
+                            />
+                        );
+                    })}
+
                 </div>
 
                 <button className="scroll-arrow right" onClick={scrollRight} />
