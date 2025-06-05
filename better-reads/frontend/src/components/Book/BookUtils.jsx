@@ -3,13 +3,14 @@ import './BookPage.css';
 
 export const GenreTags = ({ genres }) => (
     <div className="genre-tags">
-        {genres.map((genre, idx) => (
+        {Array.isArray(genres) && genres.map((genre, idx) => (
             <span key={idx} className="genre-tag">
         {genre}
       </span>
         ))}
     </div>
 );
+
 
 export const FavoriteIcon = ({ isFavorite }) => {
     return (
