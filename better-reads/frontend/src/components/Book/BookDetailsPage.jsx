@@ -59,41 +59,45 @@ export default function BookDetailsPage({ book, similarBooks }) {
                     <div className="isbn">ISBN: {book.isbn}</div>
                     <GenreTags genres={book.genres} />
 
-                    <div className="review-section">
-                        <div className="section-title">Your Review</div>
-                        {/* Placeholder for user's own review input - for now, a sample BookReview */}
-                        <BookReview 
-                            userImage="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=120&q=80" 
-                            username="YourUsername" 
-                            rating={5} 
-                            reviewText="This is where your insightful review would go! You loved this book and can't wait to tell everyone about it."
-                        />
-                    </div>
 
-                    <div className="other-reviews">
-                        <div className="section-title">Reviews from Other Readers</div>
-                        <BookReview 
-                            userImage="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=120&q=80" 
-                            username="ReaderFan101" 
-                            rating={4.5} 
-                            reviewText="A truly captivating story. The world-building was incredible, though I felt the ending was a bit rushed. Still, a solid read!"
-                        />
-                        <BookReview 
-                            username="CritiqueMaster" 
-                            rating={3} 
-                            reviewText="An interesting concept, but the execution fell a little flat for me. Some characters felt underdeveloped. It has potential but didn't quite hit the mark."
-                        />
-                        <BookReview 
-                            userImage="" // This will use the default placeholder from BookReview
-                            username="NewReader22" 
-                            rating={5} 
-                            // This will use the default reviewText from BookReview
-                        />
-                        <div className="load-more-reviews">
-                            <button className="btn">Look at more reviews...</button>
-                        </div>
-                    </div>
 
+                </div>
+            </div>
+
+            <div className="reviews-container">
+                <div className="review-section">
+                    <div className="section-title">Your Review</div>
+                    {/* Placeholder for user's own review input - for now, a sample BookReview */}
+                    <BookReview 
+                        userImage="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=120&q=80" 
+                        username="YourUsername" 
+                        rating={5} 
+                        reviewText="This is where your insightful review would go! You loved this book and can't wait to tell everyone about it."
+                    />
+                </div>
+
+                <div className="other-reviews">
+                    <div className="section-title">Reviews from Other Readers</div>
+                    <BookReview 
+                        userImage="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=120&q=80" 
+                        username="ReaderFan101" 
+                        rating={4.5} 
+                        reviewText="A truly captivating story. The world-building was incredible, though I felt the ending was a bit rushed. Still, a solid read!"
+                    />
+                    <BookReview 
+                        username="CritiqueMaster" 
+                        rating={3} 
+                        reviewText="An interesting concept, but the execution fell a little flat for me. Some characters felt underdeveloped. It has potential but didn't quite hit the mark."
+                    />
+                    <BookReview 
+                        userImage="" // This will use the default placeholder from BookReview
+                        username="NewReader22" 
+                        rating={5} 
+                        // This will use the default reviewText from BookReview
+                    />
+                    <div className="load-more-reviews">
+                        <button className="btn">Look at more reviews...</button>
+                    </div>
                 </div>
             </div>
 
