@@ -5,7 +5,18 @@ import sampleData from "../../sampleData2.json";
 
 const BookGalleryManager = ({ books, limit }) => {
     const bookData = sampleData.books;
-    const uniqueBooks = Array.from(new Map(books.map(b => [b.isbn, b])).values());
+    //console.log("bookData", bookData);
+    //console.log("books", books)
+
+    const uniqueBooks = Array.from(
+        new Set(books)
+    ).map(isbn => {
+        const book = bookData[isbn];
+        return book ? { isbn, ...book } : null;
+    }).filter(Boolean);
+   //
+    // const uniqueBooks = Array.from(new Map(books.map(b => [b.isbn, b])).values());
+    console.log("uniqueBooks", uniqueBooks);
 
     const scrollRef = useRef(null);
     const CARD_WIDTH = 240;
@@ -30,20 +41,17 @@ const BookGalleryManager = ({ books, limit }) => {
 
                 <div className="books-row-scroll" ref={scrollRef}>
                     {uniqueBooks.map((sim) => {
-                        const matchedBook = bookData[sim.isbn];
-                        console.log(sim)
+                        console.log("sim", sim)
 
-                        if (!matchedBook) return null;
 
                         return (
                             <BookPreview
-                                key={sim.isbn}
-                                isbn={sim.isbn}
-                                coverUrl={matchedBook.details.coverUrl}
-                                title={matchedBook.details.title}
-                                rating={Math.round(matchedBook.details.averageRating)}
-                                genres={matchedBook.details.genres}
-                                isFavorite={sim.isFavorite}
+                                key={sim.details.isbn}
+                                isbn={sim.details.isbn}
+                                coverUrl={sim.details.coverUrl}
+                                title={sim.details.title}
+                                rating={Math.round(sim.details.averageRating)}
+                                genres={sim.details.genres}
                             />
                         );
                     })}

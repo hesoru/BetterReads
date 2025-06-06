@@ -19,7 +19,7 @@ export default function BookDetailsPage( ) {
     const isbn = useParams();
     const book = sampleData.books[isbn.isbn];
 
-    //console.log(book.details.genres);
+    //console.log(book);
     return (
         <div>
             <div className="container book-page">
