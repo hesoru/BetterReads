@@ -3,6 +3,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import BookDetailsPage from "./components/Book/BookDetailsPage.jsx";
 import UserProfile from "./pages/UserProfile";
+import SearchPage from "./pages/SearchPage";
 import Header from "./components/Home/Header";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Header userAvatar={sampleData.user.avatarUrl} />
         <main style={{ flex: 1 }}>
           <Routes>
+            <Route path="/" element={<SearchPage />} />
             <Route path="/books/:isbn" element={
                 <BookDetailsPage />
             } />
