@@ -12,9 +12,14 @@ export const GenreTags = ({ genres }) => (
 );
 
 
-export const FavoriteIcon = ({ isFavorite }) => {
+export const FavoriteIcon = ({ isFavorite, onClick }) => {
     return (
-        <div className="favorite-icon" role="button" aria-label="Toggle favorite">
+        <div
+            className={`favorite-icon ${isFavorite ? 'favorited' : ''}`}
+            onClick={onClick}
+            role="button"
+            aria-label="Toggle favorite"
+        >
             <svg
                 className="icon-heart"
                 xmlns="http://www.w3.org/2000/svg"

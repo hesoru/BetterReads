@@ -569,8 +569,14 @@ header .button {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    color: #fff; /* default white stroke */
     transition: background-color var(--transition-fast);
 }
+
+.book-card .favorite-icon.favorited {
+    color: red; /* this will apply to fill and stroke if using currentColor */
+}
+
 
 .book-card .favorite-icon:hover {
     background-color: var(--color-primary);
