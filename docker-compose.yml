@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./better-reads/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./better-reads/frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    # depends_on:
+    #   - backend
+
+#   backend:
+#     build:
+#       contexst: ./backend
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8000:8000"
+#     volumes:
+#       - ./backend:/app
+#       - /app/node_modules
+#     environment:
+#       - NODE_ENV=development
+#       - MONGODB_URI=mongodb://mongodb:27017/betterreads
+#     depends_on:
+#       - mongodb
+
+#   mongodb:
+#     image: mongo:latest
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - mongodb_data:/data/db
+
+# volumes:
+#   mongodb_data:
