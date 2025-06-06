@@ -15,6 +15,7 @@ The following frontend features have been implemented:
 - Book review card component
 - User profile component
 - Login and signup page
+- Header component with navigation links
 - Book search page
 - Book details page
 - User profile page
