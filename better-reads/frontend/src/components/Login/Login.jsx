@@ -1,5 +1,6 @@
 import React from "react";
 import "../../styles/login.css";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
 	return (
@@ -42,7 +43,7 @@ const Login = () => {
 					<button className="guest-button">Enter as a Guest</button>
 				</div>
 				<p className="form-footer">
-					Don't have an account? <a href="/signup">Signup</a>
+					Don't have an account? <Link to="/signup">Signup</Link>
 				</p>
 			</div>
 		</div>

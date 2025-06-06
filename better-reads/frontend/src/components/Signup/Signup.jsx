@@ -1,6 +1,7 @@
 import React from "react";
 import "../../styles/signup.css";
 import GenreDropDown from "./GenreDropDown";
+import { useNavigate, Link } from "react-router-dom";
 
 const Signup = () => {
 	
@@ -49,7 +50,7 @@ const Signup = () => {
 					<button className="register-button">Register</button>
 				</div>
 				<p className="form-footer">
-					Already have a account? <a href="/login">Login</a>
+					Already have a account? <Link to="/">Login</Link>
 				</p>
 			</div>
 		</div>
