@@ -20,7 +20,7 @@ docker-compose down        # tear down container
 ```
 
 
-Use the exported Docker image tar file to run directly
+Use the exported Docker image .tar file to run app directly.
 ```
 docker load -i better-reads.tar
 docker run -p 5173:5173 team25_betterreads-frontend
