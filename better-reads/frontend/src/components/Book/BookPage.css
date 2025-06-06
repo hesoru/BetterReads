@@ -559,27 +559,31 @@ header .button {
 /* Favorite Icon */
 .book-card .favorite-icon {
     position: absolute;
-    top: 0.75rem;
+    top: 0.25rem;
     right: 0.75rem;
-    width: 24px;
-    height: 24px;
-    background-color: var(--color-bg);
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #fff; /* default white stroke */
+    color: #fff;
     transition: background-color var(--transition-fast);
+    z-index: 10;
 }
 
-.book-card .favorite-icon.favorited {
-    color: red; /* this will apply to fill and stroke if using currentColor */
+.book-card .favorite-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
+
 
 
 .book-card .favorite-icon:hover {
     background-color: var(--color-primary);
+
 }
 
 .book-card .favorite-icon .icon-heart {

@@ -8,6 +8,7 @@ const initialState = {
 const BooklistSlice = createSlice({
     name: 'booklist',
     initialState,
+    //TODO: update the state of addition to the wishlist in database as well!!!!!!
     reducers: {
         addToBooklist(state, action) {
             const isbn = action.payload;
