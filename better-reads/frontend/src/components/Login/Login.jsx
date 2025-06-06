@@ -40,7 +40,7 @@ const Login = () => {
 					</div>
 				</form>
 				<div className="button-row">
-					<button className="login-button" onClick={() => {navigate("/search")}}>Login in</button>
+					<button className="login-button" onClick={() => {navigate("/search")}}>Log in</button>
 					<button className="guest-button" onClick={() => {navigate("/search")}}>Enter as a Guest</button>
 				</div>
 				<p className="form-footer">
