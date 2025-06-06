@@ -2,7 +2,7 @@ import React from 'react';
 import UserCard from '../components/UserProfile/UserCard';
 import { Typography } from '@mui/material';
 import BookGalleryManager from '../components/Book/BookGalleryManager';
-import sampleData from "../sampleData.json";
+import sampleData from "../sampleData2.json";
 
 const UserProfile = () => {
 
@@ -38,7 +38,7 @@ const UserProfile = () => {
         >
           Reading List
         </Typography>
-        <BookGalleryManager books={sampleData.similarBooks} limit={10} />
+        <BookGalleryManager books={sampleData.user.favoriteBooks} limit={10} />
       </div>
     </div>
   );

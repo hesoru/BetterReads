@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom"; // Assuming starRating.jsx exports
 
 
 
-export function BookPreview({isbn, coverUrl, title, rating, genres, isFavorite, onToggleFavorite}) {
+export function BookPreview({isbn, coverUrl, title, rating, genres, isFavorite}) {
     const navigate = useNavigate();
 
     const handleCardClick = () => {
@@ -14,7 +14,7 @@ export function BookPreview({isbn, coverUrl, title, rating, genres, isFavorite, 
     };
     return (
         <div className="book-card">
-            <div className="favorite-icon" onClick={onToggleFavorite} role="button" aria-label="Toggle favorite">
+            <div className="favorite-icon"  role="button" aria-label="Toggle favorite">
                 <svg
                     className="icon-heart"
                     xmlns="http://www.w3.org/2000/svg"
