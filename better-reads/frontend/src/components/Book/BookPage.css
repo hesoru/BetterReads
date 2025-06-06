@@ -24,8 +24,8 @@
 body {
     font-family: var(--font-family);
     color: var(--color-text);
-    background-color: var(--color-bg-alt);
     line-height: 1.6;
+    background-color: var(--color-bg);
 }
 
 /* Typography */
@@ -253,8 +253,9 @@ header .button {
 .genre-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    gap: 8px;
+    margin: 8px 0;
+    justify-content: flex-start;
 }
 
 .genre-tag {

@@ -11,7 +11,6 @@ const Header = ({ userAvatar }) => {
         </Link>
       </div>
       <nav style={styles.nav}>
-        <Link to="/browse" style={styles.link}>Browse Books</Link>
         <Link to="/search" style={styles.link}>Search</Link>
         <Link to="/profile" style={styles.avatarLink}>
           <img
