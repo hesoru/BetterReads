@@ -19,6 +19,12 @@ docker-compose up --build  # start container
 docker-compose down        # tear down container
 ```
 
+Use the exported Docker image tar file to run directly
+```
+docker load -i better-reads.tar
+docker run -p 5173:5173 team25_betterreads-frontend
+```
+
 ## Milestones
 ### Milestone 1:
 The following frontend features have been implemented:
