@@ -6,7 +6,8 @@ import { useNavigate, Link } from "react-router-dom";
 const Signup = () => {
 	const navigate = useNavigate();
 	return (
-		<div className="signup-container">
+		<div className="signup-page">
+			<div className="signup-container">
 			<div className="signup-information">
 				<h2>
 					Join us to get ...
@@ -52,6 +53,7 @@ const Signup = () => {
 				<p className="form-footer">
 					Already have a account? <Link to="/">Login</Link>
 				</p>
+			</div>
 			</div>
 		</div>
 	);

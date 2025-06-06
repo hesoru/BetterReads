@@ -36,6 +36,7 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
               component="h2" 
               gutterBottom 
               textAlign="left"
+              color="#000"
               sx={{ 
                 fontWeight: 700,
                 fontFamily: 'Georgia, serif',
@@ -94,7 +95,9 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
             >
               Favorite Genres
             </Typography>
-            <GenreTags genres={user.favoriteGenres} />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <GenreTags genres={user.favoriteGenres} />
+            </Box>
           </Box>
         </>
       )}
