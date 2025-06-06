@@ -15,6 +15,7 @@ Clone the repository and run with Docker Compose. In your bash terminal, run:
 git clone -b Milestone1 https://github.students.cs.ubc.ca/CPSC455-2025S/Team25_BetterReads.git
 cd Team25_BetterReads
 docker-compose up --build  # start container
+# open image at port 5173
 docker-compose down        # tear down container
 ```
 
