@@ -14,22 +14,21 @@ const ReviewSchema = new mongoose.Schema({
   },
   title: {
     type: String,
-    required: true,
   },
   description: {
     type: String,
-    required: true,
   },
   rating: {
     type: Number,
-    required: true,
     min: 1,
     max: 5,
   },
   date: {
     type: Date,
-    required: true,
   },
 }, { timestamps: true });
+
+// Limits each user to one review per book
+ReviewSchema.index({ bookId: 1, userId: 1 }, { unique: true });
 
 export default mongoose.model('Review', ReviewSchema, 'reviews');
