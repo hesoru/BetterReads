@@ -2,6 +2,9 @@
 import express from 'express';
 import connectDB from './db.js';
 import cors from 'cors';
+import userRoutes from "routes/users";
+import reviewRoutes from "routes/reviews";
+import bookRoutes from "routes/books";
 
 const app = express();
 const PORT = 3000;
@@ -17,4 +20,6 @@ app.listen(PORT, () => {
 app.get('/', (req, res) => {
   res.send('Hello from Express and MongoDB!');
 });
+
+app.use('/users', userRoutes);
 
