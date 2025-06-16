@@ -3,10 +3,13 @@ import "../../styles/signup.css";
 import GenreDropDown from "./GenreDropDown";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from 'react';
+import {useDispatch} from "react-redux";
+import { loginUser } from "../../redux/userThunks";
 
 //TODO: ORE WAS HERE:
 const Signup = () => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [favoriteGenres, setFavoriteGenres] = useState([]);
@@ -15,7 +18,7 @@ const Signup = () => {
 		e.preventDefault();
 
 		try {
-			const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users/signup`, {
+			const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/signup`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -34,6 +37,7 @@ const Signup = () => {
 			const data = await res.json();
 			console.log('User created:', data);
 			//TODO: update redux state so that user is no longer guest
+			dispatch(loginUser({username, password}));
 			navigate('/search');
 		} catch (err) {
 			console.error('Signup error:', err);

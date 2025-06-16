@@ -9,3 +9,4 @@ router.get('/', async (req, res) => {
     res.json(categories);
 });
 
+export default router;

@@ -4,7 +4,7 @@ import { FavoriteIcon, GenreTags } from "./BookUtils.jsx";
 import StarRating from '../ratings/starRating';
 import {useNavigate} from "react-router-dom"; // Assuming starRating.jsx exports as default or named StarRating
 import { useDispatch, useSelector } from 'react-redux';
-import { addToBooklist, removeFromBooklist } from '../../states/Booklist'; // adjust path if needed
+import { addToBooklist, removeFromBooklist } from '../../redux/Booklist'; // adjust path if needed
 
 
 

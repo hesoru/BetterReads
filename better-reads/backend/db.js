@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const mongoURI = 'mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/?retryWrites=true&w=majority&appName=Sandbox';
+const mongoURI = 'mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/bookdb?retryWrites=true&w=majority&appName=Sandbox';
 
 const connectDB = async () => {
     try {
@@ -26,7 +26,7 @@ mongoose.connection.on('disconnected', () => {
 });
 
 
-connectDB();
+//connectDB();
 // BetterReads mongoURI
 // const mongoURI = 'mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/?retryWrites=true&w=majority&appName=Sandbox';
 //
