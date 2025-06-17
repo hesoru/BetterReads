@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './BookPage.css';
 import {BookPreview} from './BookPreview';
 import { GenreTags } from "./BookUtils.jsx";
@@ -10,23 +10,67 @@ import {useParams} from "react-router-dom";
 import BookUtils from "../../utils/BookUtils.js";
 import {useSelector} from "react-redux";
 
-// navLinks: [home: "/"],
-// book: { coverUrl, author, publishYear, title, summary, isbn (key), genres: [], averageRating, reviews : [] }
-// userReview: { avatarUrl, username }
-// otherReviews: [ { id, username, avatarUrl, rating, text } ]
-// similarBooks: [ { isbn, coverUrl, title, rating, averageRating, genres: [], isFavorite } ]
-// onToggleFavorite: function(isbn)
-
 
 export default function BookDetailsPage( ) {
-    const bookId = useParams();
+    const  {bookId}  = useParams();
     const userId = useSelector((state) => state.user?.user?._id);
+    const username = useSelector((state) => state.user?.user?.username);
+    //console.log("username", username);
+    //console.log("userId", userId);
+   // console.log("bookId", bookId);
     const userAvatar = useSelector((state) => state.user?.user?.avatarUrl);
-    const book = BookUtils.getBookById(bookId);
-    const userReview = BookUtils.getUserReview(bookId, userId);
-    const bookReviews = BookUtils.getBookReviews(bookId);
 
-    //console.log(book);
+    const [book, setBook] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [userReview, setUserReview] = useState(null);
+    const [bookReviews, setBookReviews] = useState([]);
+    const [avatarMap, setAvatarMap] = useState({});
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const bookData = await BookUtils.getBookById(bookId);
+                const review = await BookUtils.getUserReview(bookId, username);
+                const allReviews = await BookUtils.getBookReviews(bookId);
+
+                console.log("review", review);
+                console.log("all reviews", allReviews);
+
+                setBook(bookData);
+                setUserReview(review);
+                setBookReviews(allReviews);
+            } catch (err) {
+                console.error('Failed to fetch book data:', err);
+            }
+        };
+
+        if (bookId) {
+            fetchData();
+        }
+    }, [bookId, userId]);
+
+    useEffect(() => {
+        const fetchAvatars = async () => {
+            const map = {};
+
+            await Promise.all(
+                bookReviews.map(async (review) => {
+                    const avatar = await BookUtils.getUserAvatar(review.userId);
+                    map[review.userId] = avatar;
+                })
+            );
+
+            setAvatarMap(map);
+        };
+
+        if (bookReviews.length > 0) {
+            fetchAvatars();
+        }
+    }, [bookReviews]);
+
+    if (!book) return <div>Loading...</div>;
+
     return (
         <div>
             <div className="container book-page">
@@ -58,19 +102,32 @@ export default function BookDetailsPage( ) {
             <div className="reviews-container">
                 <div className="review-section">
                     <div className="section-title">Your Review</div>
-                    {/* Placeholder for user's own review input - for now, a sample BookReview */}
                     <BookReview
+                        editable={isEditing || !userReview}
                         userImage={userAvatar}
-                        username={userReview.userId}
-                        rating={userReview.rating}
-                        reviewText={userReview.description} />
-                    {/* <BookReview
-                        userImage="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=120&q=80" 
-                        username="YourUsername" 
-                        rating={5} 
-                        reviewText="This is where your insightful review would go! You loved this book and can't wait to tell everyone about it."
+                        username={username}
+                        rating={userReview?.rating}
+                        reviewText={userReview?.description}
+                        onSave={async ({ rating, description }) => {
+                            const newReview = await BookUtils.upsertReview(bookId, username, {
+                                rating,
+                                description
+                            });
+                            setUserReview(newReview);
+                            setBookReviews(prev => {
+                                const others = prev.filter(r => r.userId !== username);
+                                return [newReview, ...others];
+                            });
+                            setIsEditing(false);
+                        }}
                     />
-                    */}
+
+                    {userReview && !isEditing && (
+                        <button className="btn" onClick={() => setIsEditing(true)}>
+                            Edit Review
+                        </button>
+                    )}
+
                 </div>
 
                 <div className="other-reviews">
@@ -78,7 +135,7 @@ export default function BookDetailsPage( ) {
                     {bookReviews.map((review, idx) => (
                         <BookReview
                             key={idx}
-                            userImage={BookUtils.getUserReview(review.userId)}
+                            userImage={avatarMap[review.userId]}
                             username={review.userId}
                             rating={review.rating}
                             reviewText={review.description}

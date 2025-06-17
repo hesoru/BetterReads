@@ -9,7 +9,7 @@ import { addToBooklist, removeFromBooklist } from '../../redux/Booklist'; // adj
 
 
 
-export function BookPreview({isbn: bookId, coverUrl, title, rating, genres}) {
+export function BookPreview({bookId, isbn, coverUrl, title, rating, genres}) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 

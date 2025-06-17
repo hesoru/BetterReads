@@ -22,11 +22,24 @@ router.get('/avatarUrl/:username', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json({ avatarUrl: user.avatarUrl });
+    res.json( user.avatarUrl );
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch avatar URL', details: err.message });
   }
 });
+
+// GET /users/:id - get profile
+router.get('/:id', async (req, res) => {
+    try {
+        const user = await Users.findById(req.params.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to retrieve user', details: err.message });
+    }
+});
+
 // POST /signup - register new user
 router.post('/signup', async (req, res) => {
     try {
@@ -74,18 +87,6 @@ router.post('/login', async (req, res) => {
 // POST /logout //TODO: update w/ redux????
 router.post('/logout', (req, res) => {
     res.json({ message: 'Logged out' });
-});
-
-// GET /users/:id - get profile
-router.get('/:id', async (req, res) => {
-    try {
-        const user = await Users.findById(req.params.id);
-        if (!user) return res.status(404).json({ error: 'User not found' });
-
-        res.json(user);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to retrieve user', details: err.message });
-    }
 });
 
 

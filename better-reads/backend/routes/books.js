@@ -110,7 +110,7 @@ router.get('/', async (req, res) => {
 router.post('/:id/reviews', async (req, res) => {
     try {
         const { id: bookId } = req.params;
-        const { userId, rating, comment } = req.body;
+        const { userId, rating, description } = req.body;
 
         if (!userId) {
             return res.status(400).json({ error: 'userId is required' });
@@ -118,7 +118,7 @@ router.post('/:id/reviews', async (req, res) => {
 
         const updateFields = {};
         if (rating !== undefined) updateFields.rating = rating;
-        if (comment !== undefined) updateFields.comment = comment;
+        if (description !== undefined) updateFields.description = description;
 
         const existingReview = await Reviews.findOne({ bookId, userId });
 

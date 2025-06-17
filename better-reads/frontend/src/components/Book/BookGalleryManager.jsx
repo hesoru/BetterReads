@@ -53,7 +53,8 @@ const BookGalleryManager = ({ books, limit }) => {
                     {bookData.map((book) => (
                         <BookPreview
                             key={book._id}
-                            isbn={book.ISBN}
+                            bookId={book._id}
+                            isbn = {book.ISBN}
                             coverUrl={book.image}
                             title={book.title}
                             rating={Math.round(book.averageRating)}

@@ -2,6 +2,7 @@
 import express from 'express';
 import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
+import mongoose from "mongoose";
 const router = express.Router();
 
 // PUT /reviews/:reviewId - Edit a user's review
@@ -37,6 +38,36 @@ router.delete('/:reviewId', async (req, res) => {
         res.status(500).json({ error: 'Failed to delete review', details: err.message });
     }
 });
+
+// GET /reviews/user-review?bookId=...&userId=...
+// Get the single review on a given book (bookID) left by current user (pass the username)
+router.get('/user-review', async (req, res) => {
+    const { bookId, userId } = req.query;
+
+    if (!bookId || !userId) {
+        return res.status(400).json({ error: 'Both bookId and userId are required' });
+    }
+
+    try {
+        const query = {
+            $and: [
+                { bookId: new mongoose.Types.ObjectId(bookId) },
+                { userId }
+            ]
+        };
+
+        const review = await Reviews.findOne(query);
+
+        if (!review) {
+            return res.status(200).json(null);
+        }
+
+        res.status(200).json(review);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to retrieve review', details: err.message });
+    }
+});
+
 
 // GET /reviews/user/:userId - Get all reviews by a specific user
 router.get('/user/:username', async (req, res) => {

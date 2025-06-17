@@ -48,22 +48,29 @@ const BookUtils = {
     // Get avatarUrl from username
     async getUserAvatar(username) {
         const res = await fetch(`${BASE_URL}/users/avatarUrl/${username}`);
+        //console.log("avatarurl", res);
         if (!res.ok) throw new Error('Failed to fetch reviews');
         return res.json();
     },
 
     // Get a single user's review for a book
     async getUserReview(bookId, userId) {
-        const reviews = await BookUtils.getBookReviews(bookId);
-        return reviews.find(r => r.userId === userId) || null;
+        try {
+            const res = await fetch(`${BASE_URL}/reviews/user-review?bookId=${bookId}&userId=${userId}`);
+            if (!res.ok) throw new Error('Failed to fetch user review');
+            return await res.json(); // could be null if no review
+        } catch (err) {
+            console.error('Error fetching user review:', err);
+            return null;
+        }
     },
 
     // Create or update a user's review for a book
-    async upsertReview(bookId, userId, { rating, comment }) {
+    async upsertReview(bookId, userId, { rating, description }) {
         const res = await fetch(`${BASE_URL}/books/${bookId}/reviews`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, rating, comment }),
+            body: JSON.stringify({ userId, rating, description }),
         });
         if (!res.ok) throw new Error('Failed to submit review');
         return res.json();

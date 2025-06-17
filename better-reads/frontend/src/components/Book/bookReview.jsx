@@ -1,13 +1,41 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import StarRating from '../ratings/starRating.jsx'; // Assumes StarRating is in components/ratings/
 import { DetectiveDustyBlue, NoirNavy, PaperbackPureWhite } from '../../styles/colors.js';
 
 const BookReview = ({
-  userImage = "https://via.placeholder.com/120", // Default placeholder image
-  username = "BookLover123",
-  rating = 4, // Default rating
-  reviewText = "This was a fantastic read! Highly recommend to anyone interested in the genre. The characters were well-developed and the plot was engaging from start to finish." // Default review text
+  userImage, // Default placeholder image
+  username,
+  rating , // Default rating
+  reviewText = "No review left yet.", // Default review text,
+    //TODO: Ore was here
+                      editable = false,
+                      onSave = () => {}
+
 }) => {
+
+  //TODO: Ore was here
+  const [editRating, setEditRating] = useState(rating);
+  const [editText, setEditText] = useState(reviewText || '');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    setEditRating(rating || 0);
+  }, [rating]);
+
+  useEffect(() => {
+    setEditText(reviewText || '');
+  }, [reviewText]);
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    try {
+      await onSave({ rating: editRating, description: editText });
+    } catch (err) {
+      console.error('Failed to save review:', err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
   const cardStyle = {
     backgroundColor: DetectiveDustyBlue,
     padding: '20px',
@@ -57,6 +85,27 @@ const BookReview = ({
     textAlign: 'left' // Ensure review text is left-aligned
   };
 
+  //TODO: Ore was here
+  const textareaStyle = {
+    width: '100%',
+    fontSize: '14px',
+    lineHeight: '1.6',
+    padding: '10px',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    resize: 'vertical'
+  };
+
+  const buttonStyle = {
+    marginTop: '10px',
+    padding: '8px 16px',
+    backgroundColor: NoirNavy,
+    color: PaperbackPureWhite,
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  };
   return (
     <div style={cardStyle}>
       <div style={leftColumnStyle}>
@@ -64,8 +113,26 @@ const BookReview = ({
         <p style={usernameStyle}>{username}</p>
       </div>
       <div style={rightColumnStyle}>
-        <StarRating rating={rating} />
-        <p style={reviewTextStyle}>{reviewText}</p>
+        {editable ? (
+            <>
+              <StarRating rating={editRating} setRating={setEditRating} editable />
+              <textarea
+                  placeholder="Write your review..."
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  rows={4}
+                  style={textareaStyle}
+              />
+              <button onClick={handleSubmit} style={buttonStyle}>
+                {submitting ? 'Submitting...' : 'Submit Review'}
+              </button>
+            </>
+        ) : (
+            <>
+              <StarRating rating={rating} />
+              <p style={reviewTextStyle}>{reviewText}</p>
+            </>
+        )}
       </div>
     </div>
   );
