@@ -9,15 +9,15 @@ import { addToBooklist, removeFromBooklist } from '../../redux/Booklist'; // adj
 
 
 
-export function BookPreview({isbn, coverUrl, title, rating, genres}) {
+export function BookPreview({isbn: bookId, coverUrl, title, rating, genres}) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const booklist = useSelector((state) => state.booklist.items);
-    const isFavorite = booklist.includes(isbn);
+    const isFavorite = booklist.includes(bookId);
 
     const handleCardClick = () => {
-        navigate(`/books/${isbn}`);
+        navigate(`/books/${bookId}`);
     };
 
     return (
@@ -27,8 +27,8 @@ export function BookPreview({isbn, coverUrl, title, rating, genres}) {
                           onClick={(e) => {
                               e.stopPropagation();
                               isFavorite
-                                  ? dispatch(removeFromBooklist(isbn))
-                                  : dispatch(addToBooklist(isbn));
+                                  ? dispatch(removeFromBooklist(bookId))
+                                  : dispatch(addToBooklist(bookId));
                           }}/>
             <div className="card-clickable" onClick={handleCardClick} role="button" tabIndex={0}>
                 <img src={coverUrl} alt={`${title} cover`} />

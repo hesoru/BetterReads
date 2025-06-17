@@ -2,25 +2,52 @@ import React from 'react';
 import UserCard from '../components/UserProfile/UserCard';
 import { Typography } from '@mui/material';
 import BookGalleryManager from '../components/Book/BookGalleryManager';
-import sampleData from "../sampleData2.json";
+import { useSelector,  useDispatch} from "react-redux";
+import { clearUser } from '../redux/UserSlice';
+import { useNavigate } from 'react-router-dom';
+import BookUtils from "../utils/BookUtils.js";
+//import sampleData from "../sampleData2.json";
 
 const UserProfile = () => {
+  const user = useSelector((state) => state.user?.user);
+
+  //TODO: Limit some UI features if User is a guest
+  const isGuest = user?.isGuest;
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // TODO: Currently pulling the list of bookIDs for the user's wishlist
 
   const handleChangePassword = () => {
     // TODO: password change functionality
     console.log("Change password clicked");
+
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     // TODO: sign out functionality
     console.log("Sign out clicked");
+    try {
+
+      dispatch(clearUser());
+      navigate('/');
+      localStorage.removeItem('userState');
+
+      // Redirect to login or home page
+
+    } catch (err) {
+      console.error('Sign out failed:', err);
+    }
+
+
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.content}>
         <UserCard 
-          user={sampleData.user}
+          user={user}
           onChangePassword={handleChangePassword}
           onSignOut={handleSignOut}
         />
@@ -38,7 +65,7 @@ const UserProfile = () => {
         >
           Reading List
         </Typography>
-        <BookGalleryManager books={sampleData.user.favoriteBooks} limit={10} />
+        <BookGalleryManager books={user.wishList} limit={10} />
       </div>
     </div>
   );

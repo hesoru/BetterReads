@@ -18,6 +18,7 @@ export const loginUser = createAsyncThunk(
             }
 
             const data = await res.json();
+
             return data;
         } catch (err) {
             return thunkAPI.rejectWithValue('Login request failed', err);
@@ -42,7 +43,7 @@ export const signupUser = createAsyncThunk(
             }
 
             const data = await res.json();
-            return data.username;
+            return data;
         } catch (err) {
             return thunkAPI.rejectWithValue('Signup request failed', err);
         }
@@ -71,18 +72,18 @@ export const fetchUserProfile = createAsyncThunk(
 );
 
 
-// Logout
-export const logoutUser = createAsyncThunk(
-    'user/logoutUser',
-    async (_, thunkAPI) => {
-        try {
-            await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/logout`, {
-                method: 'POST',
-                credentials: 'include',
-            });
-            return true;
-        } catch (err) {
-            return thunkAPI.rejectWithValue('Logout failed', err);
-        }
-    }
-);
+// // Logout for cookie session if we want
+// export const logoutUser = createAsyncThunk(
+//     'user/logoutUser',
+//     async (_, thunkAPI) => {
+//         try {
+//             await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/logout`, {
+//                 method: 'POST',
+//                 credentials: 'include',
+//             });
+//             return true;
+//         } catch (err) {
+//             return thunkAPI.rejectWithValue('Logout failed', err);
+//         }
+//     }
+// );

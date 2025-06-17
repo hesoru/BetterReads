@@ -13,6 +13,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const UserCard = ({ user, onChangePassword, onSignOut }) => {
+
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -50,7 +51,7 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
               textAlign="left"
               sx={{ fontFamily: 'Georgia, serif' }}
             >
-              Joined {formatDate(user?.dateJoined)}
+              Joined {formatDate(user?.join_time)}
             </Typography>
           </Box>
         </Box>

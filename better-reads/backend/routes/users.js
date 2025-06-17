@@ -13,6 +13,20 @@ router.get('/', async (req, res) => {
     }
 });
 
+// retrieve userImageURL by busername// GET /avatarUrl/:username - Retrieve avatar URL by username
+router.get('/avatarUrl/:username', async (req, res) => {
+  try {
+    const user = await Users.findOne({ username: req.params.username });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ avatarUrl: user.avatarUrl });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch avatar URL', details: err.message });
+  }
+});
 // POST /signup - register new user
 router.post('/signup', async (req, res) => {
     try {
@@ -48,8 +62,10 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
+
+        res.json(user);
         // TODO: Replace with real session or JWT
-        res.json({ message: 'Login successful', userId: user._id });
+        //res.json({ message: 'Login successful', userId: user._id });
     } catch (err) {
         res.status(500).json({ error: 'Login failed', details: err.message });
     }

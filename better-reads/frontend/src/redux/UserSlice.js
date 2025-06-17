@@ -1,19 +1,28 @@
-// src/redux/userSlice.js
-import { createSlice } from '@reduxjs/toolkit';
-import { loginUser, signupUser, fetchUserProfile, logoutUser } from './userThunks';
 
+import { createSlice } from '@reduxjs/toolkit';
+import { loginUser, signupUser, fetchUserProfile} from './userThunks';
+
+
+export const guestUser = {
+    _id: null,
+    username: 'guest',
+    avatarUrl: 'https://ui-avatars.com/api/?name=Guest&background=888',
+    wishList: [],
+    reviews: [],
+    favoriteGenres: [],
+    isGuest: true
+};
 const initialState = {
-    user: null, // will hold the entire user object
+    user: guestUser, // will hold the entire user object
     status: 'idle',
     error: null,
 };
-
 const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
         clearUser(state) {
-            state.user = null;
+            state.user = guestUser;
             state.status = 'idle';
             state.error = null;
         },
@@ -39,11 +48,6 @@ const userSlice = createSlice({
 
             .addCase(fetchUserProfile.fulfilled, (state, action) => {
                 state.user = action.payload;
-            })
-
-            .addCase(logoutUser.fulfilled, (state) => {
-                state.user = null;
-                state.status = 'idle';
             });
     },
 });

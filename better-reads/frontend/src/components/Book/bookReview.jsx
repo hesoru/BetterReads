@@ -1,6 +1,6 @@
 import React from 'react';
-import StarRating from './ratings/starRating'; // Assumes StarRating is in components/ratings/
-import { DetectiveDustyBlue, NoirNavy, PaperbackPureWhite } from '../styles/colors';
+import StarRating from '../ratings/starRating.jsx'; // Assumes StarRating is in components/ratings/
+import { DetectiveDustyBlue, NoirNavy, PaperbackPureWhite } from '../../styles/colors.js';
 
 const BookReview = ({
   userImage = "https://via.placeholder.com/120", // Default placeholder image

@@ -4,8 +4,6 @@ import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
 const router = express.Router();
 
-
-
 // retrieve a book via a query on search
 router.get('/search', async (req, res) => {
     try {
@@ -97,6 +95,8 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch book', details: err.message });
     }
 });
+
+
 
 
 //TODO: add pagination?
