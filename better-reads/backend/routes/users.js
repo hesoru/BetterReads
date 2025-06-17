@@ -61,7 +61,7 @@ router.post('/logout', (req, res) => {
 });
 
 // GET /users/:id - get profile
-router.get('/users/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const user = await Users.findById(req.params.id);
         if (!user) return res.status(404).json({ error: 'User not found' });
@@ -72,8 +72,31 @@ router.get('/users/:id', async (req, res) => {
     }
 });
 
-// PUT /users/:id - update user
-router.put('/users/:id', async (req, res) => {
+
+// PUT /users/:id/genres/add-multiple
+router.put('/:id/genres/add-multiple', async (req, res) => {
+    try {
+        const { genres } = req.body;
+
+        if (!Array.isArray(genres) || genres.length === 0) {
+            return res.status(400).json({ error: 'An array of genres is required' });
+        }
+
+        const updated = await Users.findByIdAndUpdate(
+            req.params.id,
+            { $addToSet: { favoriteGenres: { $each: genres } } },
+            { new: true }
+        );
+
+        if (!updated) return res.status(404).json({ error: 'User not found' });
+        res.json(updated);
+    } catch (err) {
+        res.status(400).json({ error: 'Failed to add genres', details: err.message });
+    }
+});
+
+// PUT /users/:id - update a total user
+router.put('/:id', async (req, res) => {
     try {
         const updated = await Users.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updated) return res.status(404).json({ error: 'User not found' });
@@ -84,8 +107,9 @@ router.put('/users/:id', async (req, res) => {
     }
 });
 
+
 // DELETE /users/:id - delete user (optional/admin)
-router.delete('/users/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         const deleted = await Users.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ error: 'User not found' });

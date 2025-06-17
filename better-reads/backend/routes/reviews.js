@@ -1,17 +1,18 @@
 
 import express from 'express';
 import Reviews from '../model/reviews.js';
+import Users from "../model/users.js";
 const router = express.Router();
 
 // PUT /reviews/:reviewId - Edit a user's review
 router.put('/:reviewId', async (req, res) => {
     try {
         const { reviewId } = req.params;
-        const { rating, comment } = req.body;
+        const { rating, description } = req.body;
 
         const updated = await Reviews.findByIdAndUpdate(
             reviewId,
-            { rating, comment, updatedAt: new Date() },
+            { rating, description, updatedAt: new Date() },
             { new: true }
         );
 
@@ -38,10 +39,9 @@ router.delete('/:reviewId', async (req, res) => {
 });
 
 // GET /reviews/user/:userId - Get all reviews by a specific user
-router.get('/user/:userId', async (req, res) => {
+router.get('/user/:username', async (req, res) => {
     try {
-        const { userId } = req.params;
-        const reviews = await Reviews.find({ userId }).sort({ createdAt: -1 });
+        const reviews = await Reviews.find({ userId: req.params.username });
         res.json(reviews);
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch user reviews', details: err.message });

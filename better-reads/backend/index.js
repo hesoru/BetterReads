@@ -3,7 +3,7 @@ import express from 'express';
 import connectDB from './db.js';
 import cors from 'cors';
 import userRoutes from "./routes/users.js";
-//import reviewRoutes from "./routes/reviews.js";
+import reviewRoutes from "./routes/reviews.js";
 import bookRoutes from "./routes/books.js";
 
 const app = express();
@@ -22,4 +22,6 @@ app.get('/', (req, res) => {
 });
 
 app.use('/users', userRoutes);
+app.use('/reviews', reviewRoutes);
+app.use('/books', bookRoutes);
 
