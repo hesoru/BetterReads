@@ -13,6 +13,8 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const UserCard = ({ user, onChangePassword, onSignOut }) => {
+   //console.log("Current user:", user[0]);
+    const isGuest = user?.isGuest;
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -50,7 +52,7 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
               textAlign="left"
               sx={{ fontFamily: 'Georgia, serif' }}
             >
-              Joined {formatDate(user?.dateJoined)}
+              Joined {formatDate(user?.join_time)}
             </Typography>
           </Box>
         </Box>
@@ -68,18 +70,20 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
           >
             Change Password
           </Button>
-          <Button
-            variant="text"
-            startIcon={<LogoutIcon />}
-            onClick={onSignOut}
-            sx={{
-              fontStyle: 'italic',
-              textTransform: 'none',
-              color: 'text.secondary'
-            }}
-          >
-            Sign Out
-          </Button>
+            {!isGuest && (
+                <Button
+                    variant="text"
+                    startIcon={<LogoutIcon />}
+                    onClick={onSignOut}
+                    sx={{
+                        fontStyle: 'italic',
+                        textTransform: 'none',
+                        color: 'text.secondary'
+                    }}
+                >
+                    Sign Out
+                </Button>
+            )}
         </Stack>
       </Box>
 
