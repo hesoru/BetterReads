@@ -1,16 +1,16 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import {setBooklist} from "./Booklist.js";
+import {clearBooklist, setBooklist} from "./Booklist.js";
 
 
 export const loginUser = createAsyncThunk(
     'user/loginUser',
-    async ({ username, password, favoriteGenres }, thunkAPI) => {
+    async ({ username, password}, thunkAPI) => {
         try {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password, favoriteGenres }),
+                body: JSON.stringify({ username, password}),
             });
 
             if (!res.ok) {
@@ -33,6 +33,7 @@ export const signupUser = createAsyncThunk(
     'user/signupUser',
     async ({ username, password, favoriteGenres }, thunkAPI) => {
         try {
+            // Step 1: POST to /signup
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -44,10 +45,27 @@ export const signupUser = createAsyncThunk(
                 return thunkAPI.rejectWithValue(error.message || 'Signup failed');
             }
 
-            const data = await res.json();
-            return data;
+            // Step 2: GET full user info
+            const profileRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/get-user/${username}`);
+            if (!profileRes.ok) {
+                const error = await profileRes.json();
+                return thunkAPI.rejectWithValue(error.message || 'Failed to fetch profile');
+            }
+
+            const user = await profileRes.json();
+
+            // Step 3: Clear guest booklist if necessary
+            const currentState = thunkAPI.getState();
+            if (currentState.user?.user?.isGuest) {
+                thunkAPI.dispatch(clearBooklist());
+            }
+
+
+            thunkAPI.dispatch(setBooklist(user.wishList || []));
+
+            return user; //
         } catch (err) {
-            return thunkAPI.rejectWithValue('Signup request failed', err);
+            return thunkAPI.rejectWithValue('Signup request failed');
         }
     }
 );

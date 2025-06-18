@@ -13,23 +13,7 @@ const Login = () => {
 		e.preventDefault();
 
 		try {
-			const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/login`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					username,
-					password
-				})
-			});
 
-			if (!res.ok) {
-				const error = await res.json();
-				alert(`Login failed: ${error.message || error.error}`);
-				return;
-			}
-
-			const data = await res.json();
-			console.log('User logged in:', data);
 			//TODO: update redux state so that user is no longer guest
 			dispatch(loginUser({username, password}));
 

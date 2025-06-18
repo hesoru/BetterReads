@@ -6,13 +6,12 @@ import { useSelector,  useDispatch} from "react-redux";
 import { clearUser } from '../redux/UserSlice';
 import {clearBooklist} from "../redux/Booklist.js";
 import { useNavigate } from 'react-router-dom';
-import BookUtils from "../utils/BookUtils.js";
-//import sampleData from "../sampleData2.json";
 
 const UserProfile = () => {
   const user = useSelector((state) => state.user?.user);
   const booklist = useSelector((state) => state.booklist.items);
-
+  // console.log("Current user:", user);
+  // console.log("Current booklist:", booklist);
 
   //TODO: Limit some UI features if User is a guest
   const isGuest = user?.isGuest;

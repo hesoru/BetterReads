@@ -13,6 +13,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const UserCard = ({ user, onChangePassword, onSignOut }) => {
+   //console.log("Current user:", user[0]);
     const isGuest = user?.isGuest;
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', {

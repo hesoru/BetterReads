@@ -40,6 +40,18 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// GET /users/:id - get profile bu suername
+router.get('/get-user/:username', async (req, res) => {
+    try {
+        const user = await Users.findOne({username: req.params.username});
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to retrieve user', details: err.message });
+    }
+});
+
 // POST /signup - register new user
 router.post('/signup', async (req, res) => {
     try {

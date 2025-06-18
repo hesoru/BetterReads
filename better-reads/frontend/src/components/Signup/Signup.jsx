@@ -13,36 +13,26 @@ const Signup = () => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [favoriteGenres, setFavoriteGenres] = useState([]);
+	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
+		if (loading) return; // prevent duplicate calls
+		setLoading(true);
+
 		try {
-			console.log("favoriteGenres", favoriteGenres);
-			const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/signup`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					username,
-					password,
-					favoriteGenres,
-				})
-			});
+			const result = await dispatch(signupUser({ username, password, favoriteGenres }));
 
-			if (!res.ok) {
-				const error = await res.json();
-				alert(`Signup failed: ${error.message || error.error}`);
-				return;
+			if (signupUser.fulfilled.match(result)) {
+				navigate('/search');
+			} else {
+				alert(`Signup failed: ${result.payload}`);
 			}
-
-			const data = await res.json();
-			console.log('User created:', data);
-			//TODO: update redux state so that user is no longer guest
-			dispatch(signupUser({username, password, favoriteGenres}));
-			navigate('/search');
 		} catch (err) {
-			console.error('Signup error:', err);
-			alert('Something went wrong. Please try again.');
+			alert('Unexpected signup error');
+		} finally {
+			setLoading(false);
 		}
 	};
 
