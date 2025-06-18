@@ -11,6 +11,8 @@ import BookUtils from "../utils/BookUtils.js";
 
 const UserProfile = () => {
   const user = useSelector((state) => state.user?.user);
+  const booklist = useSelector((state) => state.booklist.items);
+
 
   //TODO: Limit some UI features if User is a guest
   const isGuest = user?.isGuest;
@@ -53,21 +55,21 @@ const UserProfile = () => {
           onChangePassword={handleChangePassword}
           onSignOut={handleSignOut}
         />
-        
-        <Typography 
-          variant="h6" 
-          gutterBottom
-          textAlign="left"
-          sx={{ 
-            fontFamily: 'Georgia, serif',
-            fontWeight: 600,
-            marginTop: 4,
-            fontStyle: 'italic'
-          }}
+
+        <Typography
+            variant="h6"
+            gutterBottom
+            textAlign="left"
+            sx={{
+              fontFamily: 'Georgia, serif',
+              fontWeight: 600,
+              marginTop: 4,
+              fontStyle: 'italic'
+            }}
         >
-          Reading List
+          {isGuest ? 'Reading List so far... (Sign up to save it!)' : 'Reading List'}
         </Typography>
-        <BookGalleryManager books={user.wishList} limit={10} />
+        <BookGalleryManager books={booklist} limit={10} />
       </div>
     </div>
   );

@@ -124,6 +124,34 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// PATCH /users/update-wishlist/:id
+router.patch('/update-wishlist/:id', async (req, res) => {
+    try {
+        const { bookId, operation } = req.body;
+        if (!['add', 'remove'].includes(operation)) {
+            return res.status(400).json({ error: 'Invalid operation' });
+        }
+
+        const user = await Users.findById(req.params.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        const exists = user.wishList.some(id => id.toString() === bookId.toString());
+
+        if (operation === 'add' && !exists) {
+            user.wishList.push(bookId);
+        }
+
+        if (operation === 'remove' && exists) {
+            user.wishList = user.wishList.filter(id => id.toString() !== bookId.toString());
+        }
+
+        await user.save();
+        res.json(user);
+    } catch (err) {
+        res.status(400).json({ error: 'Failed to update wishlist', details: err.message });
+    }
+});
+
 
 // DELETE /users/:id - delete user (optional/admin)
 router.delete('/:id', async (req, res) => {

@@ -3,15 +3,16 @@ import BookUtils from "../utils/BookUtils.js";
 
 import {addToBooklist, removeFromBooklist} from "./Booklist.js"; // fix path if needed
 
-export const addToBookList = createAsyncThunk(
+export const addToBookListThunk = createAsyncThunk(
     'user/addToBookList',
     async ({ userId, bookId }, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const isGuest = state.isGuest;
+            const isGuest = state.user.isGuest;
+            console.log("isGuest: ", isGuest);
 
             if (!isGuest) {
-                await BookUtils.addToWishlist(bookId, userId);
+                await BookUtils.updateWishlist(bookId, userId, "add");
             }
 
             thunkAPI.dispatch(addToBooklist(bookId));
@@ -22,15 +23,15 @@ export const addToBookList = createAsyncThunk(
 );
 
 
-export const removeFromBookList = createAsyncThunk(
+export const removeFromBookListThunk = createAsyncThunk(
     'user/removeFromBookList',
     async ({ userId, bookId }, thunkAPI) => {
         try {
             const state = thunkAPI.getState();
-            const isGuest = state.isGuest;
-
+            const isGuest = state.user.isGuest;
+            console.log("isGuest: ", isGuest);
             if (!isGuest) {
-                await BookUtils.removeFromWishlist(bookId, userId);
+                await BookUtils.updateWishlist(bookId, userId, "remove");
             }
 
             thunkAPI.dispatch(removeFromBooklist(bookId));

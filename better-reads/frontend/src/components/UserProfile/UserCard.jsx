@@ -13,7 +13,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const UserCard = ({ user, onChangePassword, onSignOut }) => {
-
+    const isGuest = user?.isGuest;
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -69,18 +69,20 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
           >
             Change Password
           </Button>
-          <Button
-            variant="text"
-            startIcon={<LogoutIcon />}
-            onClick={onSignOut}
-            sx={{
-              fontStyle: 'italic',
-              textTransform: 'none',
-              color: 'text.secondary'
-            }}
-          >
-            Sign Out
-          </Button>
+            {!isGuest && (
+                <Button
+                    variant="text"
+                    startIcon={<LogoutIcon />}
+                    onClick={onSignOut}
+                    sx={{
+                        fontStyle: 'italic',
+                        textTransform: 'none',
+                        color: 'text.secondary'
+                    }}
+                >
+                    Sign Out
+                </Button>
+            )}
         </Stack>
       </Box>
 

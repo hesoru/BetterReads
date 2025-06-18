@@ -1,35 +1,49 @@
-import React from 'react';
+import React, { useState} from 'react';
 import './BookPage.css';
 import { FavoriteIcon, GenreTags } from "./BookUtils.jsx";
 import StarRating from '../ratings/starRating';
 import {useNavigate} from "react-router-dom"; // Assuming starRating.jsx exports as default or named StarRating
 import { useDispatch, useSelector } from 'react-redux';
-import { addToBooklist, removeFromBooklist } from '../../redux/Booklist.js'; // adjust path if needed
-
-
+import { addToBookListThunk, removeFromBookListThunk } from '../../redux/BooklistThunks.js';
 
 
 export function BookPreview({bookId, coverUrl, title, rating, genres}) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const userId = useSelector((state) => state.user.user._id);
 
     const booklist = useSelector((state) => state.booklist.items);
     const isFavorite = booklist.includes(bookId);
 
+    // useEffect(() => {
+    //     console.log("Updated booklist:", booklist);
+    // }, [booklist]);
+
     const handleCardClick = () => {
         navigate(`/books/${bookId}`);
+    };
+    const [loading, setLoading] = useState(false);
+
+    const handleFavoriteClick = async (e) => {
+        e.stopPropagation();
+
+        setLoading(true);
+        try {
+            const thunk = isFavorite ? removeFromBookListThunk : addToBookListThunk;
+            await dispatch(thunk({ userId, bookId })).unwrap();
+        } catch (err) {
+            alert("Update failed.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <div className="book-card">
 
             <FavoriteIcon isFavorite={isFavorite}
-                          onClick={(e) => {
-                              e.stopPropagation();
-                              isFavorite
-                                  ? dispatch(removeFromBooklist(bookId))
-                                  : dispatch(addToBooklist(bookId));
-                          }}/>
+                          onClick={handleFavoriteClick}
+                          disabled={loading}/>
             <div className="card-clickable" onClick={handleCardClick} role="button" tabIndex={0}>
                 <img src={coverUrl} alt={`${title} cover`} />
                 <div className="card-content">

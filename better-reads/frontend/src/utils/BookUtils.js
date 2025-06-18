@@ -16,27 +16,38 @@ const BookUtils = {
         return res.json();
     },
 
-    // Add a book to the user's wishlist
-    async addToWishlist(bookId, userId) {
-        const res = await fetch(`${BASE_URL}/books/${bookId}/wishlist`, {
-            method: 'POST',
+    async updateWishlist(bookId, userId, operation) {
+        const res = await fetch(`${BASE_URL}/users/update-wishlist/${userId}`, {
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId }),
+            body: JSON.stringify({ bookId, operation }),
         });
-        if (!res.ok) throw new Error('Failed to add to wishlist');
+
+        if (!res.ok) throw new Error(`Failed to ${operation} wishlist`);
         return res.json();
     },
 
-    // Remove a book from the user's wishlist
-    async removeFromWishlist(bookId, userId) {
-        const res = await fetch(`${BASE_URL}/books/${bookId}/wishlist`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId }),
-        });
-        if (!res.ok) throw new Error('Failed to remove from wishlist');
-        return res.json();
-    },
+    // // Add a book to the user's wishlist
+    // async addToWishlist(bookId, userId) {
+    //     const res = await fetch(`${BASE_URL}/books/${bookId}/wishlist`, {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ userId }),
+    //     });
+    //     if (!res.ok) throw new Error('Failed to add to wishlist');
+    //     return res.json();
+    // },
+    //
+    // // Remove a book from the user's wishlist
+    // async removeFromWishlist(bookId, userId) {
+    //     const res = await fetch(`${BASE_URL}/books/${bookId}/wishlist`, {
+    //         method: 'DELETE',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ userId }),
+    //     });
+    //     if (!res.ok) throw new Error('Failed to remove from wishlist');
+    //     return res.json();
+    // },
 
     // Get all reviews for a book
     async getBookReviews(bookId) {
