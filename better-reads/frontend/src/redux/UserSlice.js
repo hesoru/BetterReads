@@ -10,12 +10,14 @@ export const guestUser = {
     wishList: [],
     reviews: [],
     favoriteGenres: [],
-    isGuest: true
+    isGuest: true,
+    join_time: new Date()
 };
 const initialState = {
-    user: guestUser, // will hold the entire user object
+    user: guestUser,
     status: 'idle',
     error: null,
+    isGuest: true
 };
 const userSlice = createSlice({
     name: 'user',
@@ -25,6 +27,7 @@ const userSlice = createSlice({
             state.user = guestUser;
             state.status = 'idle';
             state.error = null;
+            state.isGuest = true;
         },
     },
     extraReducers: (builder) => {
@@ -35,19 +38,23 @@ const userSlice = createSlice({
             .addCase(loginUser.fulfilled, (state, action) => {
                 state.user = action.payload;
                 state.status = 'succeeded';
+                state.isGuest = false;
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
+                state.isGuest = true;
             })
 
             .addCase(signupUser.fulfilled, (state, action) => {
                 state.user = action.payload;
                 state.status = 'succeeded';
+                state.isGuest = false;
             })
 
             .addCase(fetchUserProfile.fulfilled, (state, action) => {
                 state.user = action.payload;
+                state.isGuest = false;
             });
     },
 });

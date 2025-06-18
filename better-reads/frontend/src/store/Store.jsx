@@ -1,47 +1,46 @@
 import { configureStore } from '@reduxjs/toolkit';
-import Booklist from '../redux/Booklist.jsx';
+import booklistReducer from '../redux/Booklist.js';
 import userReducer, {guestUser} from '../redux/UserSlice.js';
 
-// Load user state from localStorage
 
-const loadUserFromLocalStorage = () => {
+const loadAppStateFromLocalStorage = () => {
     try {
-        const serialized = localStorage.getItem('userState');
+        const serialized = localStorage.getItem('appState');
         if (serialized) return JSON.parse(serialized);
-        return { user: guestUser, status: 'idle', error: null };
+        return {
+            userInfo: { user: guestUser, status: 'idle', error: null, isGuest: true },
+            booklist: { items: [] }
+        };
     } catch (err) {
-        return { user: guestUser, status: 'idle', error: null };
+        return {
+            userInfo: { user: guestUser, status: 'idle', error: null, isGuest: true },
+            booklist: { items: [] }
+        };
     }
 };
 
-
-// Save user state to localStorage
-const saveUserToLocalStorage = (state) => {
+const saveAppStateToLocalStorage = (state) => {
     try {
         const serializedState = JSON.stringify(state);
-        localStorage.setItem('userState', serializedState);
+        localStorage.setItem('appState', serializedState);
     } catch (err) {
-        console.error('Error saving user state to localStorage:', err);
+        console.error('Error saving app state to localStorage:', err);
     }
 };
 
-// Load initial user state (preloading just that slice)
-const preloadedUserState = loadUserFromLocalStorage();
+const preloadedState = loadAppStateFromLocalStorage();
 
 const store = configureStore({
     reducer: {
-        booklist: Booklist,
+        booklist: booklistReducer,
         user: userReducer,
     },
-    preloadedState: {
-        user: preloadedUserState,
-    },
+    preloadedState
 });
 
-//  Subscribe to store updates and persist user state only
 store.subscribe(() => {
-    const { user } = store.getState();
-    saveUserToLocalStorage(user);
+    const { user, booklist } = store.getState();
+    saveAppStateToLocalStorage({ user, booklist });
 });
 
 export default store;

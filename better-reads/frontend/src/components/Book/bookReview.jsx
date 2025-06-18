@@ -19,7 +19,8 @@ const BookReview = ({
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    setEditRating(rating || 0);
+    //TODO: Need to fix starrating do that it is clickable but for now set new reviews to a default of 1
+    setEditRating(rating || 1);
   }, [rating]);
 
   useEffect(() => {

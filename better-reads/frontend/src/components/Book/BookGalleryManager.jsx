@@ -16,6 +16,7 @@ const BookGalleryManager = ({ books, limit }) => {
             const seen = new Set();
             const fetched = [];
 
+            console.log("books: ", books);
             for (const bookId of books) {
                 if (seen.has(bookId)) continue;
                 seen.add(bookId);

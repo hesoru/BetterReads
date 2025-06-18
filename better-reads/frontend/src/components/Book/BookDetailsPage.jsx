@@ -17,7 +17,7 @@ export default function BookDetailsPage( ) {
     const username = useSelector((state) => state.user?.user?.username);
     //console.log("username", username);
     //console.log("userId", userId);
-   // console.log("bookId", bookId);
+   console.log("bookId", bookId);
     const userAvatar = useSelector((state) => state.user?.user?.avatarUrl);
 
     const [book, setBook] = useState(null);

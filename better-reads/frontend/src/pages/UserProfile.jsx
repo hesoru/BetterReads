@@ -4,6 +4,7 @@ import { Typography } from '@mui/material';
 import BookGalleryManager from '../components/Book/BookGalleryManager';
 import { useSelector,  useDispatch} from "react-redux";
 import { clearUser } from '../redux/UserSlice';
+import {clearBooklist} from "../redux/Booklist.js";
 import { useNavigate } from 'react-router-dom';
 import BookUtils from "../utils/BookUtils.js";
 //import sampleData from "../sampleData2.json";
@@ -31,8 +32,9 @@ const UserProfile = () => {
     try {
 
       dispatch(clearUser());
+      dispatch(clearBooklist());
       navigate('/');
-      localStorage.removeItem('userState');
+      localStorage.removeItem('appState');
 
       // Redirect to login or home page
 

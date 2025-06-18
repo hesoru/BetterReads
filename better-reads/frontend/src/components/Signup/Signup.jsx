@@ -4,7 +4,7 @@ import GenreDropDown from "./GenreDropDown";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from 'react';
 import {useDispatch} from "react-redux";
-import { loginUser } from "../../redux/userThunks";
+import { signupUser} from "../../redux/userThunks";
 
 //TODO: ORE WAS HERE:
 const Signup = () => {
@@ -18,6 +18,7 @@ const Signup = () => {
 		e.preventDefault();
 
 		try {
+			console.log("favoriteGenres", favoriteGenres);
 			const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/signup`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -37,7 +38,7 @@ const Signup = () => {
 			const data = await res.json();
 			console.log('User created:', data);
 			//TODO: update redux state so that user is no longer guest
-			dispatch(loginUser({username, password}));
+			dispatch(signupUser({username, password, favoriteGenres}));
 			navigate('/search');
 		} catch (err) {
 			console.error('Signup error:', err);

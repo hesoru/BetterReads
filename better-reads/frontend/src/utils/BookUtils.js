@@ -67,6 +67,7 @@ const BookUtils = {
 
     // Create or update a user's review for a book
     async upsertReview(bookId, userId, { rating, description }) {
+        //console.log(bookId, userId, { rating, description });
         const res = await fetch(`${BASE_URL}/books/${bookId}/reviews`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

@@ -32,6 +32,7 @@ const Login = () => {
 			console.log('User logged in:', data);
 			//TODO: update redux state so that user is no longer guest
 			dispatch(loginUser({username, password}));
+
 			navigate('/search');
 		} catch (err) {
 			console.error('Login error:', err);

@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema({
   avatarUrl: {
     type: String,
     required: true,
-    //TODO: change default link
+    //TODO: change default avatar link
     default: 'https://ui-avatars.com/api/?name=User&background=random'
   }
 }, { timestamps: true });

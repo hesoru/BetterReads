@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import sampleData from "../sampleData2.json";
 
 const initialState = {
-    items: sampleData.user.favoriteBooks
+    items: []
 };
 
 const BooklistSlice = createSlice({
@@ -11,20 +10,24 @@ const BooklistSlice = createSlice({
     //TODO: update the state of addition to the wishlist in database as well!!!!!!
     reducers: {
         addToBooklist(state, action) {
-            const isbn = action.payload;
-            if (!state.items.includes(isbn)) {
-                state.items.push(isbn);
+            const bookId = action.payload;
+            if (!state.items.includes(bookId)) {
+                state.items.push(bookId);
             }
         },
+        setBooklist(state, action){
+           state.items = action.payload;
+        },
         removeFromBooklist(state, action) {
-            const isbn = action.payload;
-            state.items = state.items.filter(id => id !== isbn);
+            const bookId = action.payload;
+            state.items = state.items.filter(id => id !== bookId);
         },
         clearBooklist(state) {
             state.items = [];
-        }
+        },
+
     }
 });
 
-export const { addToBooklist, removeFromBooklist, clearBooklist } = BooklistSlice.actions;
+export const { addToBooklist,setBooklist, removeFromBooklist, clearBooklist } = BooklistSlice.actions;
 export default BooklistSlice.reducer;

@@ -1,15 +1,16 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import {setBooklist} from "./Booklist.js";
 
-// 1. User login and return only username
+
 export const loginUser = createAsyncThunk(
     'user/loginUser',
-    async ({ username, password }, thunkAPI) => {
+    async ({ username, password, favoriteGenres }, thunkAPI) => {
         try {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ username, password, favoriteGenres }),
             });
 
             if (!res.ok) {
@@ -19,6 +20,7 @@ export const loginUser = createAsyncThunk(
 
             const data = await res.json();
 
+            thunkAPI.dispatch(setBooklist(data.wishList));
             return data;
         } catch (err) {
             return thunkAPI.rejectWithValue('Login request failed', err);
@@ -29,12 +31,12 @@ export const loginUser = createAsyncThunk(
 // 2. User signup
 export const signupUser = createAsyncThunk(
     'user/signupUser',
-    async ({ username, password }, thunkAPI) => {
+    async ({ username, password, favoriteGenres }, thunkAPI) => {
         try {
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ username, password, favoriteGenres }),
             });
 
             if (!res.ok) {

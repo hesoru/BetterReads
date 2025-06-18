@@ -4,12 +4,12 @@ import { FavoriteIcon, GenreTags } from "./BookUtils.jsx";
 import StarRating from '../ratings/starRating';
 import {useNavigate} from "react-router-dom"; // Assuming starRating.jsx exports as default or named StarRating
 import { useDispatch, useSelector } from 'react-redux';
-import { addToBooklist, removeFromBooklist } from '../../redux/Booklist'; // adjust path if needed
+import { addToBooklist, removeFromBooklist } from '../../redux/Booklist.js'; // adjust path if needed
 
 
 
 
-export function BookPreview({bookId, isbn, coverUrl, title, rating, genres}) {
+export function BookPreview({bookId, coverUrl, title, rating, genres}) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
