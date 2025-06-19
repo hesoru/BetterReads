@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import "../../styles/login.css";
 import { useNavigate, Link } from "react-router-dom";
 import {useDispatch} from "react-redux";
-import { loginUser } from "../../redux/userThunks";
+import { loginUser } from "../../redux/UserThunks";
 
 const Login = () => {
 	const navigate = useNavigate();
