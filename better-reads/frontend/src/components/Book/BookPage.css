@@ -270,6 +270,13 @@ header .button {
     display: inline-block;
 }
 
+.genre-tag.more-tag {
+    background-color: #e0e0e0;
+    cursor: help;
+    color: #555;
+    font-weight: 500;
+}
+
 .genre-tag:hover {
     background-color: var(--color-primary);
     color: var(--color-bg);
