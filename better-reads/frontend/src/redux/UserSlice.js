@@ -6,7 +6,7 @@ import { loginUser, signupUser, fetchUserProfile} from './UserThunks';
 export const guestUser = {
     _id: null,
     username: 'guest',
-    avatarUrl: 'https://ui-avatars.com/api/?name=Guest&background=888',
+    avatarUrl: '../../src/images/icons/User_Profile_Image_NoLogo.png',
     wishList: [],
     reviews: [],
     favoriteGenres: [],

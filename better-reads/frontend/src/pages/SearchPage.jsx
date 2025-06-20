@@ -143,7 +143,6 @@ const styles = {
     width: '100%',
     textAlign: 'center',
     padding: '2rem',
-    paddingTop: '6rem',
     marginBottom: '2rem',
     backgroundImage: `url(${BackgroundImage})`,
     backgroundSize: 'cover',
