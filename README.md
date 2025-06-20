@@ -7,25 +7,15 @@
 
 Our application is an intelligent, social book discovery platform tailored to passionate readers who want a more engaging and personalized experience than traditional apps like Goodreads. It allows users to explore and write reviews for books; receive personalized reading recommendations; and curate reading wishlists. By storing book metadata, user preferences, and behavioral insights, the platform delivers a highly individualized user experience. Built on MongoDB, it features account management, a natural language processing (NLP)–powered search engine, a reading recommendation system, and interactive user features.
 
-## Setup
+## Instruction for run the app with Docker
 
 Clone the repository and run with Docker Compose. In your bash terminal, run:
 
 ```bash
-git clone -b Milestone1 https://github.students.cs.ubc.ca/CPSC455-2025S/Team25_BetterReads.git
-cd Team25_BetterReads
+# After downloading our app, ensure you are under TEAM25_BETTERREADS to run the following command
 docker-compose up --build  # start container
-# open image at port 5173
 docker-compose down        # tear down container
 ```
-
-
-Use the exported Docker image .tar file to run app directly.
-```
-docker load -i better-reads.tar
-docker run -p 5173:5173 team25_betterreads-frontend
-```
-
 
 ## Milestones
 ### Milestone 1:
@@ -39,3 +29,19 @@ The following frontend features have been implemented:
 - Book search page
 - Book details page
 - User profile page
+
+### Milestone 2:
+The following features have been implemented for Milestone 2:
+#### Database
+1. Designed the relational schema for `Books`, `Reviews`, and `Users`, and created corresponding backend models.
+2. Established a MongoDB connection and initialized the project database (`booksdb`) with the necessary collections: `books`, `reviews`, and `users`.
+3. Populated the database with sample data: 3625 books, 7 reviews, and 7 users.
+
+#### Backend
+1. Configured routing and implemented the majority of the required API endpoints.
+2. Developed key application functionalities:
+   - **Sign-In & Registration Page**: Implemented sign-in and sign-up functionality, including support for guest access.
+   - **User Profile Page**: Implement functions for user profile page that displays user information fetched from the database.
+   - **Book Details Page**: Implement functions for a book details page that presents book data retrieved from the database.
+   - **Review Submission**: Implement function so user can write and submit reviews for books, which will be presisted to the database.
+   - **Book Search Page**: Implemented a keyword-based search feature that matches against book titles and descriptions.
