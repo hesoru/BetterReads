@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   frontend:
     build:
@@ -12,30 +10,30 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
-    # depends_on:
-    #   - backend
+    depends_on:
+      - backend
 
-#   backend:
-#     build:
-#       contexst: ./backend
-#       dockerfile: Dockerfile
-#     ports:
-#       - "8000:8000"
-#     volumes:
-#       - ./backend:/app
-#       - /app/node_modules
-#     environment:
-#       - NODE_ENV=development
-#       - MONGODB_URI=mongodb://mongodb:27017/betterreads
-#     depends_on:
-#       - mongodb
+  backend:
+    build:
+      context: ./better-reads/backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./better-reads/backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - MONGODB_URI=mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/bookdb?retryWrites=true&w=majority&appName=Sandbox
+    depends_on:
+      - mongodb
 
-#   mongodb:
-#     image: mongo:latest
-#     ports:
-#       - "27017:27017"
-#     volumes:
-#       - mongodb_data:/data/db
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
 
-# volumes:
-#   mongodb_data:
+volumes:
+  mongodb_data:

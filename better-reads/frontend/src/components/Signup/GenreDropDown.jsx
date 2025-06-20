@@ -10,23 +10,27 @@ const GenreDropDown = ({ onSelectGenres }) => {
   return (
       <div className="genre-row">
         <label>
-          Pick genres <span style={{ fontSize: '0.8rem', fontStyle: 'italic' }}>(Hold Ctrl or Cmd to select multiple)</span>
+          Pick genres <span style={{ fontSize: '0.8rem', fontStyle: 'italic' }}><br/>(Hold Ctrl or Cmd to select multiple)</span>
           <select
               className="selectGenre"
               multiple
               onChange={handleChange}
               style={{ height: '150px' }} // optional: makes it easier to view options
           >
-            <option value="Fantasy">Fantasy</option>
-            <option value="Science Fiction">Science Fiction</option>
-            <option value="Mystery">Mystery</option>
-            <option value="Thriller">Thriller</option>
-            <option value="Romance">Romance</option>
-            <option value="Historical Fiction">Historical Fiction</option>
-            <option value="Horror">Horror</option>
-            <option value="Literary Fiction">Literary Fiction</option>
-            <option value="Young Adult">Young Adult</option>
-            <option value="Biography">Biography</option>
+             <option value="Fantasy">Fantasy</option>
+             <option value="Fiction">Fiction</option>
+             <option value="Nonfiction">Nofiction</option>
+             <option value="Classics">Classics</option>
+             <option value="Science Fiction">Science Fiction</option>
+             <option value="Mystery">Mystery</option>
+             <option value="Thriller">Thriller</option>
+             <option value="Romance">Romance</option>
+             <option value="Historical Fiction">Historical Fiction</option>
+             <option value="Horror">Horror</option>
+             <option value="Literary Fiction">Literary Fiction</option>
+             <option value="Young Adult">Young Adult</option>
+             <option value="Biography">Biography</option>
+             <option value="Contemporary">Contemporary</option>
           </select>
         </label>
       </div>

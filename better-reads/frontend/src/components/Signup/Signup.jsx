@@ -4,7 +4,7 @@ import GenreDropDown from "./GenreDropDown";
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from 'react';
 import {useDispatch} from "react-redux";
-import { signupUser} from "../../redux/userThunks";
+import { signupUser} from "../../redux/UserThunks";
 
 //TODO: ORE WAS HERE:
 const Signup = () => {
