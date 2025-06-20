@@ -32,7 +32,7 @@ const styles = {
     padding: '1rem 2rem',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     width: '100%',
-    position: 'fixed',
+    position: 'sticky',
     top: 0,
     left: 0,
     right: 0,
