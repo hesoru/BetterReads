@@ -4,17 +4,25 @@ import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
 const router = express.Router();
 
-// retrieve a book via a query on search
+// retrieve books via a generic search query
 router.get('/search', async (req, res) => {
     try {
-        const { title, author, genre } = req.query;
-        const query = {};
+        const { q } = req.query;
+        let query = {};
 
-        if (title) query.title = new RegExp(title, 'i');
-        if (author) query.author = new RegExp(author, 'i');
-        if (genre) query.genre = genre; // exact match, or use $in for multiple
+        if (q && q.trim() !== "") {
+            // Search across title, author, and description fields
+            query = {
+                $or: [
+                    { title: { $regex: q, $options: 'i' } },
+                    { author: { $regex: q, $options: 'i' } },
+                    { description: { $regex: q, $options: 'i' } }
+                ]
+            };
+        }
 
         const books = await Books.find(query);
+        console.log(books);
         res.json(books);
     } catch (err) {
         res.status(500).json({ error: 'Search failed', details: err.message });

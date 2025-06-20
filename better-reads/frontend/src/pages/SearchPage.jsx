@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   TextField,
   Box,
@@ -8,7 +8,6 @@ import {
   InputAdornment,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import sampleData from '../sampleData.json';
 import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
 import BackgroundImage from '../images/background.svg';
 import { DetectiveDustyBlue } from '../styles/colors';
@@ -19,39 +18,52 @@ import '../components/Book/BookPage.css';
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const allBooks = useMemo(() => {
-    const mainBook = {
-      ...sampleData.book,
-      id: sampleData.book.isbn,
-      coverImage: sampleData.book.coverUrl,
-    };
-    return [mainBook, ...sampleData.similarBooks.map(book => ({
-      id: book.isbn,
-      title: book.title,
-      coverImage: book.coverUrl,
-      genres: book.genres,
-      averageRating: book.averageRating,
-      isFavorite: book.isFavorite
-    }))];
-  }, []);
+  // // Fetch all books on mount
+  // useEffect(() => {
+  //   const fetchBooks = async () => {
+  //     setLoading(true);
+  //     setError(null);
+  //     try {
+  //       const res = await fetch('http://localhost:3000/books');
+  //       if (!res.ok) throw new Error('Failed to fetch books');
+  //       const data = await res.json();
+  //       setSearchResults(data);
+  //     } catch (err) {
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchBooks();
+  // }, []);
 
-  const handleSearch = useCallback(() => {
+  // Search handler
+  const handleSearch = useCallback(async () => {
+    console.log(searchQuery);
     const trimmedQuery = searchQuery.trim();
-    if (!trimmedQuery) {
-      setSearchResults(allBooks);
-      return;
+    setLoading(true);
+    setError(null);
+    try {
+      let url = 'http://localhost:3000/books';
+      if (trimmedQuery) {
+        url = `http://localhost:3000/books/search?q=${encodeURIComponent(trimmedQuery)}`;
+      }
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Search failed');
+      const data = await res.json();
+      console.log(data);
+      setSearchResults(data);
+    } catch (err) {
+      console.error('FETCH ERROR:', err);
+      setError(err.message);
+      setSearchResults([]);
+    } finally {
+      setLoading(false);
     }
-    
-    const query = trimmedQuery.toLowerCase();
-    const filtered = allBooks.filter(book =>
-      book.title.toLowerCase().includes(query) ||
-      (book.genres && book.genres.some(genre =>
-        genre.toLowerCase().includes(query)
-      ))
-    );
-    setSearchResults(filtered);
-  }, [searchQuery, allBooks]);
+  }, [searchQuery]);
 
   return (
     <div style={styles.container}>
@@ -96,23 +108,28 @@ const SearchPage = () => {
         container 
         spacing={3} 
         sx={{ 
-          maxWidth: '1200px', 
+          maxWidth: '1900px', 
           margin: '0 auto',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          paddingBottom: '2rem'
         }}>
-        {searchResults.map((book) => (
-          <Grid item xs={12} sm={6} md={4} key={book.id}>
+        {searchResults.map((book, idx) => {
+          // Use MongoDB _id if available, otherwise fallback to id or index
+          const key = book._id || book.id || idx;
+          return (
+            <Grid item xs={12} sm={6} md={4} key={key}>
               <BookPreview
-                isbn={book.id}
-                coverUrl={book.coverImage}
+                bookId={book._id || book.id || key}
+                coverUrl={book.image || book.coverImage || book.coverUrl}
                 title={book.title}
                 rating={book.averageRating || 0}
-                genres={book.genres || []}
+                genres={book.genre || []}
                 isFavorite={book.isFavorite || false}
                 onToggleFavorite={() => {}}
               />
-          </Grid>
-        ))}
+            </Grid>
+          );
+        })}
       </Grid>
     </div>
   );
@@ -126,6 +143,7 @@ const styles = {
     width: '100%',
     textAlign: 'center',
     padding: '2rem',
+    paddingTop: '6rem',
     marginBottom: '2rem',
     backgroundImage: `url(${BackgroundImage})`,
     backgroundSize: 'cover',
