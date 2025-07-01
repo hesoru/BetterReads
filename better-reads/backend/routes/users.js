@@ -1,5 +1,7 @@
 import express from 'express';
 import Users from '../model/users.js';
+import bcrypt from 'bcrypt';
+import {isStrongPassword} from "./utils.js";
 const router = express.Router();
 
 //TODO: add pagination?
@@ -56,13 +58,20 @@ router.get('/get-user/:username', async (req, res) => {
 router.post('/signup', async (req, res) => {
     try {
         const { username, password, avatarUrl, favoriteGenres } = req.body;
+        if (!username || !password || !favoriteGenres ) return res.status(400).json({ error: 'Username and password required' });
 
+        if (!isStrongPassword(password)) {
+            return res.status(400).json({
+                error: 'Password must be at least 12 characters and include uppercase, lowercase, number, and symbol.'
+            });
+        }
         const existing = await Users.findOne({ username });
         if (existing) return res.status(409).json({ error: 'Username already exists' });
 
+        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new Users({
             username,
-            password,
+            password: hashedPassword,
             avatarUrl, // will use default if undefined
             favoriteGenres,
             reviews: [],
@@ -81,9 +90,12 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await Users.findOne({ username });
+        if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
 
-        if (!user || user.password !== password ) {
+        const user = await Users.findOne({ username });
+        const match = await bcrypt.compare(password, user.password);
+
+        if (!user || !match ) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
