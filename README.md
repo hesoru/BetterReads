@@ -45,3 +45,10 @@ The following features have been implemented for Milestone 2:
    - **Book Details Page**: Implement functions for a book details page that presents book data retrieved from the database.
    - **Review Submission**: Implement function so user can write and submit reviews for books, which will be presisted to the database.
    - **Book Search Page**: Implemented a keyword-based search feature that matches against book titles and descriptions.
+
+### Milestone 3:
+The following featuers have been implemented for Milestone 3:
+### TEST section
+1. Test folder were created including setup.js, books.test.js, reviews.tests.js and users.test.js. 
+2. Test using Mocha, Chai, Supertest, Mongodb-Memory-Server. Test report is generated usin g
+3. Instruction to run the test cases:
