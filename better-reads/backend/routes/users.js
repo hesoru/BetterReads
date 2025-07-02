@@ -72,7 +72,7 @@ router.post('/signup', async (req, res) => {
         const newUser = new Users({
             username,
             password: hashedPassword,
-            avatarUrl, // will use default if undefined
+            avatarUrl,
             favoriteGenres,
             reviews: [],
             wishList: [],
