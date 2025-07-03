@@ -34,7 +34,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/books/:isbn" element={<BookDetailsPage />} />
+          <Route path="/books/:bookId" element={<BookDetailsPage />} />
           <Route path="/profile" element={<UserProfile />} />
         </Route>
       </Routes>

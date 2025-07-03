@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   TextField,
   Box,
@@ -6,64 +6,84 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  OutlinedInput,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import sampleData from '../sampleData.json';
 import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
-import BackgroundImage from '../images/background.svg';
+import BackgroundImage from '../images/background.png';
 import { DetectiveDustyBlue } from '../styles/colors';
 import { BookPreview } from '../components/Book/BookPreview';
 import '../components/Book/BookPage.css';
 
+const genres = [
+  "Fantasy", "Fiction", "Nonfiction", "Classics", "Science Fiction",
+  "Mystery", "Thriller", "Romance", "Historical Fiction", "Horror",
+  "Literary Fiction", "Young Adult", "Biography", "Contemporary"
+];
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedGenres, setSelectedGenres] = useState([]);
 
-  const allBooks = useMemo(() => {
-    const mainBook = {
-      ...sampleData.book,
-      id: sampleData.book.isbn,
-      coverImage: sampleData.book.coverUrl,
-    };
-    return [mainBook, ...sampleData.similarBooks.map(book => ({
-      id: book.isbn,
-      title: book.title,
-      coverImage: book.coverUrl,
-      genres: book.genres,
-      averageRating: book.averageRating,
-      isFavorite: book.isFavorite
-    }))];
-  }, []);
-
-  const handleSearch = useCallback(() => {
+  const handleSearch = useCallback(async () => {
     const trimmedQuery = searchQuery.trim();
-    if (!trimmedQuery) {
-      setSearchResults(allBooks);
-      return;
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams();
+      if (trimmedQuery) {
+        params.append('q', trimmedQuery);
+      }
+      if (selectedGenres.length > 0) {
+        params.append('genres', selectedGenres.join(','));
+      }
+
+      let url = 'http://localhost:3000/books';
+      if (params.toString()) {
+        url = `http://localhost:3000/books/search?${params.toString()}`;
+      }
+
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Search failed');
+      const data = await res.json();
+      setSearchResults(data);
+    } catch (err) {
+      console.error('FETCH ERROR:', err);
+      setError(err.message);
+      setSearchResults([]);
+    } finally {
+      setLoading(false);
     }
-    
-    const query = trimmedQuery.toLowerCase();
-    const filtered = allBooks.filter(book =>
-      book.title.toLowerCase().includes(query) ||
-      (book.genres && book.genres.some(genre =>
-        genre.toLowerCase().includes(query)
-      ))
+  }, [searchQuery, selectedGenres]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch]);
+
+  const handleGenreChange = (event) => {
+    const { target: { value } } = event;
+    setSelectedGenres(
+      typeof value === 'string' ? value.split(',') : value,
     );
-    setSearchResults(filtered);
-  }, [searchQuery, allBooks]);
+  };
 
   return (
     <div style={styles.container}>
-      
       <section style={styles.banner}>
         <div style={styles.logoImage} />
         <Typography variant="h5" sx={styles.bannerText}>
           Reading is good for you. But we can make it better.
         </Typography>
       </section>
-      
-      <Box sx={{ maxWidth: 600, mx: 'auto', mb: 4, px: 2, mt: 4 }}>
+
+      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', maxWidth: 900, mx: 'auto', mb: 4, px: 2, mt: 4 }}>
         <TextField
           fullWidth
           variant="outlined"
@@ -72,6 +92,7 @@ const SearchPage = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           sx={{
+            flexGrow: 1,
             '& .MuiOutlinedInput-root': {
               borderRadius: '25px',
               backgroundColor: DetectiveDustyBlue,
@@ -90,29 +111,66 @@ const SearchPage = () => {
             ),
           }}
         />
+        <FormControl sx={{ width: 300 }}>
+          <Select
+            id="genre-select"
+            multiple
+            displayEmpty
+            value={selectedGenres}
+            onChange={handleGenreChange}
+            input={<OutlinedInput />}
+            renderValue={(selected) => {
+              if (selected.length === 0) {
+                return <em style={{ color: '#666' }}>Select genres...</em>;
+              }
+              return selected.join(', ');
+            }}
+            sx={{
+              borderRadius: '25px',
+              backgroundColor: DetectiveDustyBlue,
+              height: '56px',
+            }}
+          >
+            <MenuItem disabled value="">
+              <em style={{ color: '#666' }}>Select genres...</em>
+            </MenuItem>
+            {genres.map((genre) => (
+              <MenuItem key={genre} value={genre}>
+                {genre}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Box>
 
-      <Grid 
-        container 
-        spacing={3} 
-        sx={{ 
-          maxWidth: '1200px', 
+      {loading && <Typography sx={{ textAlign: 'center', my: 2 }}>Loading...</Typography>}
+      {error && <Typography color="error" sx={{ textAlign: 'center', my: 2 }}>{`Error: ${error}`}</Typography>}
+
+      <Grid
+        container
+        spacing={3}
+        sx={{
+          maxWidth: '1900px',
           margin: '0 auto',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          paddingBottom: '2rem'
         }}>
-        {searchResults.map((book) => (
-          <Grid item xs={12} sm={6} md={4} key={book.id}>
+        {searchResults.map((book, idx) => {
+          const key = book._id || book.id || idx;
+          return (
+            <Grid item xs={12} sm={6} md={4} key={key}>
               <BookPreview
-                isbn={book.id}
-                coverUrl={book.coverImage}
+                bookId={book._id || book.id || key}
+                coverUrl={book.image || book.coverImage || book.coverUrl}
                 title={book.title}
                 rating={book.averageRating || 0}
-                genres={book.genres || []}
+                genres={book.genre || []}
                 isFavorite={book.isFavorite || false}
-                onToggleFavorite={() => {}}
+                onToggleFavorite={() => { }}
               />
-          </Grid>
-        ))}
+            </Grid>
+          );
+        })}
       </Grid>
     </div>
   );

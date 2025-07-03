@@ -1,6 +1,6 @@
 import React from 'react';
-import StarRating from './ratings/starRating';
-import { DetectiveDustyBlue, NoirNavy, NovellaNavy } from '../styles/colors';
+import StarRating from '../ratings/starRating.jsx';
+import { DetectiveDustyBlue, NoirNavy, NovellaNavy } from '../../styles/colors.js';
 
 const BookProductCard = ({
   imageUrl = 'https://via.placeholder.com/250x300.png?text=Book+Cover',
