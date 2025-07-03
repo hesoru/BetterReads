@@ -3,7 +3,7 @@ import { Box, Avatar, Typography, Button, Paper, Stack, Divider } from '@mui/mat
 import { styled } from '@mui/material/styles';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LockResetIcon from '@mui/icons-material/LockReset';
-import { GenreTags } from '../Book/BookUtils';
+import { GenreTagsUnrolled } from '../Book/BookUtils';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -100,7 +100,7 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
               Favorite Genres
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-              <GenreTags genres={user.favoriteGenres} />
+              <GenreTagsUnrolled genres={user.favoriteGenres} />
             </Box>
           </Box>
         </>

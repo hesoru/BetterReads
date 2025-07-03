@@ -1,6 +1,6 @@
 import React, { useState} from 'react';
 import './BookPage.css';
-import { FavoriteIcon, GenreTags } from "./BookUtils.jsx";
+import { FavoriteIcon, GenreTagsRolled } from "./BookUtils.jsx";
 import StarRating from '../ratings/starRating';
 import {useNavigate} from "react-router-dom"; // Assuming starRating.jsx exports as default or named StarRating
 import { useDispatch, useSelector } from 'react-redux';
@@ -52,7 +52,7 @@ export function BookPreview({bookId, coverUrl, title, rating, genres}) {
                         <StarRating rating={rating} />
                         <span className="rating-value">{rating.toFixed(1)}</span>
                     </div>
-                    <GenreTags genres={genres} />
+                    <GenreTagsRolled genres={genres} />
                 </div>
             </div>
         </div>

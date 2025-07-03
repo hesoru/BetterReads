@@ -1,7 +1,7 @@
 import React from 'react';
 import './BookPage.css';
 
-export const GenreTags = ({ genres }) => {
+export const GenreTagsRolled = ({ genres }) => {
     if (!Array.isArray(genres)) return null;
 
     const MAX_TAGS = 2;
@@ -23,6 +23,21 @@ export const GenreTags = ({ genres }) => {
         </div>
     );
 };
+
+export const GenreTagsUnrolled = ({ genres }) => {
+    if (!Array.isArray(genres)) return null;
+
+    return (
+        <div className="genre-tags">
+            {visibleTags.map((genre, idx) => (
+                <span key={idx} className="genre-tag">
+                    {genre}
+                </span>
+            ))}
+        </div>
+    );
+};
+
 
 export const FavoriteIcon = ({ isFavorite, onClick }) => {
     const iconSrc = isFavorite

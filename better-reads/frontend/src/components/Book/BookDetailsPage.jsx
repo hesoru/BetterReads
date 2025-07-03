@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './BookPage.css';
 import {BookPreview} from './BookPreview';
-import { GenreTags } from "./BookUtils.jsx";
+import { GenreTagsUnrolled } from "./BookUtils.jsx";
 import StarRating from '../ratings/starRating'; // Assuming starRating.jsx exports as default or named StarRating
 import BookGalleryManager from "./BookGalleryManager.jsx";
 import BookReview from './bookReview.jsx'; // Assuming bookReview.jsx exports as default
@@ -92,7 +92,7 @@ export default function BookDetailsPage( ) {
                     <h1 className="book-title">{book.title}</h1>
                     <p className="book-summary">{book.description}</p>
                     <div className="isbn">ISBN: {book.ISBN}</div>
-                    <GenreTags genres={book.genre} />
+                    <GenreTagsUnrolled genres={book.genre} />
 
 
 
