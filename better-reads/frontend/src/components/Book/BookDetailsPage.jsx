@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import './BookPage.css';
 import {BookPreview} from './BookPreview';
 import { GenreTags } from "./BookUtils.jsx";
@@ -15,6 +15,8 @@ export default function BookDetailsPage( ) {
     const  {bookId}  = useParams();
     const userId = useSelector((state) => state.user?.user?._id);
     const username = useSelector((state) => state.user?.user?.username);
+    const reviewRef = useRef(null);
+
     //console.log("username", username);
     //console.log("userId", userId);
    console.log("bookId", bookId);
@@ -27,6 +29,10 @@ export default function BookDetailsPage( ) {
     const [avatarMap, setAvatarMap] = useState({});
 
 
+    const handleScrollToReview = () => {
+        reviewRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -36,10 +42,12 @@ export default function BookDetailsPage( ) {
 
                 console.log("review", review);
                 console.log("all reviews", allReviews);
+                const otherReviews = allReviews.filter(r => r.userId !== username);
+                console.log("other reviews", otherReviews);
 
                 setBook(bookData);
                 setUserReview(review);
-                setBookReviews(allReviews);
+                setBookReviews(otherReviews);
             } catch (err) {
                 console.error('Failed to fetch book data:', err);
             }
@@ -83,7 +91,7 @@ export default function BookDetailsPage( ) {
                     />
                     <StarRating rating={Math.round(book.averageRating)} />
                     <div className="load-more">
-                        <button className="btn">Make Review</button>
+                        <button className="btn" onClick={handleScrollToReview}>Make Review</button>
                     </div>
 
                 </div>
@@ -100,7 +108,7 @@ export default function BookDetailsPage( ) {
             </div>
 
             <div className="reviews-container">
-                <div className="review-section">
+                <div className="review-section" ref={reviewRef}>
                     <div className="section-title">Your Review</div>
                     <BookReview
                         editable={isEditing || !userReview}
@@ -115,7 +123,10 @@ export default function BookDetailsPage( ) {
                             });
                             setUserReview(newReview);
                             setBookReviews(prev => {
+
                                 const others = prev.filter(r => r.userId !== username);
+                                console.log("others", others);
+                                console.log("username", username);
                                 return [newReview, ...others];
                             });
                             setIsEditing(false);
