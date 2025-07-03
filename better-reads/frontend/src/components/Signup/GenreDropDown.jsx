@@ -54,17 +54,20 @@ const GenreDropDown = ({ onSelectGenres }) => {
   return (
     <Box sx={{ mt: 2, mb: 1 }}>
       <FormControl sx={{ minWidth: 220 }}>
-        <InputLabel id="genre-multiple-checkbox-label" sx={{ color: PaperbackPureWhite }}>
-          Favorite Genres
-        </InputLabel>
         <Select
           labelId="genre-multiple-checkbox-label"
           id="genre-multiple-checkbox"
           multiple
+          displayEmpty
           value={selectedGenres}
           onChange={handleChange}
-          input={<OutlinedInput label="Favorite Genres" />}
-          renderValue={(selected) => selected.join(', ')}
+          input={<OutlinedInput />}
+          renderValue={(selected) => {
+            if (selected.length === 0) {
+              return <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Favorite Genres</span>;
+            }
+            return selected.join(', ');
+          }}
           MenuProps={MenuProps}
           sx={{
             color: PaperbackPureWhite,
