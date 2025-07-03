@@ -7,7 +7,7 @@ export const loginUser = createAsyncThunk(
     'user/loginUser',
     async ({ username, password}, thunkAPI) => {
         try {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/login`, {
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password}),

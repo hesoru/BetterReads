@@ -169,8 +169,8 @@ describe('Books Tests', () => {
     expect(body).to.have.length(1);
     expect(body[0].rating).to.equal(4);
     // TODO: update book reviewCount once the book has a new review
-    // const updatedBook = await Books.findById(book._id).lean();
-    // expect(updatedBook.reviewCount).to.equal(2);
+    const updatedBook = await Books.findById(book._id).lean();
+    expect(updatedBook.reviewCount).to.equal(2);
   });
 
   it('adds & removes a book from user wishlist', async () => {
