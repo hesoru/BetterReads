@@ -196,6 +196,30 @@ header .button {
     border-color: #151B54; /* Ensure border stays consistent or changes as desired on hover */
 }
 
+.favorite-icon {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.favorite-icon:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+    .favorite-icon {
+        width: 28px;
+        height: 28px;
+        top: 8px;
+        right: 8px;
+    }
+}
+
 
 /* Review Sections Layout and Styling */
 .review-section,
@@ -255,7 +279,7 @@ header .button {
     flex-wrap: wrap;
     gap: 8px;
     margin: 8px 0;
-    justify-content: flex-start;
+    justify-content: center; /* Center align tags */
 }
 
 .genre-tag {

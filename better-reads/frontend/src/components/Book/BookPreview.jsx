@@ -40,24 +40,38 @@ export function BookPreview({ bookId, coverUrl, title, rating, genres }) {
   };
 
   return (
-    <Card sx={{ maxWidth: 345, m: 'auto', position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <FavoriteIcon
-        isFavorite={isFavorite}
-        onClick={handleFavoriteClick}
-        disabled={loading}
-      />
-      <CardActionArea onClick={handleCardClick} sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1}}>
-        <CardMedia
-          component="img"
-          sx={{ height: 250, objectFit: 'contain', pt: 2 }}
-          image={coverUrl}
-          alt={`${title} cover`}
-        />
-        <CardContent sx={{ flexGrow: 1 }}>
-          <Typography gutterBottom variant="h6" component="div" sx={{minHeight: '64px'}}>
+    <Card sx={{
+      width: '100%',
+      maxWidth: { xs: 280, sm: 320, md: 345 },
+      m: 'auto',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      textAlign: 'center'
+    }}>
+      <CardActionArea onClick={handleCardClick} sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1, p: 1 }}>
+        <Box sx={{ position: 'relative', width: '100%' }}>
+          <CardMedia
+            component="img"
+            sx={{
+              height: { xs: 200, sm: 225, md: 250 },
+              objectFit: 'contain',
+              width: '100%'
+            }}
+            image={coverUrl}
+            alt={`${title} cover`}
+          />
+          <FavoriteIcon
+            isFavorite={isFavorite}
+            onClick={handleFavoriteClick}
+            disabled={loading}
+          />
+        </Box>
+        <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Typography gutterBottom variant="h6" component="div">
             {title}
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
             <StarRating rating={rating} />
             <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
               {rating.toFixed(1)}
