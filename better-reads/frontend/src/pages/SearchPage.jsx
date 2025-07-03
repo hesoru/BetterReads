@@ -83,7 +83,17 @@ const SearchPage = () => {
         </Typography>
       </section>
 
-      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', maxWidth: 900, mx: 'auto', mb: 4, px: 2, mt: 4 }}>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        gap: 2,
+        alignItems: 'center',
+        maxWidth: 900,
+        mx: 'auto',
+        mb: 4,
+        px: 2,
+        mt: 4
+      }}>
         <TextField
           fullWidth
           variant="outlined"
@@ -111,7 +121,7 @@ const SearchPage = () => {
             ),
           }}
         />
-        <FormControl sx={{ width: 300 }}>
+        <FormControl sx={{ width: { xs: '100%', md: 300 } }}>
           <Select
             id="genre-select"
             multiple
@@ -129,6 +139,7 @@ const SearchPage = () => {
               borderRadius: '25px',
               backgroundColor: DetectiveDustyBlue,
               height: '56px',
+              width: '100%',
             }}
           >
             <MenuItem disabled value="">

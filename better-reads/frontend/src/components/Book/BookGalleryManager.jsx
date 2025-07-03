@@ -1,24 +1,24 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Grid } from '@mui/material';
 import { BookPreview } from './BookPreview';
 import BookUtils from "../../utils/BookUtils.js";
 
 const BookGalleryManager = ({ books, limit }) => {
     const [bookData, setBookData] = useState([]);
-    const scrollRef = useRef(null);
-    const CARD_WIDTH = 240;
-    const GAP = 28;
-    const scrollAmount = (CARD_WIDTH + GAP) * limit;
-    const totalVisibleWidth = scrollAmount - GAP;
 
-    // Fetch book data on mount or when books array changes
     useEffect(() => {
         const fetchBooks = async () => {
+            if (!books || books.length === 0) {
+                setBookData([]);
+                return;
+            }
+
             const seen = new Set();
             const fetched = [];
+            const booksToFetch = limit ? books.slice(0, limit) : books;
 
-            console.log("books: ", books);
-            for (const bookId of books) {
-                if (seen.has(bookId)) continue;
+            for (const bookId of booksToFetch) {
+                if (!bookId || seen.has(bookId)) continue;
                 seen.add(bookId);
 
                 try {
@@ -30,43 +30,27 @@ const BookGalleryManager = ({ books, limit }) => {
                     console.error(`Failed to fetch book with ID ${bookId}:`, err);
                 }
             }
-
             setBookData(fetched);
         };
 
         fetchBooks();
-    }, [books]);
-
-    const scrollLeft = () => {
-        scrollRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    };
-
-    const scrollRight = () => {
-        scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    };
+    }, [books, limit]);
 
     return (
-        <div className="container similar-books">
-            <div className="book-gallery-wrapper" style={{ maxWidth: `${totalVisibleWidth}px` }}>
-                <button className="scroll-arrow left" onClick={scrollLeft} />
-
-                <div className="books-row-scroll" ref={scrollRef}>
-                    {bookData.map((book) => (
-                        <BookPreview
-                            key={book._id}
-                            bookId={book._id}
-                            isbn = {book.ISBN}
-                            coverUrl={book.image}
-                            title={book.title}
-                            rating={Math.round(book.averageRating)}
-                            genres={book.genre}
-                        />
-                    ))}
-                </div>
-
-                <button className="scroll-arrow right" onClick={scrollRight} />
-            </div>
-        </div>
+        <Grid container spacing={2}>
+            {bookData.map((book) => (
+                <Grid item key={book._id} xs={6} sm={4} md={3} lg={2.4}>
+                    <BookPreview
+                        bookId={book._id}
+                        isbn={book.ISBN}
+                        coverUrl={book.image}
+                        title={book.title}
+                        rating={Math.round(book.averageRating)}
+                        genres={book.genre}
+                    />
+                </Grid>
+            ))}
+        </Grid>
     );
 };
 
