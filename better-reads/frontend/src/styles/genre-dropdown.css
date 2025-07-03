@@ -4,20 +4,24 @@ div {
 }
 
 label {
-    font-weight: bold;
+  font-weight: bold;
 	margin-right: 1rem;
 	margin-bottom: 1.5rem;
 }
 
 .selectGenre {
+  display: block;
+  margin: 0 auto;
+  margin-top: 1rem;
   padding: 0.4rem;
   border: 1px solid #ccc;
   border-radius: 6px;
-  margin-left: 1rem;
-} 
+  width: 100%;
+}
 
 .genre-row {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-bottom: 1.5rem;
