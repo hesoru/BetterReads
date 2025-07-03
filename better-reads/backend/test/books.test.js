@@ -154,7 +154,8 @@ describe('Books Tests', () => {
   it('creates, updates, lists reviews', async () => {
     const book = await Books.create(testBook1);
     const user = await Users.create(testUser);
-
+    const currentBook = await Books.findById(book._id).lean();
+    expect(currentBook.reviewCount).to.equal(1);
     await request(app)
       .post(`/books/${book._id}/reviews`)
       .send({ userId: user._id, rating: 5, description: 'Great!' })

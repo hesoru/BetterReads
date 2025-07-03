@@ -1,16 +1,21 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {clearBooklist, setBooklist} from "./Booklist.js";
+import {clearUser} from "./UserSlice.js";
 
 
 export const loginUser = createAsyncThunk(
     'user/loginUser',
     async ({ username, password}, thunkAPI) => {
         try {
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
+
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password}),
+                body: JSON.stringify({
+                    username,
+                    password
+                })
             });
 
             if (!res.ok) {
@@ -19,9 +24,9 @@ export const loginUser = createAsyncThunk(
             }
 
             const data = await res.json();
-
-            thunkAPI.dispatch(setBooklist(data.wishList));
-            return data;
+            localStorage.setItem('token', data.token);
+            thunkAPI.dispatch(setBooklist(data.user.wishList));
+            return data.user;
         } catch (err) {
             return thunkAPI.rejectWithValue('Login request failed', err);
         }
@@ -31,13 +36,17 @@ export const loginUser = createAsyncThunk(
 // 2. User signup
 export const signupUser = createAsyncThunk(
     'user/signupUser',
-    async ({ username, password, favoriteGenres }, thunkAPI) => {
+    async ({ username, password, favoriteGenres}, thunkAPI) => {
         try {
+            const { getState } = thunkAPI;
+            //const state = getState();
+            const wishList  = thunkAPI.getState().booklist.items;
+            console.log("Wishlist: ", wishList);
             // Step 1: POST to /signup
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password, favoriteGenres }),
+                body: JSON.stringify({ username, password, favoriteGenres, wishList }),
             });
 
             if (!res.ok) {
@@ -90,6 +99,16 @@ export const fetchUserProfile = createAsyncThunk(
         }
     }
 );
+
+
+export const logoutUser = createAsyncThunk('user/logoutUser', async (_, thunkAPI) => {
+    const { dispatch} = thunkAPI;
+    dispatch(clearUser());
+    dispatch(clearBooklist());
+    localStorage.removeItem('appState');
+    localStorage.removeItem('user');
+    return true;
+});
 
 
 // // Logout for cookie session if we want

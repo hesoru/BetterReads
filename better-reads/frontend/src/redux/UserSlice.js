@@ -1,6 +1,6 @@
 
 import { createSlice } from '@reduxjs/toolkit';
-import { loginUser, signupUser, fetchUserProfile} from './UserThunks';
+import {loginUser, signupUser, fetchUserProfile, logoutUser} from './UserThunks';
 
 
 export const guestUser = {
