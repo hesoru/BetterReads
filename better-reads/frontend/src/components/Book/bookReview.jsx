@@ -130,7 +130,7 @@ const BookReview = ({
             </>
         ) : (
             <>
-              <StarRating rating={rating} />
+              <StarRating rating={editable ? editRating : rating} isEditable={editable} onChange={(event, newValue) => { setEditRating(newValue); }} />
               <p style={reviewTextStyle}>{reviewText}</p>
             </>
         )}

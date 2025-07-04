@@ -11,14 +11,15 @@ const StyledRating = styled(Rating)({
   },
 });
 
-const StarRating = ({ rating, totalStars = 5 }) => {
+const StarRating = ({ rating, totalStars = 5, isEditable = false, onChange }) => {
   return (
     <StyledRating
-      name="read-only"
+      name={isEditable ? "editable-rating" : "read-only"}
       value={rating}
-      precision={0.5}
+      precision={1} // Use whole numbers for editable ratings
       max={totalStars}
-      readOnly
+      readOnly={!isEditable}
+      onChange={onChange}
     />
   );
 };

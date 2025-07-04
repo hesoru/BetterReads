@@ -118,6 +118,11 @@ const Signup = () => {
 								required
 							/>
 						</div>
+						
+						{/* Genre dropdown should update setFavoriteGenres */}
+						<div className="genre-dropdown-container">
+							<GenreDropDown onSelectGenres={setFavoriteGenres} />
+						</div>
 
 						{passwordError && (
 							<div className="password-error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '5px', textAlign: 'center' }}>
@@ -133,11 +138,6 @@ const Signup = () => {
 								Error: {signupError}
 							</div>
 						)}
-
-						{/* Genre dropdown should update setFavoriteGenres */}
-						<div className="genre-dropdown-container">
-							<GenreDropDown onSelectGenres={setFavoriteGenres} />
-						</div>
 
 						<div className="button-row">
 							<button type="submit" className="register-button">Register</button>
