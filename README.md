@@ -48,6 +48,10 @@ The following features have been implemented for Milestone 2:
 
 ### Milestone 3:
 The following featuers have been implemented for Milestone 3:
+- UI has been made responsive. 
+- NLP Book search bar now has additional genre selection option.
+- Fixed background images. 
+
 ### TEST section
 1. Test folder were created including setup.js, books.test.js, reviews.tests.js and users.test.js. 
 2. Test using Mocha, Chai, Supertest, Mongodb-Memory-Server. Test report is generated using mochawesome.
