@@ -46,9 +46,7 @@ const SearchPage = () => {
       // if (selectedGenres.length > 0) {
       //   params.append('genre', selectedGenres.join(','));
       // }
-      // console.log("params", params.toString());
-      // console.log("search query", searchQuery);
-      // console.log("selected genres", selectedGenres);
+      //TODO: FOR FUNCTIONAL PAGE SCROLLING GO TO BOOK UTILS TO TWEAK PAGE & LIMIT PARAMS
       const data = await BookUtils.searchBooks({ q: trimmedQuery, genres: selectedGenres });
       // let url = 'http://localhost:3000/books';
       // if (params.toString()) {

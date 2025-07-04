@@ -9,6 +9,7 @@ const BookUtils = {
     },
 
     // Search for books by query (title, author, genre, etc.)
+    //TODO: decide on page/limit
     async searchBooks({ q = '', genres = [], page = 1, limit = 10 } = {}) {
         const params = new URLSearchParams();
 
