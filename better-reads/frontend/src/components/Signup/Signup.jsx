@@ -22,7 +22,8 @@ const Signup = () => {
 		setLoading(true);
 
 		try {
-			const result = await dispatch(signupUser({ username, password, favoriteGenres }));
+
+			const result = await dispatch(signupUser({ username, password, favoriteGenres}));
 
 			if (signupUser.fulfilled.match(result)) {
 				navigate('/search');
@@ -71,7 +72,9 @@ const Signup = () => {
 						</div>
 
 						{/* Genre dropdown should update setFavoriteGenres */}
-						<GenreDropDown onSelectGenres={setFavoriteGenres} />
+						<div className="genre-dropdown-container">
+							<GenreDropDown onSelectGenres={setFavoriteGenres} />
+						</div>
 
 						<div className="button-row">
 							<button type="submit" className="register-button">Register</button>

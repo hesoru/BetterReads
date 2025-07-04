@@ -2,6 +2,7 @@ import express from 'express';
 import Books from '../model/books.js';
 import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
+import mongoose from "mongoose";
 import axios from 'axios';
 const router = express.Router();
 
@@ -25,6 +26,58 @@ router.get('/search', async (req, res) => {
         const books = await Books.find(query);
         console.log(books);
         res.json(books);
+    } catch (err) {
+        res.status(500).json({ error: 'Search failed', details: err.message });
+    }
+});
+
+router.get('/genre-search', async (req, res) => {
+    try {
+        const { q, genre, page, limit  } = req.query;
+
+        const parsedPage = Math.max(parseInt(page, 10), 1);
+        const parsedLimit = Math.min(Math.max(parseInt(limit, 10), 1), 50); // Max 50 per page
+        const skip = (parsedPage - 1) * parsedLimit;
+
+
+        const andConditions = [];
+
+        if (q && q.trim() !== '') {
+            andConditions.push({
+                $or: [
+                    { title: { $regex: q, $options: 'i' } },
+                    { author: { $regex: q, $options: 'i' } },
+                    { description: { $regex: q, $options: 'i' } }
+                ]
+            });
+        }
+
+        if (genre) {
+            const genreList = Array.isArray(genre)
+                ? genre
+                : genre.split(',').map((g) => g.trim());
+
+            if (genreList.length > 0) {
+                andConditions.push({ genre: { $all: genreList } });
+            }
+        }
+
+        // Final query
+        const query = andConditions.length > 0 ? { $and: andConditions } : {};
+
+        const [books, totalCount] = await Promise.all([
+            Books.find(query).skip(skip).limit(parsedLimit),
+            Books.countDocuments(query)
+        ]);
+
+        console.log("totalCount", totalCount);
+        res.json({
+            page: parsedPage,
+            limit: parsedLimit,
+            totalPages: Math.ceil(totalCount / parsedLimit),
+            totalResults: totalCount,
+            results: books
+        });
     } catch (err) {
         res.status(500).json({ error: 'Search failed', details: err.message });
     }
@@ -152,14 +205,34 @@ router.post('/:id/reviews', async (req, res) => {
         }
 
         // Create a new review if none exists
-        const review = new Reviews({
+        const newReview = new Reviews({
             bookId,
             userId,
             ...updateFields,
             createdAt: new Date(),
         });
 
-        const saved = await review.save();
+        const saved = await newReview.save();
+        const reviewId = saved._id;
+
+        const review = await Reviews.findById(reviewId);
+        if (!review) throw new Error('Review not found');
+
+        const book = await Books.findById(bookId);
+        if (!book) throw new Error('Book not found');
+
+        const user = await Users.findById(userId);
+        if (!user) throw new Error('User not found');
+
+        //  Increment book review count
+        book.reviewCount += 1;
+        await book.save();
+
+        //  Add review to user if not already included
+        const reviewObjId = new mongoose.Types.ObjectId(reviewId);
+
+        user.reviews.push(reviewObjId);
+        await user.save();
         
         // Update the recommender matrix
         try {

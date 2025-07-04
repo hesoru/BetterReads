@@ -1,6 +1,6 @@
 
 import { createSlice } from '@reduxjs/toolkit';
-import { loginUser, signupUser, fetchUserProfile} from './UserThunks';
+import {loginUser, signupUser, fetchUserProfile, logoutUser} from './UserThunks';
 
 
 export const guestUser = {
@@ -51,7 +51,6 @@ const userSlice = createSlice({
                 state.status = 'succeeded';
                 state.isGuest = false;
             })
-
             .addCase(fetchUserProfile.fulfilled, (state, action) => {
                 state.user = action.payload;
                 state.isGuest = false;

@@ -1,15 +1,21 @@
+/* 
+  DEPRECATED: This file is no longer in use.
+  The Login component has been refactored with Material-UI and this stylesheet is not linked to any component.
+  It is kept for reference purposes only.
+*/
 .login-page {
 	min-height: 100vh;
 	margin: 0;
 	color: white;
-	background-image: url('../images/background.svg');
+	background-image: url('../images/background.png');
 	background-size: cover;
 	background-position: center;
 }
 
 h1 {
   text-align: center;
-  font-size: 8vw; 
+  /* Use clamp to ensure font size is responsive but doesn't get too large */
+  font-size: clamp(2.5rem, 8vw, 4rem);
   margin: 1rem 0;
   word-wrap: break-word;
 }
@@ -117,4 +123,24 @@ button:hover {
 	color: white;
 	text-decoration: none;
 	font-weight: bold;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 992px) {
+  .login-information {
+    max-width: 60%;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-information {
+    max-width: 80%;
+  }
+}
+
+@media (max-width: 576px) {
+  .login-information {
+    max-width: 95%;
+    padding: 1.5rem; /* Slightly reduce padding on very small screens */
+  }
 }

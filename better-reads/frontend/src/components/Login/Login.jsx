@@ -3,6 +3,8 @@ import "../../styles/login.css";
 import { useNavigate, Link } from "react-router-dom";
 import {useDispatch} from "react-redux";
 import { loginUser } from "../../redux/UserThunks";
+import {clearUser} from "../../redux/UserSlice.js";
+import {clearBooklist} from "../../redux/Booklist.js";
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -13,8 +15,6 @@ const Login = () => {
 		e.preventDefault();
 
 		try {
-
-			//TODO: update redux state so that user is no longer guest
 			dispatch(loginUser({username, password}));
 
 			navigate('/search');
@@ -67,7 +67,13 @@ const Login = () => {
 						<button
 							className="guest-button"
 							type="button"
-							onClick={() => { navigate("/search"); }}
+							onClick={() => {
+								dispatch(clearUser());
+								dispatch(clearBooklist());
+								navigate('/search');
+								localStorage.removeItem('appState');
+
+								navigate("/search"); }}
 						>
 							Enter as a Guest
 						</button>

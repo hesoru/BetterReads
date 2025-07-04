@@ -48,7 +48,19 @@ The following features have been implemented for Milestone 2:
 
 ### Milestone 3:
 The following featuers have been implemented for Milestone 3:
+- UI has been made responsive. 
+- NLP Book search bar now has additional genre selection option.
+- Fixed background images. 
+
 ### TEST section
 1. Test folder were created including setup.js, books.test.js, reviews.tests.js and users.test.js. 
-2. Test using Mocha, Chai, Supertest, Mongodb-Memory-Server. Test report is generated usin g
-3. Instruction to run the test cases:
+2. Test using Mocha, Chai, Supertest, Mongodb-Memory-Server. Test report is generated using mochawesome.
+3. There are 34 total tests covering API calls of books.js, reviews.js and users.js
+3. Instruction to run the test:
+```bash
+# After downloading our app, cd better-reads/backend to run the following command
+npm install # install all required dependencies for testing
+npm test    # run test 
+
+# The test result report can be reviewed by opending mochawesome.html by browser. The mochawesome.html is located at better-reads/backend/mochawesome-report/mochawesome.html
+```
