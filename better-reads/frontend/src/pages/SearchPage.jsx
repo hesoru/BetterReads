@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
-import BackgroundImage from '../images/background.svg';
+import BackgroundImage from '../images/background.png';
 import { DetectiveDustyBlue } from '../styles/colors';
 import { BookPreview } from '../components/Book/BookPreview';
 import '../components/Book/BookPage.css';
