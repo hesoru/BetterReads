@@ -1,6 +1,8 @@
 import express from 'express';
 import Users from '../model/users.js';
 import bcrypt from 'bcrypt';
+import mongoose from "mongoose";
+import axios from 'axios';
 import {isStrongPassword} from "./utils.js";
 const router = express.Router();
 
@@ -80,6 +82,16 @@ router.post('/signup', async (req, res) => {
         });
 
         await newUser.save();
+        
+        // Update the recommender matrix to include the new user
+        try {
+            await axios.post('http://localhost:5001/update-matrix');
+            console.log('Recommender matrix updated after new user signup');
+        } catch (updateError) {
+            console.error('Failed to update recommender matrix:', updateError.message);
+            // Don't fail the signup if matrix update fails
+        }
+        
         res.status(201).json({ message: 'User created', userId: newUser._id });
     } catch (err) {
         res.status(400).json({ error: 'Failed to create user', details: err.message });

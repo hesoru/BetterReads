@@ -5,6 +5,7 @@ import cors from 'cors';
 import userRoutes from "./routes/users.js";
 import reviewRoutes from "./routes/reviews.js";
 import bookRoutes from "./routes/books.js";
+import recommendationsRoutes from "./routes/recommendations.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 app.use('/users', userRoutes);
 app.use('/reviews', reviewRoutes);
 app.use('/books', bookRoutes);
+app.use('/recommendations', recommendationsRoutes);
 
 // only connect to prod database when NOT running tests
 if (process.env.NODE_ENV !== 'test') {

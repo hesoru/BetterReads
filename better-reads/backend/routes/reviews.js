@@ -3,6 +3,7 @@ import express from 'express';
 import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
 import mongoose from "mongoose";
+import axios from 'axios';
 const router = express.Router();
 
 // PUT /reviews/:reviewId - Edit a user's review
@@ -19,6 +20,15 @@ router.put('/:reviewId', async (req, res) => {
 
         if (!updated) return res.status(404).json({ error: 'Review not found' });
 
+        // Update the recommender matrix
+        try {
+            await axios.post('http://localhost:5001/update-matrix');
+            console.log('Recommender matrix updated after review edit');
+        } catch (updateError) {
+            console.error('Failed to update recommender matrix:', updateError.message);
+            // Don't fail the request if matrix update fails
+        }
+
         res.json(updated);
     } catch (err) {
         res.status(500).json({ error: 'Failed to update review', details: err.message });
@@ -32,6 +42,15 @@ router.delete('/:reviewId', async (req, res) => {
         const deleted = await Reviews.findByIdAndDelete(reviewId);
 
         if (!deleted) return res.status(404).json({ error: 'Review not found' });
+
+        // Update the recommender matrix
+        try {
+            await axios.post('http://localhost:5001/update-matrix');
+            console.log('Recommender matrix updated after review deletion');
+        } catch (updateError) {
+            console.error('Failed to update recommender matrix:', updateError.message);
+            // Don't fail the request if matrix update fails
+        }
 
         res.json({ message: 'Review deleted' });
     } catch (err) {

@@ -2,6 +2,7 @@ import express from 'express';
 import Books from '../model/books.js';
 import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
+import axios from 'axios';
 const router = express.Router();
 
 // retrieve books via a generic search query
@@ -137,6 +138,16 @@ router.post('/:id/reviews', async (req, res) => {
                 { ...updateFields, updatedAt: new Date() },
                 { new: true }
             );
+            
+            // Update the recommender matrix
+            try {
+                await axios.post('http://localhost:5001/update-matrix');
+                console.log('Recommender matrix updated after review update');
+            } catch (updateError) {
+                console.error('Failed to update recommender matrix:', updateError.message);
+                // Don't fail the request if matrix update fails
+            }
+            
             return res.status(200).json(updated);
         }
 
@@ -149,6 +160,16 @@ router.post('/:id/reviews', async (req, res) => {
         });
 
         const saved = await review.save();
+        
+        // Update the recommender matrix
+        try {
+            await axios.post('http://localhost:5001/update-matrix');
+            console.log('Recommender matrix updated after new review');
+        } catch (updateError) {
+            console.error('Failed to update recommender matrix:', updateError.message);
+            // Don't fail the request if matrix update fails
+        }
+        
         res.status(201).json(saved);
     } catch (err) {
         res.status(500).json({ error: 'Failed to create or update review', details: err.message });
