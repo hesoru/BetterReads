@@ -22,7 +22,8 @@ const Signup = () => {
 		setLoading(true);
 
 		try {
-			const result = await dispatch(signupUser({ username, password, favoriteGenres }));
+
+			const result = await dispatch(signupUser({ username, password, favoriteGenres}));
 
 			if (signupUser.fulfilled.match(result)) {
 				navigate('/search');

@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState, useRef} from 'react';
+import './BookPage.css';
+import {BookPreview} from './BookPreview';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Container, Grid, Box, Typography, Button, CircularProgress } from '@mui/material';
@@ -37,7 +39,9 @@ const buttonStyle = {
 export default function BookDetailsPage() {
     const { bookId } = useParams();
     const username = useSelector((state) => state.user?.user?.username);
+    const reviewRef = useRef(null);
     const userAvatar = useSelector((state) => state.user?.user?.avatarUrl);
+    console.log("bookId", bookId);
 
     const [book, setBook] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -46,6 +50,10 @@ export default function BookDetailsPage() {
     const [avatarMap, setAvatarMap] = useState({});
     const [loading, setLoading] = useState(true);
 
+    const handleScrollToReview = () => {
+        reviewRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -53,10 +61,16 @@ export default function BookDetailsPage() {
                 const bookData = await BookUtils.getBookById(bookId);
                 const review = await BookUtils.getUserReview(bookId, username);
                 const allReviews = await BookUtils.getBookReviews(bookId);
-
+              
+                // Ore was here
+                console.log("review", review);
+                console.log("all reviews", allReviews);
+                const otherReviews = allReviews.filter(r => r.userId !== username);
+                console.log("other reviews", otherReviews); 
+                // Non-ore touched
                 setBook(bookData);
                 setUserReview(review);
-                setBookReviews(allReviews);
+                setBookReviews(otherReviews);
             } catch (err) {
                 console.error('Failed to fetch book data:', err);
             } finally {
@@ -115,11 +129,17 @@ export default function BookDetailsPage() {
                             mx: 'auto',
                         }}
                     />
-                    <Box sx={{ my: 2 }}>
-                        <StarRating rating={Math.round(book.averageRating)} />
-                    </Box>
-                    <Button sx={buttonStyle}>Make Review</Button>
-                </Grid>
+                    <StarRating rating={Math.round(book.averageRating)} />
+                    <div className="load-more">
+                        <button className="btn" onClick={handleScrollToReview}>Make Review</button>
+                    </div>
+
+                </div>
+
+                <div className="book-info">
+                    <h1 className="book-title">{book.title}</h1>
+                    <p className="book-summary">{book.description}</p>
+                    <div className="isbn">ISBN: {book.ISBN}</div>
 
                 <Grid item xs={12} md={8}>
                     <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2, fontSize: { xs: '1.8rem', md: '2.5rem' } }}>
@@ -131,13 +151,19 @@ export default function BookDetailsPage() {
                     <Typography sx={{ fontSize: '0.9rem', color: 'var(--color-text-light)', mb: 2 }}>
                         ISBN: {book.ISBN}
                     </Typography>
+                    
                     <GenreTags genres={book.genre} />
                 </Grid>
             </Grid>
 
-            <Box sx={{ mt: { xs: 4, md: 6 } }}>
-                <Box>
-                    <Typography sx={sectionTitleStyle}>Your Review</Typography>
+
+                </div>
+            </div>
+
+            <div className="reviews-container">
+                <div className="review-section" ref={reviewRef}>
+                    <div className="section-title">Your Review</div>
+
                     <BookReview
                         editable={isEditing || !userReview}
                         userImage={userAvatar}
@@ -148,7 +174,10 @@ export default function BookDetailsPage() {
                             const newReview = await BookUtils.upsertReview(bookId, username, { rating, description });
                             setUserReview(newReview);
                             setBookReviews(prev => {
+
                                 const others = prev.filter(r => r.userId !== username);
+                                console.log("others", others);
+                                console.log("username", username);
                                 return [newReview, ...others];
                             });
                             setIsEditing(false);
