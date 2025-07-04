@@ -135,6 +135,22 @@ router.get('/genres', async (req, res) => {
     }
 });
 
+// GET /books/popular - Get popular books sorted by average rating
+router.get('/popular', async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 20; // Default to 20 books
+        
+        // Find books with at least some reviews and sort by average rating
+        const popularBooks = await Books.find({ reviewCount: { $gt: 0 } })
+            .sort({ averageRating: -1 }) // Sort by highest rating first
+            .limit(limit);
+                
+        res.json(popularBooks);
+    } catch (err) {
+        console.error('Failed to fetch popular books:', err);
+        res.status(500).json({ error: 'Failed to fetch popular books', details: err.message });
+    }
+});
 
 // GET /books/:id/reviews - Get all reviews for a book
 router.get('/:id/reviews', async (req, res) => {

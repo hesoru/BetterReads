@@ -41,7 +41,16 @@ export const signupUser = createAsyncThunk(
             const { getState } = thunkAPI;
             //const state = getState();
             const wishList  = thunkAPI.getState().booklist.items;
-            console.log("Wishlist: ", wishList);
+            
+            // Debug logs
+            console.log("Signup Request Data:", { 
+                username, 
+                passwordLength: password?.length,
+                favoriteGenres, 
+                wishList,
+                backendUrl: import.meta.env.VITE_BACKEND_URL
+            });
+            
             // Step 1: POST to /signup
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/signup`, {
                 method: 'POST',
@@ -51,7 +60,8 @@ export const signupUser = createAsyncThunk(
 
             if (!res.ok) {
                 const error = await res.json();
-                return thunkAPI.rejectWithValue(error.message || 'Signup failed');
+                console.error('Signup error response:', error);
+                return thunkAPI.rejectWithValue(error.error || error.message || 'Signup failed');
             }
 
             // Step 2: GET full user info

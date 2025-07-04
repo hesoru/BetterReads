@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, useLocation, Outlet } from 'react-router-
 import BookDetailsPage from "./components/Book/BookDetailsPage.jsx";
 import UserProfile from "./pages/UserProfile";
 import SearchPage from "./pages/SearchPage";
+import RecommendationsPage from "./pages/RecommendationsPage";
 import Header from "./components/Home/Header";
 import Login from './components/Login/Login.jsx'
 import Signup from "./components/Signup/Signup.jsx";
@@ -34,6 +35,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/recommendations" element={<RecommendationsPage />} />
           <Route path="/books/:bookId" element={<BookDetailsPage />} />
           <Route path="/profile" element={<UserProfile />} />
         </Route>

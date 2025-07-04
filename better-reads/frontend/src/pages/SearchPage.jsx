@@ -14,10 +14,9 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
-import BackgroundImage from '../images/background.png';
+import BackgroundImage from '../images/background.svg';
 import { DetectiveDustyBlue } from '../styles/colors';
 import { BookPreview } from '../components/Book/BookPreview';
-import BookGalleryManager from '../components/Book/BookGalleryManager';
 import '../components/Book/BookPage.css';
 import BookUtils from "../utils/BookUtils.js";
 
@@ -31,51 +30,13 @@ const genres = [
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedGenres, setSelectedGenres] = useState([]);
-  const [hasSearched, setHasSearched] = useState(false);
 
-  // Fetch recommendations on mount
+  // Initial search on component mount
   useEffect(() => {
-    const fetchRecommendations = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Get the current user from localStorage if available
-        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-        const userId = currentUser?.username || '';
-        
-        let url = 'http://localhost:3000/api/recommend';
-        if (userId) {
-          url = `http://localhost:3000/api/recommend/${userId}`;
-        }
-        
-        const res = await fetch(url);
-        if (!res.ok) throw new Error('Failed to fetch recommendations');
-        const data = await res.json();
-        
-        if (data && data.recommendations) {
-          setRecommendations(data.recommendations.map(book => book._id));
-        }
-      } catch (err) {
-        console.error('Failed to fetch recommendations:', err);
-        // Fallback to popular books if recommendations fail
-        try {
-          const res = await fetch('http://localhost:3000/books/popular');
-          if (!res.ok) throw new Error('Failed to fetch popular books');
-          const data = await res.json();
-          setRecommendations(data.map(book => book._id));
-        } catch (fallbackErr) {
-          setError(fallbackErr.message);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchRecommendations();
+    handleSearch();
   }, []);
 
   // Search handler
@@ -103,12 +64,10 @@ const SearchPage = () => {
       // const data = await res.json();
       console.log("data", data);
       setSearchResults(data.results);
-      setHasSearched(true); // Set hasSearched to true when search is performed
     } catch (err) {
       console.error('FETCH ERROR:', err);
       setError(err.message);
       setSearchResults([]);
-      setHasSearched(true); // Set hasSearched to true even if search fails
     } finally {
       setLoading(false);
     }
@@ -208,51 +167,39 @@ const SearchPage = () => {
       {loading && <Typography sx={{ textAlign: 'center', my: 2 }}>Loading...</Typography>}
       {error && <Typography color="error" sx={{ textAlign: 'center', my: 2 }}>{`Error: ${error}`}</Typography>}
 
-      {/* Show recommendations before search, search results after */}
-      {!hasSearched && recommendations.length > 0 && (
-        <Box sx={{ maxWidth: '1200px', margin: '0 auto', mb: 4 }}>
-          <Typography variant="h5" sx={{ mb: 2, textAlign: 'center' }}>
-            Recommended for you
-          </Typography>
-          <BookGalleryManager books={recommendations} limit={5} />
-        </Box>
-      )}
-      
-      {/* Show search results when search is performed */}
-      {hasSearched && (
-        <Grid
-          container
-          spacing={3}
-          sx={{
-            maxWidth: '1900px',
-            margin: '0 auto',
-            justifyContent: 'center',
-            paddingBottom: '2rem'
-          }}>
-          {searchResults.length > 0 ? (
-            searchResults.map((book, idx) => {
-                  const key = book._id || book.id || idx;
-              return (
-                <Grid item xs={12} sm={6} md={4} key={key}>
-                  <BookPreview
-                    bookId={book._id || book.id || key}
-                    coverUrl={book.image || book.coverImage || book.coverUrl}
-                    title={book.title}
-                    rating={book.averageRating || 0}
-                    genres={book.genre || []}
-                    isFavorite={book.isFavorite || false}
-                    onToggleFavorite={() => { }}
-                  />
-                </Grid>
-              );
-            })
-          ) : (
-            <Box sx={{ textAlign: 'center', width: '100%', py: 4 }}>
-              <Typography variant="h6">No books found matching your search.</Typography>
-            </Box>
-          )}
-        </Grid>
-      )}
+      {/* Show search results */}
+      <Grid
+        container
+        spacing={3}
+        sx={{
+          maxWidth: '1900px',
+          margin: '0 auto',
+          justifyContent: 'center',
+          paddingBottom: '2rem'
+        }}>
+        {searchResults.length > 0 ? (
+          searchResults.map((book, idx) => {
+            const key = book._id || book.id || idx;
+            return (
+              <Grid item xs={12} sm={6} md={4} key={key}>
+                <BookPreview
+                  bookId={book._id || book.id || key}
+                  coverUrl={book.image || book.coverImage || book.coverUrl}
+                  title={book.title}
+                  rating={book.averageRating || 0}
+                  genres={book.genre || []}
+                  isFavorite={book.isFavorite || false}
+                  onToggleFavorite={() => { }}
+                />
+              </Grid>
+            );
+          })
+        ) : (
+          <Box sx={{ textAlign: 'center', width: '100%', py: 4 }}>
+            <Typography variant="h6">No books found matching your search.</Typography>
+          </Box>
+        )}
+      </Grid>
     </div>
   );
 };

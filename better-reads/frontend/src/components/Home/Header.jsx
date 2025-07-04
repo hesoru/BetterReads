@@ -65,6 +65,7 @@ const Header = ({ userAvatar }) => {
               }}
             >
               <MenuItem component={RouterLink} to="/search" onClick={handleMenuClose}>Search</MenuItem>
+              <MenuItem component={RouterLink} to="/recommendations" onClick={handleMenuClose}>Recommendations</MenuItem>
               <MenuItem component={RouterLink} to="/profile" onClick={handleMenuClose}>Profile</MenuItem>
             </Menu>
           </>
@@ -72,6 +73,9 @@ const Header = ({ userAvatar }) => {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Button color="inherit" component={RouterLink} to="/search">
               Search
+            </Button>
+            <Button color="inherit" component={RouterLink} to="/recommendations">
+              Recommendations
             </Button>
             <IconButton component={RouterLink} to="/profile">
               <Avatar src={userAvatar} alt="User Avatar" sx={{ width: 40, height: 40 }} />
