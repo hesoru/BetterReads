@@ -18,6 +18,8 @@ import BackgroundImage from '../images/background.png';
 import { DetectiveDustyBlue } from '../styles/colors';
 import { BookPreview } from '../components/Book/BookPreview';
 import '../components/Book/BookPage.css';
+import BookUtils from "../utils/BookUtils.js";
+
 
 const genres = [
   "Fantasy", "Fiction", "Nonfiction", "Classics", "Science Fiction",
@@ -37,23 +39,27 @@ const SearchPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const params = new URLSearchParams();
-      if (trimmedQuery) {
-        params.append('q', trimmedQuery);
-      }
-      if (selectedGenres.length > 0) {
-        params.append('genres', selectedGenres.join(','));
-      }
-
-      let url = 'http://localhost:3000/books';
-      if (params.toString()) {
-        url = `http://localhost:3000/books/search?${params.toString()}`;
-      }
-
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Search failed');
-      const data = await res.json();
-      setSearchResults(data);
+      // const params = new URLSearchParams();
+      // if (trimmedQuery) {
+      //   params.append('q', trimmedQuery);
+      // }
+      // if (selectedGenres.length > 0) {
+      //   params.append('genre', selectedGenres.join(','));
+      // }
+      // console.log("params", params.toString());
+      // console.log("search query", searchQuery);
+      // console.log("selected genres", selectedGenres);
+      const data = await BookUtils.searchBooks({ q: trimmedQuery, genres: selectedGenres });
+      // let url = 'http://localhost:3000/books';
+      // if (params.toString()) {
+      //   url = `http://localhost:3000/books/search?${params.toString()}`;
+      // }
+      //
+      // const res = await fetch(url);
+      // if (!res.ok) throw new Error('Search failed');
+      // const data = await res.json();
+      console.log("data", data);
+      setSearchResults(data.results);
     } catch (err) {
       console.error('FETCH ERROR:', err);
       setError(err.message);

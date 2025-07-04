@@ -9,11 +9,37 @@ const BookUtils = {
     },
 
     // Search for books by query (title, author, genre, etc.)
-    async searchBooks(params = {}) {
-        const query = new URLSearchParams(params).toString();
-        const res = await fetch(`${BASE_URL}/books/search?${query}`);
-        if (!res.ok) throw new Error('Failed to search books');
-        return res.json();
+    async searchBooks({ q = '', genres = [], page = 1, limit = 10 } = {}) {
+        const params = new URLSearchParams();
+
+        if (q.trim()) {
+            params.append('q', q.trim());
+        }
+
+        if (Array.isArray(genres) && genres.length > 0) {
+            params.append('genre', genres.join(','));
+        }
+
+        params.append('page', page);
+        params.append('limit', limit);
+
+        const queryString = params.toString();
+        console.log("query: ", queryString);
+        const res = await fetch(`${BASE_URL}/books/genre-search?${queryString}`);
+
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error?.error || 'Failed to search books');
+        }
+
+        const data = await res.json();
+
+        return {
+            results: data.results,
+            page: data.page,
+            totalPages: data.totalPages,
+            totalResults: data.totalResults
+        };
     },
 
     async updateWishlist(bookId, userId, operation) {
