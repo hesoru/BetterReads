@@ -2,6 +2,7 @@ import express from 'express';
 import Books from '../model/books.js';
 import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
+import mongoose from "mongoose";
 const router = express.Router();
 
 // retrieve books via a generic search query
@@ -141,14 +142,36 @@ router.post('/:id/reviews', async (req, res) => {
         }
 
         // Create a new review if none exists
-        const review = new Reviews({
+        const newReview = new Reviews({
             bookId,
             userId,
             ...updateFields,
             createdAt: new Date(),
         });
 
-        const saved = await review.save();
+        const saved = await newReview.save();
+        const reviewId = saved._id;
+
+        const review = await Reviews.findById(reviewId);
+        if (!review) throw new Error('Review not found');
+
+        const book = await Books.findById(bookId);
+        if (!book) throw new Error('Book not found');
+
+        const user = await Users.findById(userId);
+        if (!user) throw new Error('User not found');
+
+        //  Increment book review count
+        book.reviewCount += 1;
+        await book.save();
+
+        //  Add review to user if not already included
+        const reviewObjId = new mongoose.Types.ObjectId(reviewId);
+
+        user.reviews.push(reviewObjId);
+        await user.save();
+
+
         res.status(201).json(saved);
     } catch (err) {
         res.status(500).json({ error: 'Failed to create or update review', details: err.message });

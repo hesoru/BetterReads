@@ -1,7 +1,11 @@
 import express from 'express';
 import Users from '../model/users.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 import {isStrongPassword} from "./utils.js";
+
 const router = express.Router();
 
 //TODO: add pagination?
@@ -57,7 +61,7 @@ router.get('/get-user/:username', async (req, res) => {
 // POST /signup - register new user
 router.post('/signup', async (req, res) => {
     try {
-        const { username, password, avatarUrl, favoriteGenres } = req.body;
+        const { username, password, avatarUrl, favoriteGenres, wishList } = req.body;
         if (!username || !password || !favoriteGenres ) return res.status(400).json({ error: 'Username and password required' });
 
         if (!isStrongPassword(password)) {
@@ -75,12 +79,15 @@ router.post('/signup', async (req, res) => {
             avatarUrl,
             favoriteGenres,
             reviews: [],
-            wishList: [],
+            wishList: wishList || [],
             join_time: new Date()
         });
 
         await newUser.save();
-        res.status(201).json({ message: 'User created', userId: newUser._id });
+        const token = jwt.sign({ id: newUser._id, username }, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRY
+        });
+        res.status(201).json({ message: 'User created', userId: newUser._id , token: token});
     } catch (err) {
         res.status(400).json({ error: 'Failed to create user', details: err.message });
     }
@@ -99,8 +106,10 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
-
-        res.json(user);
+        const token = jwt.sign({ id: user._id, username }, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRY
+        });
+        res.json({token, user});
         // TODO: Replace with real session or JWT
         //res.json({ message: 'Login successful', userId: user._id });
     } catch (err) {
