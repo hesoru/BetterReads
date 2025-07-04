@@ -62,14 +62,6 @@ export const signupUser = createAsyncThunk(
             }
 
             const user = await profileRes.json();
-
-            // // Step 3: Clear guest booklist if necessary
-            // const currentState = thunkAPI.getState();
-            // if (currentState.user?.user?.isGuest) {
-            //     thunkAPI.dispatch(clearBooklist());
-            // }
-            //
-
             thunkAPI.dispatch(setBooklist(user.wishList || []));
 
             return user; //
