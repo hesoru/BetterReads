@@ -134,12 +134,7 @@ export default function BookDetailsPage() {
                         <button className="btn" onClick={handleScrollToReview}>Make Review</button>
                     </div>
 
-                </div>
-
-                <div className="book-info">
-                    <h1 className="book-title">{book.title}</h1>
-                    <p className="book-summary">{book.description}</p>
-                    <div className="isbn">ISBN: {book.ISBN}</div>
+                </Grid>
 
                 <Grid item xs={12} md={8}>
                     <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2, fontSize: { xs: '1.8rem', md: '2.5rem' } }}>
@@ -148,17 +143,9 @@ export default function BookDetailsPage() {
                     <Typography sx={{ color: 'var(--color-text-light)', mb: 2 }}>
                         {book.description}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.9rem', color: 'var(--color-text-light)', mb: 2 }}>
-                        ISBN: {book.ISBN}
-                    </Typography>
                     
-                    <GenreTags genres={book.genre} />
                 </Grid>
             </Grid>
-
-
-                </div>
-            </div>
 
             <div className="reviews-container">
                 <div className="review-section" ref={reviewRef}>
@@ -188,7 +175,7 @@ export default function BookDetailsPage() {
                             Edit Review
                         </Button>
                     )}
-                </Box>
+                </div>
 
                 <Box sx={{ mt: 4 }}>
                     <Typography sx={sectionTitleStyle}>Reviews from Other Readers</Typography>
@@ -205,7 +192,7 @@ export default function BookDetailsPage() {
                         <Button sx={buttonStyle}>Look at more reviews...</Button>
                     </Box>
                 </Box>
-            </Box>
+            </div>
         </Container>
     );
 }
