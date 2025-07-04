@@ -30,17 +30,29 @@ const RecommendationsPage = () => {
         const userId = currentUser?.username || '';
         console.log("userId: ", userId);
         
-        let url = 'http://localhost:3000/api/recommend';
+        // Use the recommendations endpoint now that we've fixed the memory issues
+        let url = 'http://localhost:3000/recommendations';
         if (userId) {
-          url = `http://localhost:3000/api/recommend/${userId}`;
+          url = `http://localhost:3000/recommendations/${userId}`;
         }
+        console.log('Fetching recommendations from:', url);
         
         const res = await fetch(url);
         if (!res.ok) throw new Error('Failed to fetch recommendations');
         const data = await res.json();
         
+        console.log('Received data:', data);
+        
+        // Handle different response formats
         if (data && data.recommendations) {
+          // Original recommendations format
           setRecommendations(data.recommendations.map(book => book._id));
+        } else if (data && data.books) {
+          // Popular books format
+          setRecommendations(data.books.map(book => book._id || book.id));
+        } else if (Array.isArray(data)) {
+          // Direct array format
+          setRecommendations(data.map(book => book._id || book.id || book));
         }
       } catch (err) {
         console.error('Failed to fetch recommendations:', err);
