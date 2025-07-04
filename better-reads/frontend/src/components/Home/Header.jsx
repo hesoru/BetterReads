@@ -1,81 +1,86 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Button,
+  IconButton,
+  Avatar,
+  Menu,
+  MenuItem,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import BetterReadsLogo from '../../images/icons/BetterReadsLogo.svg';
+import { NoirNavy, PaperbackPureWhite } from '../../styles/colors';
 
 const Header = ({ userAvatar }) => {
-  return (
-    <header style={styles.header}>
-      <div style={styles.logo}>
-        <Link to="/">
-          <div style={styles.logoImage} />
-        </Link>
-      </div>
-      <nav style={styles.nav}>
-        <Link to="/search" style={styles.link}>Search</Link>
-        <Link to="/profile" style={styles.avatarLink}>
-          <img
-            src={userAvatar}
-            alt="User Avatar"
-            style={styles.avatar}
-          />
-        </Link>
-      </nav>
-    </header>
-  );
-};
+  const [anchorEl, setAnchorEl] = useState(null);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-const styles = {
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '1rem 2rem',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    width: '100%',
-    position: 'sticky',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1000,
-    backgroundColor: '#1e213d',
-    boxSizing: 'border-box',
-    margin: 0,
-  },
-  logo: {
-    width: '178px',
-    height: '38px',
-  },
-  logoImage: {
-    width: '100%',
-    height: '100%',
-    backgroundImage: `url(${BetterReadsLogo})`,
-    backgroundSize: 'contain',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-  },
-  nav: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1.5rem',
-  },
-  link: {
-    textDecoration: 'none',
-    color: '#ffffff',
-    fontWeight: '500',
-    fontSize: '1rem',
-    transition: 'color 0.3s ease',
-  },
-  avatarLink: {
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    objectFit: 'cover',
-  },
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <AppBar position="sticky" sx={{ backgroundColor: NoirNavy, padding: '5px 0' }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <RouterLink to="/">
+          <Box
+            component="img"
+            src={BetterReadsLogo}
+            alt="BetterReads Logo"
+            sx={{ height: 38, width: 178, display: 'block' }}
+          />
+        </RouterLink>
+
+        {isMobile ? (
+          <>
+            <IconButton
+              edge="end"
+              color="inherit"
+              aria-label="menu"
+              onClick={handleMenuOpen}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              sx={{
+                '& .MuiPaper-root': {
+                  backgroundColor: NoirNavy,
+                  color: PaperbackPureWhite,
+                },
+              }}
+            >
+              <MenuItem component={RouterLink} to="/search" onClick={handleMenuClose}>Search</MenuItem>
+              <MenuItem component={RouterLink} to="/profile" onClick={handleMenuClose}>Profile</MenuItem>
+            </Menu>
+          </>
+        ) : (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Button color="inherit" component={RouterLink} to="/search">
+              Search
+            </Button>
+            <IconButton component={RouterLink} to="/profile">
+              <Avatar src={userAvatar} alt="User Avatar" sx={{ width: 40, height: 40 }} />
+            </IconButton>
+          </Box>
+        )}
+      </Toolbar>
+    </AppBar>
+  );
 };
 
 export default Header;

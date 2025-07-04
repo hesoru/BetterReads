@@ -72,7 +72,9 @@ const Signup = () => {
 						</div>
 
 						{/* Genre dropdown should update setFavoriteGenres */}
-						<GenreDropDown onSelectGenres={setFavoriteGenres} />
+						<div className="genre-dropdown-container">
+							<GenreDropDown onSelectGenres={setFavoriteGenres} />
+						</div>
 
 						<div className="button-row">
 							<button type="submit" className="register-button">Register</button>
