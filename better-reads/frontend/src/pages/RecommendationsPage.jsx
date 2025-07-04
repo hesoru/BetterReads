@@ -5,12 +5,10 @@ import {
   CircularProgress,
   Container,
   Paper,
-  Divider
 } from '@mui/material';
 import BookGalleryManager from '../components/Book/BookGalleryManager';
 import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
 import BackgroundImage from '../images/background.svg';
-import { DetectiveDustyBlue } from '../styles/colors';
 import '../components/Book/BookPage.css';
 
 const RecommendationsPage = () => {
@@ -19,9 +17,24 @@ const RecommendationsPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Check if user is a guest
+  const [isGuest, setIsGuest] = useState(false);
+
+  useEffect(() => {
+    // Check if the user is a guest
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    setIsGuest(currentUser?.isGuest === true);
+  }, []);
+
   // Fetch recommendations on mount
   useEffect(() => {
     const fetchRecommendations = async () => {
+      if (isGuest) {
+        // Don't fetch personalized recommendations for guest users
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setError(null);
       try {
@@ -30,11 +43,13 @@ const RecommendationsPage = () => {
         const userId = currentUser?.username || '';
         console.log("userId: ", userId);
         
-        // Use the recommendations endpoint now that we've fixed the memory issues
-        let url = 'http://localhost:3000/recommendations';
-        if (userId) {
-          url = `http://localhost:3000/recommendations/${userId}`;
+        if (!userId) {
+          setError('User ID not found');
+          return;
         }
+        
+        // Use the recommendations endpoint
+        const url = `http://localhost:3000/recommendations/${userId}`;
         console.log('Fetching recommendations from:', url);
         
         const res = await fetch(url);
@@ -98,29 +113,31 @@ const RecommendationsPage = () => {
           </Box>
         ) : (
           <>
-            {/* Personalized Recommendations */}
             <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
-              <Typography variant="h5" sx={{ mb: 2 }}>
+              <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
                 Recommended for You
               </Typography>
-              {recommendations.length > 0 ? (
+              {isGuest ? (
+                <Typography>
+                  Guest user: log in to see personalized recommendations.
+                </Typography>
+              ) : recommendations.length > 0 ? (
                 <BookGalleryManager books={recommendations} limit={10} />
               ) : error ? (
                 <Typography color="error">{error}</Typography>
               ) : (
-                <Typography>No personalized recommendations available yet. Try rating some books!</Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>No personalized recommendations available yet. Try rating some books!</Typography>
               )}
             </Paper>
 
-            {/* Popular Books */}
             <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Popular Books
+              <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
+                Top-Rated Books
               </Typography>
               {popularBooks.length > 0 ? (
                 <BookGalleryManager books={popularBooks} limit={10} />
               ) : (
-                <Typography>Loading popular books...</Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>Loading top-rated books...</Typography>
               )}
             </Paper>
           </>
