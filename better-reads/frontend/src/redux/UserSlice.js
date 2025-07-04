@@ -51,7 +51,6 @@ const userSlice = createSlice({
                 state.status = 'succeeded';
                 state.isGuest = false;
             })
-
             .addCase(fetchUserProfile.fulfilled, (state, action) => {
                 state.user = action.payload;
                 state.isGuest = false;
