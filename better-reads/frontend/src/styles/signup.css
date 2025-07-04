@@ -1,15 +1,40 @@
 .signup-page {
+
+.genre-dropdown-container .MuiSelect-select {
+    font-family: 'Albert Sans', sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    background-color: transparent;
+    border: 1px solid #151B54;
+    border-radius: 4px; /* Or whatever the border-radius of your button is */
+    padding: 10px 15px; /* Adjust padding to match your button */
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.genre-dropdown-container .MuiSelect-select span {
+    color: #FFFFFF !important; /* Use !important to override inline style */
+}
+
+.genre-dropdown-container .MuiSelect-select:hover {
+    background-color: green;
+    color: white;
+}
 	min-height: 100vh;
 	margin: 0;
 	color: white;
-	background-image: url('../images/background.svg');
+	background-image: url('../images/background.png');
 	background-size: cover;
 	background-position: center;
 }
 
 h1 {
-	text-align: center;
-	font-size: xxx-large;
+  text-align: center;
+  /* Use clamp to ensure font size is responsive but doesn't get too large */
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  margin: 0.25rem 0;
+  word-wrap: break-word;
 }
 
 .better {
