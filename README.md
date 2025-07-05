@@ -25,15 +25,53 @@ docker-compose down        # tear down container
 
 ## Environment Variables
 
-The Docker Compose files include default environment variables. For custom configurations, create a `.env` file in the project root directory.
+The Docker Compose file is configured to use environment variables from `.env` files. For your convenience, we've included `.env.example` files in the repository that you can use as templates.
 
-Example `.env` file:
+### Setting Up Environment Files
+
+1. **Root Directory**: Copy `.env.example` to `.env` in the project root directory for Docker Compose variables:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Service-Specific Environment Files**: Each service has its own environment file:
+   ```bash
+   # Backend service
+   cp backend/.env.example backend/.env
+   
+   # Recommender service
+   cp recommender/.env.example recommender/.env
+   
+   # Frontend service
+   cp frontend/.env.example frontend/.env
+   ```
+
+3. **Environment Variables in Docker**: When running with Docker Compose, the environment variables are loaded from:
+   - The root `.env` file (for Docker Compose variables)
+   - Service-specific `.env` files (for each service)
+   - Environment variables defined directly in the `docker-compose.yml` file
+
+### Example Root `.env` File
 ```
+# MongoDB Configuration
+MONGO_ROOT_USERNAME=root
+MONGO_ROOT_PASSWORD=rootpassword
+MONGO_DATABASE=betterreads
 MONGO_URI=mongodb://root:rootpassword@mongodb:27017/betterreads?authSource=admin
+
+# Redis Configuration
 REDIS_HOST=redis
 REDIS_PORT=6379
 REDIS_DB=0
-JWT_SECRET=your_custom_jwt_secret
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret_key
+JWT_EXPIRY=7d
+
+# Server Configuration
+BACKEND_PORT=3000
+RECOMMENDER_PORT=5001
+FRONTEND_PORT=80
 ```
 
 ## Milestones
