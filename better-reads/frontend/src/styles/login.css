@@ -13,6 +13,8 @@
 }
 
 h1 {
+    font-family: 'Source Serif Pro', serif;
+    font-weight: bold;
   text-align: center;
   /* Use clamp to ensure font size is responsive but doesn't get too large */
   font-size: clamp(2.5rem, 8vw, 4rem);
