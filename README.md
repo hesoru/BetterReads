@@ -70,7 +70,8 @@ The following features have been implemented for Milestone 2:
 The following featuers have been implemented for Milestone 3:
 - UI has been made responsive. 
 - NLP Book search bar now has additional genre selection option.
-- Fixed background images.
+- Fixed background images. 
+- Added pagination for book search results.
 - Implemented recommender system (external API): genre-based, collaborative filtering, and popularity-based recommendations.
 - Implemented Redis caching for user-item matrix and popular books.
 

@@ -50,7 +50,7 @@ const BookReview = ({
       <div className="review-right-column">
         {editable ? (
           <>
-            <StarRating rating={editRating} onRating={setEditRating} editable={true} />
+                        <StarRating rating={editRating} onChange={(e, newValue) => setEditRating(newValue)} isEditable={true} />
             <textarea
               className="review-textarea"
               value={editText}
@@ -64,7 +64,7 @@ const BookReview = ({
           </>
         ) : (
           <>
-            <StarRating rating={rating} editable={false} />
+                        <StarRating rating={rating} isEditable={false} />
             <p className="review-text">{reviewText}</p>
           </>
         )}
