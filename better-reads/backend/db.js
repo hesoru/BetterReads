@@ -1,5 +1,11 @@
 import mongoose from 'mongoose';
-const mongoURI = 'mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/bookdb?retryWrites=true&w=majority&appName=Sandbox';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
+
+// Use environment variable for MongoDB URI or fall back to the original URI
+const mongoURI = process.env.MONGO_URI || 'mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/bookdb?retryWrites=true&w=majority&appName=Sandbox';
 
 const connectDB = async () => {
     try {
