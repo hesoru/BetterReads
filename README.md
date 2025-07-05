@@ -82,7 +82,7 @@ The following featuers have been implemented for Milestone 3:
 - Implemented recommender system (external API): genre-based, collaborative filtering, and popularity-based recommendations.
 - Implemented Redis caching for user-item matrix and popular books.
 
-### Test Suite section
+### Test Suite Section
 1. Test folder were created including setup.js, books.test.js, reviews.tests.js and users.test.js. 
 2. Test using Mocha, Chai, Supertest, Mongodb-Memory-Server. Test report is generated using mochawesome.
 3. There are 39 total tests covering API calls of books.js, reviews.js and users.js
