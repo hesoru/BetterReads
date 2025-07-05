@@ -399,6 +399,100 @@ header .button {
     line-height: 1.4;
 }
 
+/* Styles for BookReview component */
+.book-review-card {
+  background-color: #DFE5EF; /* DetectiveDustyBlue */
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-family: 'Arial, sans-serif';
+  color: #1E213D; /* NoirNavy */
+  max-width: 1044px;
+  margin: 18px auto;
+}
+
+.review-left-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.review-profile-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  background-color: #FFFFFF; /* PaperbackPureWhite */
+}
+
+.review-username {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.review-right-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.book-review-card .review-text {
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.review-textarea {
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-family: 'Arial, sans-serif';
+}
+
+.review-submit-button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #1E213D; /* NoirNavy */
+  color: #FFFFFF; /* PaperbackPureWhite */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Responsive styles for the review card */
+@media (max-width: 768px) {
+  .book-review-card {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .review-left-column {
+    margin-bottom: 20px;
+  }
+
+  .review-right-column {
+    align-items: center;
+    text-align: center;
+  }
+
+  .book-review-card .review-text {
+    text-align: center;
+  }
+}
+
+
 /* Load More Reviews Button Container */
 .load-more-reviews {
     display: flex;

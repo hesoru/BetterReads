@@ -10,7 +10,7 @@ import {
   Select,
   MenuItem,
   OutlinedInput,
-  Pagination,
+  Button,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
@@ -35,19 +35,25 @@ const SearchPage = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
-  const handleSearch = useCallback(async (pageToFetch = 1) => {
+  const handleSearch = useCallback(async (pageToFetch = 1, append = false) => {
     const trimmedQuery = searchQuery.trim();
     setLoading(true);
     setError(null);
     try {
       const data = await BookUtils.searchBooks({ q: trimmedQuery, genres: selectedGenres, page: pageToFetch });
-      setSearchResults(data.results || []);
+      if (append) {
+        setSearchResults(prev => [...prev, ...(data.results || [])]);
+      } else {
+        setSearchResults(data.results || []);
+      }
       setTotalPages(data.totalPages || 0);
       setPage(pageToFetch);
     } catch (err) {
       console.error('FETCH ERROR:', err);
       setError(err.message);
-      setSearchResults([]);
+      if (!append) {
+        setSearchResults([]);
+      }
       setTotalPages(0);
     } finally {
       setLoading(false);
@@ -56,14 +62,14 @@ const SearchPage = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      handleSearch(1);
+      handleSearch(1, false); // Always fetch page 1 and replace results on new search
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery, selectedGenres, handleSearch]);
 
-  const handlePageChange = (event, value) => {
-    handleSearch(value);
+  const handleShowMore = () => {
+    handleSearch(page + 1, true); // Fetch next page and append
   };
 
   const handleGenreChange = (event) => {
@@ -110,17 +116,17 @@ const SearchPage = () => {
         </Typography>
       </section>
 
-      <Box sx={{
-        display: 'flex',
-        flexDirection: { xs: 'column', md: 'row' },
-        gap: 2,
-        alignItems: 'center',
-        maxWidth: 900,
-        mx: 'auto',
-        mb: 4,
-        px: 2,
-        mt: 4
-      }}>
+      <Box sx={{ backgroundColor: 'white', flexGrow: 1, paddingTop: '2rem' }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          gap: 2,
+          alignItems: 'center',
+          maxWidth: 900,
+          mx: 'auto',
+          mb: 4,
+          px: 2,
+        }}>
         <TextField
           fullWidth
           variant="outlined"
@@ -219,17 +225,31 @@ const SearchPage = () => {
         )}
       </Grid>
 
-      {totalPages > 1 && (
+      {page < totalPages && (
         <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={handlePageChange}
-            color="primary"
-            size="large"
-          />
+          <Button
+            variant="outlined"
+            onClick={handleShowMore}
+            disabled={loading}
+            sx={{
+              fontFamily: 'Albert Sans, sans-serif',
+              fontStyle: 'italic',
+              color: '#151B54',
+              borderColor: '#151B54',
+              borderWidth: '1px',
+              backgroundColor: 'transparent',
+              '&:hover': {
+                backgroundColor: '#151B54',
+                color: 'white',
+                borderColor: '#151B54',
+              },
+            }}
+          >
+            {loading ? 'Loading...' : 'Show More Books'}
+          </Button>
         </Box>
       )}
+      </Box>
     </div>
   );
 };
