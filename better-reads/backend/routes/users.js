@@ -21,19 +21,33 @@ router.get('/', async (req, res) => {
     }
 });
 
-// retrieve userImageURL by busername// GET /avatarUrl/:username - Retrieve avatar URL by username
-router.get('/avatarUrl/:username', async (req, res) => {
-  try {
-    const user = await Users.findOne({ username: req.params.username });
+// Get user details by ID or username
+router.get('/details/:identifier', async (req, res) => {
+    try {
+        const { identifier } = req.params;
+        let user;
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+        // Check if the identifier is a valid MongoDB ObjectId
+        if (mongoose.Types.ObjectId.isValid(identifier)) {
+            user = await Users.findById(identifier);
+        } else {
+            // If not a valid ID, assume it's a username
+            user = await Users.findOne({ username: identifier });
+        }
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return essential, non-sensitive user data
+        res.json({
+            id: user._id,
+            username: user.username,
+            avatarUrl: user.avatarUrl
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
-
-    res.json( user.avatarUrl );
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch avatar URL', details: err.message });
-  }
 });
 
 // GET /users/:id - get profile

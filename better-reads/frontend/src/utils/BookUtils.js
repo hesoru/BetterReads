@@ -83,12 +83,22 @@ const BookUtils = {
         return res.json();
     },
 
-    // Get avatarUrl from username
-    async getUserAvatar(username) {
-        const res = await fetch(`${BASE_URL}/users/avatarUrl/${username}`);
-        //console.log("avatarurl", res);
-        if (!res.ok) throw new Error('Failed to fetch reviews');
-        return res.json();
+    // Get avatarUrl from username or userId
+    async getUserAvatar(identifier) {
+        try {
+            const res = await fetch(`${BASE_URL}/users/details/${identifier}`);
+            if (!res.ok) {
+                // It's fine if a user isn't found (e.g., deleted), so just warn and return null.
+                console.warn(`Could not fetch user details for identifier: ${identifier}. Status: ${res.status}`);
+                return null;
+            }
+            const data = await res.json();
+            return data.avatarUrl; // The new endpoint returns an object with user details
+        } catch (err) {
+            // Catch network errors and prevent the whole page from crashing.
+            console.error(`Failed to fetch avatar for identifier ${identifier}:`, err);
+            return null;
+        }
     },
 
     // Get a single user's review for a book

@@ -228,11 +228,7 @@ router.post('/:id/reviews', async (req, res) => {
             createdAt: new Date(),
         });
 
-        const saved = await newReview.save();
-        const reviewId = saved._id;
-
-        const review = await Reviews.findById(reviewId);
-        if (!review) throw new Error('Review not found');
+        const savedReview = await newReview.save();
 
         const book = await Books.findById(bookId);
         if (!book) throw new Error('Book not found');
@@ -245,9 +241,7 @@ router.post('/:id/reviews', async (req, res) => {
         await book.save();
 
         //  Add review to user if not already included
-        const reviewObjId = new mongoose.Types.ObjectId(reviewId);
-
-        user.reviews.push(reviewObjId);
+        user.reviews.push(savedReview._id);
         await user.save();
         
         // Update the recommender matrix
@@ -259,7 +253,7 @@ router.post('/:id/reviews', async (req, res) => {
             // Don't fail the request if matrix update fails
         }
         
-        res.status(201).json(saved);
+        res.status(201).json(savedReview);
     } catch (err) {
         res.status(500).json({ error: 'Failed to create or update review', details: err.message });
     }
