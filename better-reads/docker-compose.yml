@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:latest
+    container_name: betterreads-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+    networks:
+      - betterreads-network
+
+  # Redis service
+  redis:
+    image: redis:latest
+    container_name: betterreads-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - betterreads-network
+
+  # Backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: betterreads-backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+      - redis
+      - recommender
+    environment:
+      - MONGO_URI=mongodb://root:rootpassword@mongodb:27017/betterreads?authSource=admin
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - JWT_SECRET=your_jwt_secret_key
+      - PORT=3000
+    networks:
+      - betterreads-network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  # Recommender service
+  recommender:
+    build:
+      context: ./recommender
+      dockerfile: Dockerfile
+    container_name: betterreads-recommender
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mongodb
+      - redis
+    environment:
+      - MONGO_URI=mongodb://root:rootpassword@mongodb:27017/betterreads?authSource=admin
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    networks:
+      - betterreads-network
+    volumes:
+      - ./recommender:/app
+
+  # Frontend service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: betterreads-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - betterreads-network
+
+networks:
+  betterreads-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:

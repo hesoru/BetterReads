@@ -30,8 +30,7 @@ async function getRecommendations(userId) {
     // Try to get recommendations from the API
     let apiRecommendations = [];
     try {
-      // const response = await axios.post('http://recommender:5001/recommend', {
-      const response = await axios.post('http://localhost:5001/recommend', {
+      const response = await axios.post('http://recommender:5001/recommend', {
         user_id: userId.toString(),
         interactions: [] // Add empty interactions array to satisfy API requirement
       });
