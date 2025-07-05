@@ -24,8 +24,11 @@ export const loginUser = createAsyncThunk(
             }
 
             const data = await res.json();
+            // Store both token and user data in localStorage
             localStorage.setItem('token', data.token);
-            thunkAPI.dispatch(setBooklist(data.user.wishList));
+            localStorage.setItem('user', JSON.stringify(data.user));
+            console.log('User data stored in localStorage:', data.user);
+            thunkAPI.dispatch(setBooklist(data.user.wishList || []));
             return data.user;
         } catch (err) {
             return thunkAPI.rejectWithValue('Login request failed', err);
@@ -41,7 +44,16 @@ export const signupUser = createAsyncThunk(
             const { getState } = thunkAPI;
             //const state = getState();
             const wishList  = thunkAPI.getState().booklist.items;
-            console.log("Wishlist: ", wishList);
+            
+            // Debug logs
+            console.log("Signup Request Data:", { 
+                username, 
+                passwordLength: password?.length,
+                favoriteGenres, 
+                wishList,
+                backendUrl: import.meta.env.VITE_BACKEND_URL
+            });
+            
             // Step 1: POST to /signup
             const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/signup`, {
                 method: 'POST',
@@ -51,7 +63,8 @@ export const signupUser = createAsyncThunk(
 
             if (!res.ok) {
                 const error = await res.json();
-                return thunkAPI.rejectWithValue(error.message || 'Signup failed');
+                console.error('Signup error response:', error);
+                return thunkAPI.rejectWithValue(error.error || error.message || 'Signup failed');
             }
 
             // Step 2: GET full user info
@@ -62,9 +75,14 @@ export const signupUser = createAsyncThunk(
             }
 
             const user = await profileRes.json();
+            
+            // Store user data in localStorage after signup
+            localStorage.setItem('user', JSON.stringify(user));
+            console.log('User data stored in localStorage after signup:', user);
+            
             thunkAPI.dispatch(setBooklist(user.wishList || []));
 
-            return user; //
+            return user;
         } catch (err) {
             return thunkAPI.rejectWithValue('Signup request failed');
         }
@@ -97,8 +115,13 @@ export const logoutUser = createAsyncThunk('user/logoutUser', async (_, thunkAPI
     const { dispatch} = thunkAPI;
     dispatch(clearUser());
     dispatch(clearBooklist());
+    
+    // Clear all authentication and user data from localStorage
     localStorage.removeItem('appState');
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    
+    console.log('User logged out, localStorage cleared');
     return true;
 });
 

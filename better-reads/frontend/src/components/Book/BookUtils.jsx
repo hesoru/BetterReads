@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './BookPage.css';
 
 export const GenreTags = ({ genres }) => {
+    const [showAll, setShowAll] = useState(false);
+
     if (!Array.isArray(genres)) return null;
 
     const MAX_TAGS = 2;
-    const visibleTags = genres.slice(0, MAX_TAGS);
-    const hasMore = genres.length > MAX_TAGS;
+    const visibleTags = showAll ? genres : genres.slice(0, MAX_TAGS);
+    const hasMore = !showAll && genres.length > MAX_TAGS;
+
+    const handleShowMore = () => {
+        setShowAll(true);
+    };
 
     return (
         <div className="genre-tags">
@@ -16,7 +22,12 @@ export const GenreTags = ({ genres }) => {
                 </span>
             ))}
             {hasMore && (
-                <span className="genre-tag more-tag" title={genres.slice(MAX_TAGS).join(', ')}>
+                <span
+                    className="genre-tag more-tag"
+                    title="Show all genres"
+                    onClick={handleShowMore}
+                    style={{ cursor: 'pointer' }}
+                >
                     +{genres.length - MAX_TAGS} more
                 </span>
             )}

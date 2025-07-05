@@ -4,6 +4,7 @@ import cors from 'cors';
 import userRoutes from "./routes/users.js";
 import reviewRoutes from "./routes/reviews.js";
 import bookRoutes from "./routes/books.js";
+import recommendationsRoutes from "./routes/recommendations.js";
 
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(cors());
 app.use('/users', userRoutes);
 app.use('/reviews', reviewRoutes);
 app.use('/books', bookRoutes);
+app.use('/recommendations', recommendationsRoutes);
 
 if (process.env.NODE_ENV !== 'test') {
   (async () => {

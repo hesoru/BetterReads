@@ -9,11 +9,38 @@ const BookUtils = {
     },
 
     // Search for books by query (title, author, genre, etc.)
-    async searchBooks(params = {}) {
-        const query = new URLSearchParams(params).toString();
-        const res = await fetch(`${BASE_URL}/books/search?${query}`);
-        if (!res.ok) throw new Error('Failed to search books');
-        return res.json();
+    //TODO: decide on page/limit
+    async searchBooks({ q = '', genres = [], page = 1, limit = 10 } = {}) {
+        const params = new URLSearchParams();
+
+        if (q.trim()) {
+            params.append('q', q.trim());
+        }
+
+        if (Array.isArray(genres) && genres.length > 0) {
+            params.append('genre', genres.join(','));
+        }
+
+        params.append('page', page);
+        params.append('limit', limit);
+
+        const queryString = params.toString();
+        console.log("query: ", queryString);
+        const res = await fetch(`${BASE_URL}/books/genre-search?${queryString}`);
+
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error?.error || 'Failed to search books');
+        }
+
+        const data = await res.json();
+
+        return {
+            results: data.results,
+            page: data.page,
+            totalPages: data.totalPages,
+            totalResults: data.totalResults
+        };
     },
 
     async updateWishlist(bookId, userId, operation) {
@@ -56,12 +83,22 @@ const BookUtils = {
         return res.json();
     },
 
-    // Get avatarUrl from username
-    async getUserAvatar(username) {
-        const res = await fetch(`${BASE_URL}/users/avatarUrl/${username}`);
-        //console.log("avatarurl", res);
-        if (!res.ok) throw new Error('Failed to fetch reviews');
-        return res.json();
+    // Get avatarUrl from username or userId
+    async getUserAvatar(identifier) {
+        try {
+            const res = await fetch(`${BASE_URL}/users/details/${identifier}`);
+            if (!res.ok) {
+                // It's fine if a user isn't found (e.g., deleted), so just warn and return null.
+                console.warn(`Could not fetch user details for identifier: ${identifier}. Status: ${res.status}`);
+                return null;
+            }
+            const data = await res.json();
+            return data.avatarUrl; // The new endpoint returns an object with user details
+        } catch (err) {
+            // Catch network errors and prevent the whole page from crashing.
+            console.error(`Failed to fetch avatar for identifier ${identifier}:`, err);
+            return null;
+        }
     },
 
     // Get a single user's review for a book
