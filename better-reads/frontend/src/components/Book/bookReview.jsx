@@ -1,80 +1,95 @@
-import React, { useEffect, useState } from 'react';
-import StarRating from '../ratings/starRating';
+import React, {useEffect, useState} from 'react';
+import StarRating from '../ratings/starRating.jsx'; // Assumes StarRating is in components/ratings/
 import { DetectiveDustyBlue, NoirNavy, PaperbackPureWhite } from '../../styles/colors.js';
 
-// This component handles both displaying an existing review and creating/editing a new one.
 const BookReview = ({
-  review, // The existing review object, if it exists
-  user,   // The current user object
-  book,   // The book object
-  editable = false, // Flag to determine if the component is in edit/create mode
-  onSave, // Function to call when submitting the review
-  onCancel, // Function to call when cancelling an edit
-}) => {
-  const [currentRating, setCurrentRating] = useState(0);
-  const [reviewText, setReviewText] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  userImage, // Default placeholder image
+  username,
+  rating , // Default rating
+  reviewText = "No review left yet.", // Default review text,
+    //TODO: Ore was here
+                      editable = false,
+                      onSave = () => {}
 
-  // Initialize state when the review prop changes
+}) => {
+
+  const [editRating, setEditRating] = useState(rating ?? null);
+  const [editText, setEditText] = useState(reviewText && reviewText !== "No review left yet." ? reviewText : "");
+  const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
-    setCurrentRating(review?.rating || 0);
-    setReviewText(review?.review_text || '');
-  }, [review]);
+    setEditRating(rating ?? null);
+    setEditText(reviewText && reviewText !== "No review left yet." ? reviewText : "");
+  }, [rating, reviewText]);
 
   const handleSubmit = async () => {
-    if (!user || !book) {
-      console.error("User or book information is missing.");
-      return;
-    }
-    setIsSubmitting(true);
+    setSubmitting(true);
     try {
-      // The onSave function is expected to be passed from the parent (BookDetailsPage)
-      // and should handle the API call.
-      await onSave({ rating: currentRating, description: reviewText });
+      await onSave({ rating: editRating, description: editText });
     } catch (err) {
       console.error('Failed to save review:', err);
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
-
-  // Styling (can be moved to a CSS file later)
-  const containerStyle = {
+  const cardStyle = {
     backgroundColor: DetectiveDustyBlue,
     padding: '20px',
     borderRadius: '20px',
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center', // Vertically center align the columns
     gap: '20px',
-    fontFamily: 'Arial, sans-serif',
-    color: NoirNavy,
-    maxWidth: '1044px',
-    margin: '18px auto',
+    fontFamily: 'Arial, sans-serif', // A basic font stack
+    color: NoirNavy, // Default text color for the card
+    maxWidth: '1044px', // Example max width
+    margin: '18px auto' // 18px top/bottom for 36px spacing, auto left/right for centering
   };
 
   const leftColumnStyle = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'center', // Center image and username
     textAlign: 'center',
-    flexShrink: 0,
+    flexShrink: 0 // Prevent this column from shrinking
   };
 
   const profileImageStyle = {
-    width: '80px',
-    height: '80px',
-    borderRadius: '50%',
-    objectFit: 'cover',
+    width: '120px',
+    height: '120px',
+    borderRadius: '50%', // Make it circular
+    objectFit: 'cover', // Ensure the image covers the area well
     marginBottom: '10px',
-    backgroundColor: PaperbackPureWhite,
+    backgroundColor: PaperbackPureWhite // A light background for the placeholder
+  };
+
+  const usernameStyle = {
+    fontWeight: 'bold',
+    fontSize: '16px'
   };
 
   const rightColumnStyle = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
-    gap: '10px',
-    flexGrow: 1,
+    alignItems: 'flex-start', // Left-align content (star rating, review text)
+    gap: '10px', // Space between star rating and review text
+    flexGrow: 1 // Allow this column to take remaining space
+  };
+
+  const reviewTextStyle = {
+    fontSize: '14px',
+    lineHeight: '1.6',
+    textAlign: 'left' // Ensure review text is left-aligned
+  };
+
+  //TODO: Ore was here
+  const textareaStyle = {
+    width: '100%',
+    fontSize: '14px',
+    lineHeight: '1.6',
+    padding: '10px',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    resize: 'vertical'
   };
 
   const buttonStyle = {
@@ -85,46 +100,39 @@ const BookReview = ({
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   };
-
-  const username = user?.username || "Guest";
-  const userImage = user?.profile_image_url || '../../src/images/icons/User_Profile_Image_NoLogo.png';
-
   return (
-    <div style={containerStyle}>
+    <div style={cardStyle}>
       <div style={leftColumnStyle}>
-        <img alt={`${username}'s profile`} src={userImage} style={profileImageStyle} />
-        <p style={{ fontWeight: 'bold', fontSize: '16px', margin: 0 }}>{username}</p>
+        <img src={userImage} alt={`${username}'s profile`} style={profileImageStyle} />
+        <p style={usernameStyle}>{username}</p>
       </div>
       <div style={rightColumnStyle}>
         {editable ? (
           <>
             <StarRating
-              rating={currentRating}
+              rating={editRating}
               isEditable={true}
               onChange={(event, newValue) => {
-                setCurrentRating(newValue);
+                setEditRating(newValue);
               }}
             />
             <textarea
               placeholder="Write your review..."
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-              rows="4"
-              style={{ width: '100%', fontSize: '14px', lineHeight: '1.6', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', resize: 'vertical' }}
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              rows={4}
+              style={textareaStyle}
             />
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button onClick={handleSubmit} disabled={isSubmitting} style={buttonStyle}>
-                {isSubmitting ? 'Submitting...' : 'Submit Review'}
-              </button>
-              {onCancel && <button onClick={onCancel} style={{...buttonStyle, backgroundColor: '#777'}}>Cancel</button>}
-            </div>
+            <button onClick={handleSubmit} style={buttonStyle} disabled={submitting}>
+              {submitting ? 'Submitting...' : 'Submit Review'}
+            </button>
           </>
         ) : (
           <>
-            <StarRating rating={currentRating} />
-            <p style={{ margin: 0 }}>{reviewText || 'No review text.'}</p>
+            <StarRating rating={rating} isEditable={false} />
+            <p style={reviewTextStyle}>{reviewText}</p>
           </>
         )}
       </div>
