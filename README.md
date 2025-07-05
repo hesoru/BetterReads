@@ -7,7 +7,7 @@
 
 Our application is an intelligent, social book discovery platform tailored to passionate readers who want a more engaging and personalized experience than traditional apps like Goodreads. It allows users to explore and write reviews for books; receive personalized reading recommendations; and curate reading wishlists. By storing book metadata, user preferences, and behavioral insights, the platform delivers a highly individualized user experience. Built on MongoDB, it features account management, a natural language processing (NLP)–powered search engine, a reading recommendation system, and interactive user features.
 
-## Instruction for run the app with Docker
+## Instruction for Running the App with Docker
 
 Clone the repository and run with Docker Compose. In your bash terminal, run:
 
@@ -17,7 +17,27 @@ docker-compose up --build  # start container
 docker-compose down        # tear down container
 ```
 
+## Accessing the Application
+
+- **Frontend**: http://localhost
+- **Backend API**: http://localhost:3000
+- **Recommender API**: http://localhost:5001
+
+## Environment Variables
+
+The Docker Compose files include default environment variables. For custom configurations, create a `.env` file in the project root directory.
+
+Example `.env` file:
+```
+MONGO_URI=mongodb://root:rootpassword@mongodb:27017/betterreads?authSource=admin
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+JWT_SECRET=your_custom_jwt_secret
+```
+
 ## Milestones
+
 ### Milestone 1:
 The following frontend features have been implemented:
 - Book product card component
@@ -50,7 +70,9 @@ The following features have been implemented for Milestone 2:
 The following featuers have been implemented for Milestone 3:
 - UI has been made responsive. 
 - NLP Book search bar now has additional genre selection option.
-- Fixed background images. 
+- Fixed background images.
+- Implemented recommender system (external API): genre-based, collaborative filtering, and popularity-based recommendations.
+- Implemented Redis caching for user-item matrix and popular books.
 
 ### TEST section
 1. Test folder were created including setup.js, books.test.js, reviews.tests.js and users.test.js. 
