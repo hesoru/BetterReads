@@ -94,4 +94,5 @@ npm test    # run test
 
 # The test result report can be reviewed by opending mochawesome.html by browser. The mochawesome.html is located at better-reads/backend/mochawesome-report/mochawesome.html
 ```
-Link for ref: http://localhost:63342/Team25_BetterReads/better-reads/backend/mochawesome-report/mochawesome.html?_ijt=unh7lprp3vuq4p65q22r3jm38p&_ij_reload=RELOAD_ON_SAVE
+## Accessing test suite html file instrutions: 
+   - The test result report can be reviewed by opending mochawesome.html by browser. The mochawesome.html is located at better-reads/backend/mochawesome-report/mochawesome.html
