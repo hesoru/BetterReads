@@ -51,6 +51,8 @@ The following featuers have been implemented for Milestone 3:
 - UI has been made responsive. 
 - NLP Book search bar now has additional genre selection option.
 - Fixed background images. 
+- Added pagination for book search results.
+- Added genre expansion on book details and book cards
 
 ### TEST section
 1. Test folder were created including setup.js, books.test.js, reviews.tests.js and users.test.js. 
