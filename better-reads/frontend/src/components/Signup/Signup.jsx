@@ -14,21 +14,66 @@ const Signup = () => {
 	const [password, setPassword] = useState('');
 	const [favoriteGenres, setFavoriteGenres] = useState([]);
 	const [loading, setLoading] = useState(false);
+	// Add this state for password validation
+	const [passwordError, setPasswordError] = useState('');
+	// Add state for signup error
+	const [signupError, setSignupError] = useState('');
+
+	// Add this function to check password strength
+	const checkPasswordStrength = (password) => {
+		const minLength = 12;
+		const hasUpper = /[A-Z]/.test(password);
+		const hasLower = /[a-z]/.test(password);
+		const hasDigit = /[0-9]/.test(password);
+		const hasSymbol = /[^A-Za-z0-9]/.test(password);
+	
+		if (password.length < minLength) {
+		  setPasswordError('Password must be at least 12 characters long');
+		  return false;
+		} else if (!hasUpper) {
+		  setPasswordError('Password must include at least one uppercase letter');
+		  return false;
+		} else if (!hasLower) {
+		  setPasswordError('Password must include at least one lowercase letter');
+		  return false;
+		} else if (!hasDigit) {
+		  setPasswordError('Password must include at least one number');
+		  return false;
+		} else if (!hasSymbol) {
+		  setPasswordError('Password must include at least one special character');
+		  return false;
+		} else {
+		  setPasswordError('');
+		  return true;
+		}
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		if (loading) return; // prevent duplicate calls
+
+		// Clear previous errors
+		setSignupError('');
+
+		// Validate password first
+		if (!checkPasswordStrength(password)) {
+			return; // Stop submission if password is invalid
+		}
+
+		// Ensure favoriteGenres is not empty
+		const genresToSubmit = favoriteGenres.length > 0 ? favoriteGenres : ['Fiction']; // Default to Fiction if no genres selected
+
 		setLoading(true);
 
 		try {
 
-			const result = await dispatch(signupUser({ username, password, favoriteGenres}));
+			const result = await dispatch(signupUser({ username, password, favoriteGenres: genresToSubmit}));
 
 			if (signupUser.fulfilled.match(result)) {
 				navigate('/search');
 			} else {
-				alert(`Signup failed: ${result.payload}`);
+				setSignupError(result.payload);
 			}
 		} catch (err) {
 			alert('Unexpected signup error');
@@ -66,13 +111,33 @@ const Signup = () => {
 								type="password"
 								placeholder="Enter your password"
 								value={password}
-								onChange={(e) => setPassword(e.target.value)}
+								onChange={(e) => {
+								  setPassword(e.target.value);
+								  checkPasswordStrength(e.target.value);
+								}}
 								required
 							/>
 						</div>
-
+						
 						{/* Genre dropdown should update setFavoriteGenres */}
-						<GenreDropDown onSelectGenres={setFavoriteGenres} />
+						<div className="genre-dropdown-container">
+							<GenreDropDown onSelectGenres={setFavoriteGenres} />
+						</div>
+
+						{passwordError && (
+							<div className="password-error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '5px', textAlign: 'center' }}>
+							  {passwordError}
+							</div>
+						)}
+						<div className="password-requirements" style={{ fontSize: '0.8rem', marginTop: '5px', textAlign: 'center' }}>
+							Password must be at least 12 characters and include uppercase, lowercase, number, and symbol.
+						</div>
+						
+						{signupError && (
+							<div className="signup-error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '10px', textAlign: 'center', padding: '5px', backgroundColor: 'rgba(255,0,0,0.1)', borderRadius: '4px' }}>
+								Error: {signupError}
+							</div>
+						)}
 
 						<div className="button-row">
 							<button type="submit" className="register-button">Register</button>

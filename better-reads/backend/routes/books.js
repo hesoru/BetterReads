@@ -3,6 +3,7 @@ import Books from '../model/books.js';
 import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
 import mongoose from "mongoose";
+import axios from 'axios';
 const router = express.Router();
 
 // retrieve books via a generic search query
@@ -25,6 +26,58 @@ router.get('/search', async (req, res) => {
         const books = await Books.find(query);
         console.log(books);
         res.json(books);
+    } catch (err) {
+        res.status(500).json({ error: 'Search failed', details: err.message });
+    }
+});
+
+router.get('/genre-search', async (req, res) => {
+    try {
+        const { q, genre, page, limit  } = req.query;
+
+        const parsedPage = Math.max(parseInt(page, 10), 1);
+        const parsedLimit = Math.min(Math.max(parseInt(limit, 10), 1), 50); // Max 50 per page
+        const skip = (parsedPage - 1) * parsedLimit;
+
+
+        const andConditions = [];
+
+        if (q && q.trim() !== '') {
+            andConditions.push({
+                $or: [
+                    { title: { $regex: q, $options: 'i' } },
+                    { author: { $regex: q, $options: 'i' } },
+                    { description: { $regex: q, $options: 'i' } }
+                ]
+            });
+        }
+
+        if (genre) {
+            const genreList = Array.isArray(genre)
+                ? genre
+                : genre.split(',').map((g) => g.trim());
+
+            if (genreList.length > 0) {
+                andConditions.push({ genre: { $all: genreList } });
+            }
+        }
+
+        // Final query
+        const query = andConditions.length > 0 ? { $and: andConditions } : {};
+
+        const [books, totalCount] = await Promise.all([
+            Books.find(query).skip(skip).limit(parsedLimit),
+            Books.countDocuments(query)
+        ]);
+
+        console.log("totalCount", totalCount);
+        res.json({
+            page: parsedPage,
+            limit: parsedLimit,
+            totalPages: Math.ceil(totalCount / parsedLimit),
+            totalResults: totalCount,
+            results: books
+        });
     } catch (err) {
         res.status(500).json({ error: 'Search failed', details: err.message });
     }
@@ -82,6 +135,22 @@ router.get('/genres', async (req, res) => {
     }
 });
 
+// GET /books/popular - Get popular books sorted by average rating
+router.get('/popular', async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 20; // Default to 20 books
+        
+        // Find books with at least some reviews and sort by average rating
+        const popularBooks = await Books.find({ reviewCount: { $gt: 0 } })
+            .sort({ averageRating: -1 }) // Sort by highest rating first
+            .limit(limit);
+                
+        res.json(popularBooks);
+    } catch (err) {
+        console.error('Failed to fetch popular books:', err);
+        res.status(500).json({ error: 'Failed to fetch popular books', details: err.message });
+    }
+});
 
 // GET /books/:id/reviews - Get all reviews for a book
 router.get('/:id/reviews', async (req, res) => {
@@ -115,68 +184,82 @@ router.get('/', async (req, res) => {
     res.json(categories);
 });
 
+
 // POST /books/:id/reviews - Create or update a review for a book
 router.post('/:id/reviews', async (req, res) => {
     try {
         const { id: bookId } = req.params;
-        const { userId, rating, description } = req.body;
+        const { username, rating, description } = req.body;
 
-        if (!userId) {
-            return res.status(400).json({ error: 'userId is required' });
+        if (!username) {
+            return res.status(400).json({ error: 'username is required' });
         }
 
         const updateFields = {};
         if (rating !== undefined) updateFields.rating = rating;
         if (description !== undefined) updateFields.description = description;
 
-        const existingReview = await Reviews.findOne({ bookId, userId });
+        const existingReview = !!(await Reviews.findOne({ bookId, userId: username }));
 
         if (existingReview) {
             // Update the existing review
             const updated = await Reviews.findOneAndUpdate(
-                { bookId, userId },
+                { bookId, userId: username },
                 { ...updateFields, updatedAt: new Date() },
                 { new: true }
             );
+            
+            // Update the recommender matrix
+            try {
+                await axios.post('http://localhost:5001/update-matrix');
+                console.log('Recommender matrix updated after review update');
+            } catch (updateError) {
+                console.error('Failed to update recommender matrix:', updateError.message);
+                // Don't fail the request if matrix update fails
+            }
+            
             return res.status(200).json(updated);
         }
 
         // Create a new review if none exists
         const newReview = new Reviews({
             bookId,
-            userId,
+            userId: username,
             ...updateFields,
             createdAt: new Date(),
         });
 
-        const saved = await newReview.save();
-        const reviewId = saved._id;
-
-        const review = await Reviews.findById(reviewId);
-        if (!review) throw new Error('Review not found');
+        const savedReview = await newReview.save();
 
         const book = await Books.findById(bookId);
         if (!book) throw new Error('Book not found');
 
-        const user = await Users.findById(userId);
+        const user = await Users.findOne({username});
         if (!user) throw new Error('User not found');
 
         //  Increment book review count
-        book.reviewCount += 1;
+        book.reviewCount = (book.reviewCount || 0) + 1;
         await book.save();
 
         //  Add review to user if not already included
-        const reviewObjId = new mongoose.Types.ObjectId(reviewId);
-
-        user.reviews.push(reviewObjId);
+        user.reviews.push(savedReview._id);
         await user.save();
-
-
-        res.status(201).json(saved);
+        
+        // Update the recommender matrix
+        try {
+            await axios.post('http://localhost:5001/update-matrix');
+            console.log('Recommender matrix updated after new review');
+        } catch (updateError) {
+            console.error('Failed to update recommender matrix:', updateError.message);
+            // Don't fail the request if matrix update fails
+        }
+        
+        res.status(201).json(savedReview);
     } catch (err) {
         res.status(500).json({ error: 'Failed to create or update review', details: err.message });
     }
 });
+
 
 // add book to wishlist
 router.post('/:bookId/wishlist', async (req, res) => {

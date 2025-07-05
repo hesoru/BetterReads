@@ -1,15 +1,52 @@
 .signup-page {
+
 	min-height: 100vh;
 	margin: 0;
 	color: white;
-	background-image: url('../images/background.svg');
+	background-image: url('../images/background.png');
 	background-size: cover;
 	background-position: center;
 }
 
+.genre-dropdown-container .MuiFormControl-root {
+    width: 100%;
+    margin-bottom: 1rem; /* Add some space below */
+}
+
+.genre-dropdown-container .MuiOutlinedInput-root {
+    background-color: white;
+    border-radius: 4px;
+}
+
+.genre-dropdown-container .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+    border-color: #ccc;
+}
+
+.genre-dropdown-container .MuiSelect-select {
+    color: black;
+}
+
+/* This targets the placeholder text like 'Favorite Genres' */
+.genre-dropdown-container .MuiSelect-select span {
+    color: rgba(0, 0, 0, 0.87) !important; /* Override inline style to be black */
+}
+
+.genre-dropdown-container .MuiOutlinedInput-root {
+    cursor: pointer;
+}
+
+.genre-dropdown-container .MuiSelect-icon {
+    color: #1F213B !important; /* Make arrow darker as requested */
+}
+
 h1 {
-	text-align: center;
-	font-size: xxx-large;
+  font-family: 'Source Serif Pro', serif;
+  font-weight: bold;
+  text-align: center;
+  /* Use clamp to ensure font size is responsive but doesn't get too large */
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  margin: 0.25rem 0;
+  word-wrap: break-word;
 }
 
 .better {
@@ -56,9 +93,36 @@ h2 {
 	border-radius: 12px;
 	box-shadow: 0 4px 12px white;
 	width: 100%;
-	max-width: 40%;
+	max-width: 720px;
 	max-height: 60%;
 	box-sizing: border-box;
+}
+
+/* Responsive styles for tablet */
+@media (max-width: 1024px) {
+    .signup-information {
+        max-width: 70%;
+    }
+}
+
+/* Responsive styles for mobile */
+@media (max-width: 768px) {
+    .signup-information {
+        max-width: 95%;
+        padding: 1.5rem;
+        box-shadow: none;
+    }
+
+    .tagline {
+        margin-bottom: 2rem;
+    }
+}
+
+/* Responsive styles for very small mobile */
+@media (max-width: 320px) {
+    h1 {
+        font-size: 1.8rem; /* Ensure title doesn't wrap on very small screens */
+    }
 }
 
 button {

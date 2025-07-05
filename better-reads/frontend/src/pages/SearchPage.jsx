@@ -6,84 +6,136 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  FormControl,
+  Select,
+  MenuItem,
+  OutlinedInput,
+  Button,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
-import BackgroundImage from '../images/background.svg';
+import BackgroundImage from '../images/background.png';
 import { DetectiveDustyBlue } from '../styles/colors';
 import { BookPreview } from '../components/Book/BookPreview';
 import '../components/Book/BookPage.css';
+import BookUtils from "../utils/BookUtils.js";
 
+const genres = [
+  "Fantasy", "Fiction", "Nonfiction", "Classics", "Science Fiction",
+  "Mystery", "Thriller", "Romance", "Historical Fiction", "Horror",
+  "Literary Fiction", "Young Adult", "Biography", "Contemporary"
+];
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
-  // // Fetch all books on mount
-  // useEffect(() => {
-  //   const fetchBooks = async () => {
-  //     setLoading(true);
-  //     setError(null);
-  //     try {
-  //       const res = await fetch('http://localhost:3000/books');
-  //       if (!res.ok) throw new Error('Failed to fetch books');
-  //       const data = await res.json();
-  //       setSearchResults(data);
-  //     } catch (err) {
-  //       setError(err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchBooks();
-  // }, []);
-
-  // Search handler
-  const handleSearch = useCallback(async () => {
-    console.log(searchQuery);
+  const handleSearch = useCallback(async (pageToFetch = 1, append = false) => {
     const trimmedQuery = searchQuery.trim();
     setLoading(true);
     setError(null);
     try {
-      let url = 'http://localhost:3000/books';
-      if (trimmedQuery) {
-        url = `http://localhost:3000/books/search?q=${encodeURIComponent(trimmedQuery)}`;
+      const data = await BookUtils.searchBooks({ q: trimmedQuery, genres: selectedGenres, page: pageToFetch });
+      if (append) {
+        setSearchResults(prev => [...prev, ...(data.results || [])]);
+      } else {
+        setSearchResults(data.results || []);
       }
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Search failed');
-      const data = await res.json();
-      console.log(data);
-      setSearchResults(data);
+      setTotalPages(data.totalPages || 0);
+      setPage(pageToFetch);
     } catch (err) {
       console.error('FETCH ERROR:', err);
       setError(err.message);
-      setSearchResults([]);
+      if (!append) {
+        setSearchResults([]);
+      }
+      setTotalPages(0);
     } finally {
       setLoading(false);
     }
-  }, [searchQuery]);
+  }, [searchQuery, selectedGenres]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      handleSearch(1, false); // Always fetch page 1 and replace results on new search
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery, selectedGenres, handleSearch]);
+
+  const handleShowMore = () => {
+    handleSearch(page + 1, true); // Fetch next page and append
+  };
+
+  const handleGenreChange = (event) => {
+    const { target: { value } } = event;
+    setSelectedGenres(
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
 
   return (
-    <div style={styles.container}>
-      
-      <section style={styles.banner}>
-        <div style={styles.logoImage} />
-        <Typography variant="h5" sx={styles.bannerText}>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: '#fff',
+      backgroundImage: `url(${BackgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center center',
+      backgroundAttachment: 'fixed',
+    }}>
+      <section style={{
+        textAlign: 'center',
+        padding: '4rem 2rem',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        color: 'white',
+        position: 'relative',
+      }}>
+        <div style={{
+          height: '100px',
+          width: '100%',
+          backgroundImage: `url(${BetterReadsLogo})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundSize: 'contain',
+          marginBottom: '1rem',
+        }} />
+        <Typography variant="h5" style={{
+          fontFamily: "'Source Serif Pro', serif",
+          fontStyle: 'italic',
+          color: '#FFFFFF',
+          textShadow: '1px 1px 3px rgba(0,0,0,0.7)',
+        }}>
           Reading is good for you. But we can make it better.
         </Typography>
       </section>
-      
-      <Box sx={{ maxWidth: 600, mx: 'auto', mb: 4, px: 2, mt: 4 }}>
+
+      <Box sx={{ backgroundColor: 'white', flexGrow: 1, paddingTop: '2rem' }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          gap: 2,
+          alignItems: 'center',
+          maxWidth: 900,
+          mx: 'auto',
+          mb: 4,
+          px: 2,
+        }}>
         <TextField
           fullWidth
           variant="outlined"
           placeholder="Search for books by title, author, or ISBN..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          onKeyPress={(e) => e.key === 'Enter' && handleSearch(1)}
           sx={{
+            flexGrow: 1,
             '& .MuiOutlinedInput-root': {
               borderRadius: '25px',
               backgroundColor: DetectiveDustyBlue,
@@ -95,79 +147,113 @@ const SearchPage = () => {
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={handleSearch}>
+                <IconButton onClick={() => handleSearch(1)}>
                   <SearchIcon />
                 </IconButton>
               </InputAdornment>
             ),
           }}
         />
+        <FormControl sx={{ width: { xs: '100%', md: 300 } }}>
+          <Select
+            id="genre-select"
+            multiple
+            displayEmpty
+            value={selectedGenres}
+            onChange={handleGenreChange}
+            input={<OutlinedInput />}
+            renderValue={(selected) => {
+              if (selected.length === 0) {
+                return <em style={{ color: '#666' }}>Select genres...</em>;
+              }
+              return selected.join(', ');
+            }}
+            sx={{
+              borderRadius: '25px',
+              backgroundColor: DetectiveDustyBlue,
+              height: '56px',
+              width: '100%',
+            }}
+          >
+            <MenuItem disabled value="">
+              <em style={{ color: '#666' }}>Select genres...</em>
+            </MenuItem>
+            {genres.map((genre) => (
+              <MenuItem key={genre} value={genre}>
+                {genre}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Box>
 
-      <Grid 
-        container 
-        spacing={3} 
-        sx={{ 
-          maxWidth: '1900px', 
+      {loading && <Typography sx={{ textAlign: 'center', my: 2 }}>Loading...</Typography>}
+      {error && <Typography color="error" sx={{ textAlign: 'center', my: 2 }}>{`Error: ${error}`}</Typography>}
+
+      <Grid
+        container
+        spacing={3}
+        sx={{
+          maxWidth: '1900px',
           margin: '0 auto',
           justifyContent: 'center',
           paddingBottom: '2rem'
         }}>
-        {searchResults.map((book, idx) => {
-          // Use MongoDB _id if available, otherwise fallback to id or index
-          const key = book._id || book.id || idx;
-          return (
-            <Grid item xs={12} sm={6} md={4} key={key}>
-              <BookPreview
-                bookId={book._id || book.id || key}
-                coverUrl={book.image || book.coverImage || book.coverUrl}
-                title={book.title}
-                rating={book.averageRating || 0}
-                genres={book.genre || []}
-                isFavorite={book.isFavorite || false}
-                onToggleFavorite={() => {}}
-              />
-            </Grid>
-          );
-        })}
+        {searchResults.length > 0 ? (
+          searchResults.map((book, idx) => {
+            const key = book._id || book.id || idx;
+            return (
+              <Grid item xs={12} sm={6} md={4} key={key}>
+                <BookPreview
+                  bookId={book._id || book.id || key}
+                  coverUrl={book.image || book.coverImage || book.coverUrl}
+                  title={book.title}
+                  rating={book.averageRating || 0}
+                  genres={book.genre || []}
+                  isFavorite={book.isFavorite || false}
+                  onToggleFavorite={() => { }}
+                />
+              </Grid>
+            );
+          })
+        ) : (
+          !loading && (
+            <Box sx={{ textAlign: 'center', width: '100%', py: 4 }}>
+              <Typography variant="h6">No books found matching your search.</Typography>
+            </Box>
+          )
+        )}
       </Grid>
+
+      {page < totalPages && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <Button
+            variant="outlined"
+            onClick={handleShowMore}
+            disabled={loading}
+            sx={{
+              fontFamily: 'Albert Sans, sans-serif',
+              fontStyle: 'italic',
+              color: '#151B54',
+              borderColor: '#151B54',
+              borderWidth: '1px',
+              backgroundColor: 'transparent',
+              '&:hover': {
+                backgroundColor: '#151B54',
+                color: 'white',
+                borderColor: '#151B54',
+              },
+            }}
+          >
+            {loading ? 'Loading...' : 'Show More Books'}
+          </Button>
+        </Box>
+      )}
+      </Box>
     </div>
   );
 };
 
-const styles = {
-  container: {
-    padding: 0,
-  },
-  banner: {
-    width: '100%',
-    textAlign: 'center',
-    padding: '2rem',
-    marginBottom: '2rem',
-    backgroundImage: `url(${BackgroundImage})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: '0',
-  },
-  bannerText: {
-    fontSize: '1.2rem',
-    color: '#fff',
-    marginBottom: '1rem',
-    fontWeight: 500,
-    fontFamily: 'Georgia, serif',
-    marginTop: 4,
-    fontStyle: 'italic'
-  },
-  logoImage: {
-    width: '360px',
-    height: '160px',
-    margin: '0 auto',
-    backgroundImage: `url(${BetterReadsLogo})`,
-    backgroundSize: 'contain',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-  }
-};
+
 
 export default SearchPage;

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import {signupUser} from "./UserThunks.js";
 
 const initialState = {
     items: []
@@ -7,7 +8,6 @@ const initialState = {
 const BooklistSlice = createSlice({
     name: 'booklist',
     initialState,
-    //TODO: update the state of addition to the wishlist in database as well!!!!!!
     reducers: {
         addToBooklist(state, action) {
             const bookId = action.payload;

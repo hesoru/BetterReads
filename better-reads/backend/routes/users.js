@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
+import mongoose from "mongoose";
+import axios from 'axios';
 import {isStrongPassword} from "./utils.js";
 
 const router = express.Router();
@@ -21,17 +23,46 @@ router.get('/', async (req, res) => {
 
 // retrieve userImageURL by busername// GET /avatarUrl/:username - Retrieve avatar URL by username
 router.get('/avatarUrl/:username', async (req, res) => {
-  try {
-    const user = await Users.findOne({ username: req.params.username });
+    try {
+        const user = await Users.findOne({ username: req.params.username });
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json( user.avatarUrl );
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch avatar URL', details: err.message });
     }
+});
 
-    res.json( user.avatarUrl );
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch avatar URL', details: err.message });
-  }
+// Get user details by ID or username
+router.get('/details/:identifier', async (req, res) => {
+    try {
+        const { identifier } = req.params;
+        let user;
+
+        // Check if the identifier is a valid MongoDB ObjectId
+        if (mongoose.Types.ObjectId.isValid(identifier)) {
+            user = await Users.findById(identifier);
+        } else {
+            // If not a valid ID, assume it's a username
+            user = await Users.findOne({ username: identifier });
+        }
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return essential, non-sensitive user data
+        res.json({
+            id: user._id,
+            username: user.username,
+            avatarUrl: user.avatarUrl
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
 });
 
 // GET /users/:id - get profile
@@ -87,6 +118,16 @@ router.post('/signup', async (req, res) => {
         const token = jwt.sign({ id: newUser._id, username }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRY
         });
+        
+        // Update the recommender matrix to include the new user
+        try {
+            await axios.post('http://localhost:5001/update-matrix');
+            console.log('Recommender matrix updated after new user signup');
+        } catch (updateError) {
+            console.error('Failed to update recommender matrix:', updateError.message);
+            // Don't fail the signup if matrix update fails
+        }
+        
         res.status(201).json({ message: 'User created', userId: newUser._id , token: token});
     } catch (err) {
         res.status(400).json({ error: 'Failed to create user', details: err.message });
@@ -100,16 +141,21 @@ router.post('/login', async (req, res) => {
         if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
 
         const user = await Users.findOne({ username });
+        if (!user) {
+            return res.status(401).json({ error: 'This username does not exist. Please make sure username is correct and try again.' });
+        }
         const match = await bcrypt.compare(password, user.password);
 
-        if (!user || !match ) {
+        if (!match ) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
         const token = jwt.sign({ id: user._id, username }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRY
         });
-        res.json({token, user});
+        const userObject = user.toObject();
+        delete userObject.password;
+        res.json({token, user: userObject});
         // TODO: Replace with real session or JWT
         //res.json({ message: 'Login successful', userId: user._id });
     } catch (err) {
