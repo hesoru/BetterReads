@@ -44,41 +44,6 @@ let testUser2 = {
 const defaultAvatar =
     '../../src/images/icons/User_Profile_Image_NoLogo.png';
 
-// let mongo;
-
-// before(async () => {
-//   process.env.NODE_ENV = 'test'; //this is important to ensure not run on production database
-//   mongo = await MongoMemoryServer.create();
-//   await mongoose.connect(mongo.getUri());
-//   console.log("mongo.getUri()", mongo.getUri())
-// });
-
-// after(async () => {
-//   await mongoose.disconnect();
-//   await mongo.stop();
-// });
-
-// beforeEach(async () => {
-//   const { host, port } = mongoose.connection;
-//   const expectedHost = mongo.instanceInfo.ip;
-//   const expectedPort = mongo.instanceInfo.port;
-
-//   if (
-//     process.env.NODE_ENV !== 'test' ||
-//     host !== expectedHost ||
-//     port !== expectedPort
-//   ) {
-//     throw new Error(
-//       `Refusing to run deleteMany — connected to ${host}:${port}, expected ${expectedHost}:${expectedPort}`
-//     );
-//   }
-
-//   const collections = await mongoose.connection.db.collections();
-//   for (const coll of collections) {
-//     await coll.deleteMany();
-//   }
-// });
-
 describe('Users Tests', () => {
     it('GET /users returns all new users', async () => {
         await Users.create([testUser1, testUser2]);
@@ -111,7 +76,7 @@ describe('Users Tests', () => {
     })
 });
 
-describe('POST /signup', () => {
+describe('Test user signup', () => {
     it('creates a new user with valid password requirements', async () => {
         const res = await request(app)
             .post('/users/signup')
@@ -161,7 +126,7 @@ describe('POST /signup', () => {
     });
 });
 
-describe('POST /login', () => {
+describe('Test user login', () => {
     beforeEach(async () => {
         const password = 'Password1?321234567890';
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -201,7 +166,7 @@ describe('POST /login', () => {
     });
 });
 
-describe('PUT /:id/genres/add-multiple', () => {
+describe('Test updating user Favourite Genres', () => {
     let user;
 
     beforeEach(async () => {
@@ -228,7 +193,7 @@ describe('PUT /:id/genres/add-multiple', () => {
     });
 });
 
-describe('PUT /:id', () => {
+describe('Test updating the user information', () => {
     it('updates a use information', async () => {
         const user = await Users.create(testUser1);
         expect(user.avatarUrl).to.equal(defaultAvatar);
@@ -242,7 +207,7 @@ describe('PUT /:id', () => {
     });
 });
 
-describe('PATCH /update-wishlist/:id', () => {
+describe('Test adding and removing books to a user\'s wishlist', () => {
     let user;
     let testBook
 
@@ -268,9 +233,12 @@ describe('PATCH /update-wishlist/:id', () => {
     });
 });
 
-describe('DELETE /:id', () => {
+describe('Test deleting a user', () => {
     it('deletes an existing user', async () => {
         const user = await Users.create(testUser1);
+
+        const ok = await request(app).get(`/users/${user._id}`);
+        expect(ok.body.username).to.equal('User1');
 
         const res = await request(app).delete(`/users/${user._id}`);
         expect(res.status).to.equal(204);

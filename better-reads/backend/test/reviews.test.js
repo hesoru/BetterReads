@@ -64,6 +64,9 @@ describe('Reivew Tests', () => {
             rating: 4,
             description: "I love this book"
         });
+        //Push the review into the user's review list
+        user1.reviews.push(review1._id);
+        await user1.save();
     });
 
     it('returns all reviews written by the specified user (User1)', async () => {
@@ -73,7 +76,7 @@ describe('Reivew Tests', () => {
         expect(ratings).to.deep.equal([4]);
     });
 
-    it('updates rating & description and returns the updated doc', async () => {
+    it('updates rating & description of an existing review', async () => {
         const res = await request(app)
             .put(`/reviews/${review1._id}`)
             .send({ rating: 5, description: 'Edited text' })
@@ -83,7 +86,7 @@ describe('Reivew Tests', () => {
         expect(res.body).to.include({ rating: 5, description: 'Edited text' });
     });
 
-    it('returns 404 when the review does not exist', async () => {
+    it('returns 404 when attempting to update a non-existent review', async () => {
         const nonexistentId = new mongoose.Types.ObjectId();
         await request(app)
             .put(`/reviews/${nonexistentId}`)
@@ -99,7 +102,7 @@ describe('Reivew Tests', () => {
         expect(stillExists).to.be.null;
     });
 
-    it('returns 404 for an unknown reviewId', async () => {
+    it('returns 404 for an unknown reviewId when the review is deleted', async () => {
         const badId = new mongoose.Types.ObjectId();
         const { status, body } = await request(app).delete(`/reviews/${badId}`);
         expect(status).to.be.equals(404)
@@ -121,7 +124,7 @@ describe('Reivew Tests', () => {
         });
     });
 
-    it('returns null if no review exists for book', async () => {
+    it('returns null if no review exists for a book and user', async () => {
         const res = await request(app)
             .get('/reviews/user-review')
             .query({
@@ -133,7 +136,24 @@ describe('Reivew Tests', () => {
         expect(res.body).to.be.null;
     });
 
-    it('review review of specific user by username', async () => {
+    it('returns 400 if bookId is missing from the query', async () => {
+        const res = await request(app)
+            .get(`/reviews/user-review`)
+            .query({ userId: user1.username })
+            .expect(400);
+        expect(res.body).to.have.property('error');
+    });
+
+    it('returns 400 if userId is missing from the query', async () => {
+        const res = await request(app)
+            .get(`/reviews/user-review`)
+            .query({ bookId: book1._id.toString() })
+            .expect(400);
+
+        expect(res.body).to.deep.equal({ error: 'Both bookId and userId are required' });
+    });
+
+    it('lists reviews of a specific user given their username', async () => {
         const res1 = await request(app).get(`/reviews/user/${user1.username}`).expect(200);
         expect(res1.body).to.be.an('array').with.lengthOf(1);
         const ratings1 = res1.body.map((r) => r.rating);
@@ -148,6 +168,9 @@ describe('Reivew Tests', () => {
             rating: 1,
             description: "I hate this book"
         });
+
+        user1.reviews.push(review2._id);
+        await user1.save();
 
         const res2 = await request(app).get(`/reviews/user/${user1.username}`).expect(200);
         expect(res2.body).to.be.an('array').with.lengthOf(2);
