@@ -153,7 +153,9 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({ id: user._id, username }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRY
         });
-        res.json({token, user});
+        const userObject = user.toObject();
+        delete userObject.password;
+        res.json({token, user: userObject});
         // TODO: Replace with real session or JWT
         //res.json({ message: 'Login successful', userId: user._id });
     } catch (err) {
