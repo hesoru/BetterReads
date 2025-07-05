@@ -13,7 +13,7 @@ const testBook1 = {
     publishYear:      2001,
     image:            'Image1',
     description:      'Description1',
-    genre: ['Genre1', 'Genre2'],
+    genre: ['Classics', 'Comics'],
     ISBN:             '111111111',
     numberOfEditions: 1,
     averageRating:    1,
@@ -27,7 +27,7 @@ const testBook2 = {
     publishYear:      2002,
     image:            'Image2',
     description:      'Description2',
-    genre: ['Genre1', 'Genre3'],
+    genre: ['Classics', 'Comics'],
     ISBN:             '222222222',
     numberOfEditions: 2,
     averageRating:    2,
@@ -111,6 +111,14 @@ describe('Books Tests', () => {
         expect(status).to.equal(200);
     });
 
+    it('searches by book title & genres', async () => {
+        await Books.create(testBook1);
+        await Books.create(testBook2);
+        const { status, body } = await request(app).get('/books/genre-search?q=title&page=1&limit=10');
+        expect(body.results.map(b => b.title)).to.deep.equal(['Title1', "Title2"]);
+        expect(status).to.equal(200);
+    });
+
     it('searches by book description', async () => {
         await Books.create(testBook1);
         await Books.create(testBook2);
@@ -130,7 +138,7 @@ describe('Books Tests', () => {
     it('filters by multiple genres & sorts by averageRating desc', async () => {
         await Books.create(testBook1);
         await Books.create(testBook2);
-        const { status, body } = await request(app).get('/books/genres?genres=Genre1, Genre2');
+        const { status, body } = await request(app).get('/books/genres?genres=Classics,Comics');
         expect(body.map(b => b.title)).to.deep.equal(["Title2", "Title1"]);
         expect(status).to.equal(200);
     });
@@ -175,18 +183,33 @@ describe('Books Tests', () => {
         expect(updatedBook.reviewCount).to.equal(2);
     });
 
-    it('adds & removes a book from user wishlist', async () => {
+
+    it('adds & removes a book from user wishlist with checking user wishList', async () => {
         const book = await Books.create(testBook1);
         const user = await Users.create(testUser);
 
-        const add = await request(app)
-            .post(`/books/${book._id}/wishlist`)
-            .send({ userId: user._id });
-        expect(add.body).to.include(String(book._id));
+        let current_user = await Users.findById(user._id).lean();
+        expect(current_user.wishList.map(String)).to.not.include(String(book._id));
 
-        const del = await request(app)
+        const addRes = await request(app)
+            .post(`/books/${book._id}/wishlist`)
+            .send({ userId: user._id })
+            .expect(200);
+
+        expect(addRes.body).to.include(String(book._id));
+
+        current_user = await Users.findById(user._id).lean();
+        expect(current_user.wishList.map(String)).to.include(String(book._id));
+
+        const delRes = await request(app)
             .delete(`/books/${book._id}/wishlist`)
-            .send({ userId: user._id });
-        expect(del.body).to.not.include(String(book._id));
+            .send({ userId: user._id })
+            .expect(200);
+
+        expect(delRes.body).to.not.include(String(book._id));
+
+        current_user = await Users.findById(user._id).lean();
+        expect(current_user.wishList.map(String)).to.not.include(String(book._id));
     });
+
 });
