@@ -13,7 +13,7 @@ Clone the repository and run with Docker Compose. In your bash terminal, run:
 
 ```bash
 # After downloading our app, ensure you are under TEAM25_BETTERREADS to run the following command
-docker-compose up --build  # start container
+docker-compose up -d --build  # start container
 docker-compose down        # tear down container
 ```
 
