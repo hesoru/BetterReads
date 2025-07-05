@@ -49,7 +49,8 @@ const RecommendationsPage = () => {
         }
         
         // Use the recommendations endpoint
-        const url = `http://localhost:3000/recommendations/${userId}`;
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+        const url = `${backendUrl}/recommendations/${userId}`;
         console.log('Fetching recommendations from:', url);
         
         const res = await fetch(url);
@@ -84,7 +85,8 @@ const RecommendationsPage = () => {
   useEffect(() => {
     const fetchPopularBooks = async () => {
       try {
-        const res = await fetch('http://localhost:3000/books/popular');
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+        const res = await fetch(`${backendUrl}/books/popular`);
         if (!res.ok) throw new Error('Failed to fetch popular books');
         const data = await res.json();
         setPopularBooks(data.map(book => book._id));
