@@ -19,7 +19,7 @@ docker-compose down        # tear down container
 
 ## Accessing the Application
 
-- **Frontend**: http://localhost
+- **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:3000
 - **Recommender API**: http://localhost:5001
 
