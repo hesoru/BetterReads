@@ -4,7 +4,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 let mongo;
 
 before(async () => {
-  process.env.NODE_ENV = 'test'; //this is important to ensure not run on production database
+  process.env.NODE_ENV = 'test'; //this is important to ensure not run on production db
   mongo = await MongoMemoryServer.create();
   await mongoose.connect(mongo.getUri());
   console.log("mongo.getUri()", mongo.getUri())

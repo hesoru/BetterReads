@@ -21,6 +21,21 @@ router.get('/', async (req, res) => {
     }
 });
 
+// retrieve userImageURL by busername// GET /avatarUrl/:username - Retrieve avatar URL by username
+router.get('/avatarUrl/:username', async (req, res) => {
+    try {
+        const user = await Users.findOne({ username: req.params.username });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json( user.avatarUrl );
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch avatar URL', details: err.message });
+    }
+});
+
 // Get user details by ID or username
 router.get('/details/:identifier', async (req, res) => {
     try {
