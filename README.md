@@ -68,17 +68,24 @@ The following features have been implemented for Milestone 2:
 
 ### Milestone 3:
 The following featuers have been implemented for Milestone 3:
-- UI has been made responsive. 
+- UI has been made responsive to fix some bugs.
+   - Functional 'make reviews' button to autoscroll to right component.
+   - Select rating when creating or editing a new review.
+   - Filtering the user review from other reviews on detail page of book
+   - Cleaner UI for the search page
 - NLP Book search bar now has additional genre selection option.
-- Fixed background images. 
+   - Search bar allows you to search (if wanted) to allow for stricter limitation
+- Fixed background images.
+- Hashed and salted user passwords in the backend with bcrypt for security.
+- Ability to persist wishlist from guest session when user signs up for a new account
 - Added pagination for book search results.
 - Implemented recommender system (external API): genre-based, collaborative filtering, and popularity-based recommendations.
 - Implemented Redis caching for user-item matrix and popular books.
 
-### TEST section
+### Test Suite section
 1. Test folder were created including setup.js, books.test.js, reviews.tests.js and users.test.js. 
 2. Test using Mocha, Chai, Supertest, Mongodb-Memory-Server. Test report is generated using mochawesome.
-3. There are 34 total tests covering API calls of books.js, reviews.js and users.js
+3. There are 39 total tests covering API calls of books.js, reviews.js and users.js
 3. Instruction to run the test:
 ```bash
 # After downloading our app, cd better-reads/backend to run the following command
