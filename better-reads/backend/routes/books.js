@@ -3,6 +3,7 @@ import Books from '../model/books.js';
 import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
 import mongoose from "mongoose";
+import axios from 'axios';
 const router = express.Router();
 
 // retrieve books via a generic search query
@@ -134,6 +135,22 @@ router.get('/genres', async (req, res) => {
     }
 });
 
+// GET /books/popular - Get popular books sorted by average rating
+router.get('/popular', async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 20; // Default to 20 books
+        
+        // Find books with at least some reviews and sort by average rating
+        const popularBooks = await Books.find({ reviewCount: { $gt: 0 } })
+            .sort({ averageRating: -1 }) // Sort by highest rating first
+            .limit(limit);
+                
+        res.json(popularBooks);
+    } catch (err) {
+        console.error('Failed to fetch popular books:', err);
+        res.status(500).json({ error: 'Failed to fetch popular books', details: err.message });
+    }
+});
 
 // GET /books/:id/reviews - Get all reviews for a book
 router.get('/:id/reviews', async (req, res) => {
@@ -191,6 +208,16 @@ router.post('/:id/reviews', async (req, res) => {
                 { ...updateFields, updatedAt: new Date() },
                 { new: true }
             );
+            
+            // Update the recommender matrix
+            try {
+                await axios.post('http://localhost:5001/update-matrix');
+                console.log('Recommender matrix updated after review update');
+            } catch (updateError) {
+                console.error('Failed to update recommender matrix:', updateError.message);
+                // Don't fail the request if matrix update fails
+            }
+            
             return res.status(200).json(updated);
         }
 
@@ -202,11 +229,7 @@ router.post('/:id/reviews', async (req, res) => {
             createdAt: new Date(),
         });
 
-        const saved = await newReview.save();
-        const reviewId = saved._id;
-
-        const review = await Reviews.findById(reviewId);
-        if (!review) throw new Error('Review not found');
+        const savedReview = await newReview.save();
 
         const book = await Books.findById(bookId);
         if (!book) throw new Error('Book not found');
@@ -219,13 +242,19 @@ router.post('/:id/reviews', async (req, res) => {
         await book.save();
 
         //  Add review to user if not already included
-        const reviewObjId = new mongoose.Types.ObjectId(reviewId);
-
-        user.reviews.push(reviewObjId);
+        user.reviews.push(savedReview._id);
         await user.save();
-
-
-        res.status(201).json(saved);
+        
+        // Update the recommender matrix
+        try {
+            await axios.post('http://localhost:5001/update-matrix');
+            console.log('Recommender matrix updated after new review');
+        } catch (updateError) {
+            console.error('Failed to update recommender matrix:', updateError.message);
+            // Don't fail the request if matrix update fails
+        }
+        
+        res.status(201).json(savedReview);
     } catch (err) {
         res.status(500).json({ error: 'Failed to create or update review', details: err.message });
     }

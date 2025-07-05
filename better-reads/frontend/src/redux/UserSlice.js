@@ -11,7 +11,7 @@ export const guestUser = {
     reviews: [],
     favoriteGenres: [],
     isGuest: true,
-    join_time: new Date()
+    join_time: new Date().toISOString() // Use ISO string instead of Date object
 };
 const initialState = {
     user: guestUser,
@@ -36,7 +36,12 @@ const userSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(loginUser.fulfilled, (state, action) => {
-                state.user = action.payload;
+                // Convert Date object to string to ensure serialization
+                const payload = {...action.payload};
+                if (payload.join_time && payload.join_time instanceof Date) {
+                    payload.join_time = payload.join_time.toISOString();
+                }
+                state.user = payload;
                 state.status = 'succeeded';
                 state.isGuest = false;
             })
@@ -47,12 +52,22 @@ const userSlice = createSlice({
             })
 
             .addCase(signupUser.fulfilled, (state, action) => {
-                state.user = action.payload;
+                // Convert Date object to string to ensure serialization
+                const payload = {...action.payload};
+                if (payload.join_time && payload.join_time instanceof Date) {
+                    payload.join_time = payload.join_time.toISOString();
+                }
+                state.user = payload;
                 state.status = 'succeeded';
                 state.isGuest = false;
             })
             .addCase(fetchUserProfile.fulfilled, (state, action) => {
-                state.user = action.payload;
+                // Convert Date object to string to ensure serialization
+                const payload = {...action.payload};
+                if (payload.join_time && payload.join_time instanceof Date) {
+                    payload.join_time = payload.join_time.toISOString();
+                }
+                state.user = payload;
                 state.isGuest = false;
             });
     },

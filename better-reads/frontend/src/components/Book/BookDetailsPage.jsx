@@ -143,8 +143,11 @@ export default function BookDetailsPage() {
                     <Typography sx={{ color: 'var(--color-text-light)', mb: 2 }}>
                         {book.description}
                     </Typography>
+                    <Typography sx={{ fontSize: '0.9rem', color: 'var(--color-text-light)', mb: 2 }}>
+                        ISBN: {book.ISBN}
+                    </Typography>
                     
-                </Grid>
+                    <GenreTags genres={book.genre} />                </Grid>
             </Grid>
 
             <div className="reviews-container">

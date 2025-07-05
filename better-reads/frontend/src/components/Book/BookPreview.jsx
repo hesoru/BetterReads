@@ -19,7 +19,12 @@ export function BookPreview({ bookId, coverUrl, title, rating, genres }) {
   const userId = useSelector((state) => state.user.user._id);
   const booklist = useSelector((state) => state.booklist.items);
   const isFavorite = booklist.includes(bookId);
+  const [isFavoriteState, setIsFavoriteState] = useState(isFavorite);
   const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    setIsFavoriteState(isFavorite);
+  }, [isFavorite]);
 
   const handleCardClick = () => {
     navigate(`/books/${bookId}`);
@@ -29,7 +34,7 @@ export function BookPreview({ bookId, coverUrl, title, rating, genres }) {
     e.stopPropagation();
     setLoading(true);
     try {
-      const thunk = isFavorite ? removeFromBookListThunk : addToBookListThunk;
+      const thunk = isFavoriteState ? removeFromBookListThunk : addToBookListThunk;
       await dispatch(thunk({ userId, bookId })).unwrap();
     } catch (error) {
       console.error('Failed to update favorite status:', error);
@@ -62,7 +67,7 @@ export function BookPreview({ bookId, coverUrl, title, rating, genres }) {
             alt={`${title} cover`}
           />
           <FavoriteIcon
-            isFavorite={isFavorite}
+            isFavorite={isFavoriteState}
             onClick={handleFavoriteClick}
             disabled={loading}
           />

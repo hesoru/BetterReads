@@ -1,4 +1,13 @@
 services:
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"  # Expose Redis for local dev
+    volumes:
+      - redis-data:/data
+
   frontend:
     build:
       context: ./better-reads/frontend
@@ -25,8 +34,21 @@ services:
     environment:
       - NODE_ENV=development
       - MONGODB_URI=mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/bookdb?retryWrites=true&w=majority&appName=Sandbox
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
-      - mongodb
+      - redis
+
+  recommender:
+    build: ./better-reads/recommender
+    container_name: fastapi-recommender
+    ports:
+      - "5001:5001"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
 
   mongodb:
     image: mongo:latest
@@ -37,3 +59,4 @@ services:
 
 volumes:
   mongodb_data:
+  redis-data:
