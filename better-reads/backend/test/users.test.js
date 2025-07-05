@@ -44,7 +44,6 @@ let testUser2 = {
 const defaultAvatar =
     '../../src/images/icons/User_Profile_Image_NoLogo.png';
 
-
 describe('Users Tests', () => {
     it('GET /users returns all new users', async () => {
         await Users.create([testUser1, testUser2]);
