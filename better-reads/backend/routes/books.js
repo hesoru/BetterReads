@@ -167,26 +167,27 @@ router.get('/', async (req, res) => {
     res.json(categories);
 });
 
+
 // POST /books/:id/reviews - Create or update a review for a book
 router.post('/:id/reviews', async (req, res) => {
     try {
         const { id: bookId } = req.params;
-        const { userId, rating, description } = req.body;
+        const { username, rating, description } = req.body;
 
-        if (!userId) {
-            return res.status(400).json({ error: 'userId is required' });
+        if (!username) {
+            return res.status(400).json({ error: 'username is required' });
         }
 
         const updateFields = {};
         if (rating !== undefined) updateFields.rating = rating;
         if (description !== undefined) updateFields.description = description;
 
-        const existingReview = await Reviews.findOne({ bookId, userId });
+        const existingReview = !!(await Reviews.findOne({ bookId, userId: username }));
 
         if (existingReview) {
             // Update the existing review
             const updated = await Reviews.findOneAndUpdate(
-                { bookId, userId },
+                { bookId, userId: username },
                 { ...updateFields, updatedAt: new Date() },
                 { new: true }
             );
@@ -196,7 +197,7 @@ router.post('/:id/reviews', async (req, res) => {
         // Create a new review if none exists
         const newReview = new Reviews({
             bookId,
-            userId,
+            userId: username,
             ...updateFields,
             createdAt: new Date(),
         });
@@ -210,11 +211,11 @@ router.post('/:id/reviews', async (req, res) => {
         const book = await Books.findById(bookId);
         if (!book) throw new Error('Book not found');
 
-        const user = await Users.findById(userId);
+        const user = await Users.findOne({username});
         if (!user) throw new Error('User not found');
 
         //  Increment book review count
-        book.reviewCount += 1;
+        book.reviewCount = (book.reviewCount || 0) + 1;
         await book.save();
 
         //  Add review to user if not already included
@@ -229,6 +230,7 @@ router.post('/:id/reviews', async (req, res) => {
         res.status(500).json({ error: 'Failed to create or update review', details: err.message });
     }
 });
+
 
 // add book to wishlist
 router.post('/:bookId/wishlist', async (req, res) => {
