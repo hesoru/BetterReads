@@ -41,6 +41,7 @@ export default function BookDetailsPage() {
     const username = useSelector((state) => state.user?.user?.username);
     const reviewRef = useRef(null);
     const userAvatar = useSelector((state) => state.user?.user?.avatarUrl);
+    const isGuest = useSelector((state) => state.user?.isGuest);
     console.log("bookId", bookId);
 
     const [book, setBook] = useState(null);
@@ -151,34 +152,34 @@ export default function BookDetailsPage() {
             </Grid>
 
             <div className="reviews-container">
-                <div className="review-section" ref={reviewRef}>
-                    <div className="section-title">Your Review</div>
+                {!isGuest && (
+                    <div className="review-section" ref={reviewRef}>
+                        <div className="section-title">Your Review</div>
 
-                    <BookReview
-                        editable={isEditing || !userReview}
-                        userImage={userAvatar}
-                        username={username}
-                        rating={userReview?.rating}
-                        reviewText={userReview?.description}
-                        onSave={async ({ rating, description }) => {
-                            const newReview = await BookUtils.upsertReview(bookId, username, { rating, description });
-                            setUserReview(newReview);
-                            setBookReviews(prev => {
+                        <BookReview
+                            editable={isEditing || !userReview}
+                            userImage={userAvatar}
+                            username={username}
+                            rating={userReview?.rating}
+                            reviewText={userReview?.description}
+                            onSave={async ({ rating, description }) => {
+                                const newReview = await BookUtils.upsertReview(bookId, username, { rating, description });
+                                setUserReview(newReview);
+                                setBookReviews(prev => {
+                                    const others = prev.filter(r => r.userId !== username);
+                                    return [newReview, ...others];
+                                });
+                                setIsEditing(false);
+                            }}
+                        />
+                        {userReview && !isEditing && (
+                            <Button sx={{ ...buttonStyle, mt: 2 }} onClick={() => setIsEditing(true)}>
+                                Edit Review
+                            </Button>
+                        )}
+                    </div>
+                )}
 
-                                const others = prev.filter(r => r.userId !== username);
-                                console.log("others", others);
-                                console.log("username", username);
-                                return [newReview, ...others];
-                            });
-                            setIsEditing(false);
-                        }}
-                    />
-                    {userReview && !isEditing && (
-                        <Button sx={{ ...buttonStyle, mt: 2 }} onClick={() => setIsEditing(true)}>
-                            Edit Review
-                        </Button>
-                    )}
-                </div>
 
                 <Box sx={{ mt: 4 }}>
                     <Typography sx={sectionTitleStyle}>Reviews from Other Readers</Typography>
