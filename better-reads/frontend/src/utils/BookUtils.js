@@ -30,7 +30,7 @@ const BookUtils = {
 
         if (!res.ok) {
             const error = await res.json().catch(() => ({}));
-            throw new Error(error?.error || 'Failed to search.py books');
+            throw new Error(error?.error || 'Failed to main.py books');
         }
 
         const data = await res.json();

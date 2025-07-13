@@ -39,4 +39,5 @@ for book in tqdm(cursor, total=total, desc="Embedding books"):
         {"$set": {"embedding": embedding}}
     )
 
-print("✅ Done. All applicable books have embeddings.")
+print("" All applicable books have embeddings.")
+
