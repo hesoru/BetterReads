@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import axios from 'axios';
 const router = express.Router();
 
-// retrieve books via a generic search.py query
+// retrieve books via a generic main.py query
 router.get('/search', async (req, res) => {
     try {
         const { q } = req.query;
@@ -63,7 +63,7 @@ router.get('/genre-search', async (req, res) => {
         }
 
         // Final query
-        const query = andConditions.length > 0 ? { $and: andConditions } : {};
+        const query = andConditions.length > 0 ? { $or: andConditions } : {};
 
         const [books, totalCount] = await Promise.all([
             Books.find(query).skip(skip).limit(parsedLimit),
@@ -84,7 +84,7 @@ router.get('/genre-search', async (req, res) => {
 });
 
 // potential flexible route for querying
-// router.get('/search.py', async (req, res) => {
+// router.get('/main.py', async (req, res) => {
 //     try {
 //         const query = {};
 //
