@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import axios from 'axios';
 const router = express.Router();
 
-// retrieve books via a generic search query
+// retrieve books via a generic search.py query
 router.get('/search', async (req, res) => {
     try {
         const { q } = req.query;
@@ -84,7 +84,7 @@ router.get('/genre-search', async (req, res) => {
 });
 
 // potential flexible route for querying
-// router.get('/search', async (req, res) => {
+// router.get('/search.py', async (req, res) => {
 //     try {
 //         const query = {};
 //

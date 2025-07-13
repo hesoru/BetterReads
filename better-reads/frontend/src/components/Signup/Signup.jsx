@@ -198,7 +198,7 @@ const Signup = () => {
 // 				<GenreDropDown/>
 //
 // 				<div className="button-row">
-// 					<button className="register-button" onClick={() => {navigate("/search")}}>Register</button>
+// 					<button className="register-button" onClick={() => {navigate("/search.py")}}>Register</button>
 // 				</div>
 // 				<p className="form-footer">
 // 					Already have a account? <Link to="/">Login</Link>
