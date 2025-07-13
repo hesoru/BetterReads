@@ -33,44 +33,39 @@ router.get('/search', async (req, res) => {
 
 router.get('/genre-search', async (req, res) => {
     try {
-        const { q, genre, page, limit  } = req.query;
+        const { q, genre, page, limit } = req.query;
 
-        const parsedPage = Math.max(parseInt(page, 10), 1);
-        const parsedLimit = Math.min(Math.max(parseInt(limit, 10), 1), 50); // Max 50 per page
+        const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
+        const parsedLimit = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 50);
         const skip = (parsedPage - 1) * parsedLimit;
 
+        const query = {};
 
-        const andConditions = [];
-
-        if (q && q.trim() !== '') {
-            andConditions.push({
-                $or: [
-                    { title: { $regex: q, $options: 'i' } },
-                    { author: { $regex: q, $options: 'i' } },
-                    { description: { $regex: q, $options: 'i' } }
-                ]
-            });
+        // Text search
+        if (q && q.trim()) {
+            query.$or = [
+                { title: { $regex: q, $options: 'i' } },
+                { author: { $regex: q, $options: 'i' } },
+                { description: { $regex: q, $options: 'i' } }
+            ];
         }
 
+        // Soft genre match: at least one genre matches
         if (genre) {
             const genreList = Array.isArray(genre)
                 ? genre
                 : genre.split(',').map((g) => g.trim());
 
             if (genreList.length > 0) {
-                andConditions.push({ genre: { $all: genreList } });
+                query.genre = { $in: genreList };
             }
         }
-
-        // Final query
-        const query = andConditions.length > 0 ? { $or: andConditions } : {};
 
         const [books, totalCount] = await Promise.all([
             Books.find(query).skip(skip).limit(parsedLimit),
             Books.countDocuments(query)
         ]);
 
-        console.log("totalCount", totalCount);
         res.json({
             page: parsedPage,
             limit: parsedLimit,
@@ -82,6 +77,60 @@ router.get('/genre-search', async (req, res) => {
         res.status(500).json({ error: 'Search failed', details: err.message });
     }
 });
+
+
+// SEARCH ENDPOINT WITH AND SEARCHES FOR ALL GENRES
+// router.get('/genre-search', async (req, res) => {
+//     try {
+//         const { q, genre, page, limit  } = req.query;
+//
+//         const parsedPage = Math.max(parseInt(page, 10), 1);
+//         const parsedLimit = Math.min(Math.max(parseInt(limit, 10), 1), 50); // Max 50 per page
+//         const skip = (parsedPage - 1) * parsedLimit;
+//
+//
+//         const andConditions = [];
+//
+//         if (q && q.trim() !== '') {
+//             andConditions.push({
+//                 $or: [
+//                     { title: { $regex: q, $options: 'i' } },
+//                     { author: { $regex: q, $options: 'i' } },
+//                     { description: { $regex: q, $options: 'i' } }
+//                 ]
+//             });
+//         }
+//
+//         if (genre) {
+//             const genreList = Array.isArray(genre)
+//                 ? genre
+//                 : genre.split(',').map((g) => g.trim());
+//
+//             if (genreList.length > 0) {
+//                 andConditions.push({ genre: { $all: genreList } });
+//             }
+//         }
+//
+//         // Final query
+//         const query = andConditions.length > 0 ? { $or: andConditions } : {};
+//
+//         const [books, totalCount] = await Promise.all([
+//             Books.find(query).skip(skip).limit(parsedLimit),
+//             Books.countDocuments(query)
+//         ]);
+//
+//         console.log("totalCount", totalCount);
+//         res.json({
+//             page: parsedPage,
+//             limit: parsedLimit,
+//             totalPages: Math.ceil(totalCount / parsedLimit),
+//             totalResults: totalCount,
+//             results: books
+//         });
+//     } catch (err) {
+//         res.status(500).json({ error: 'Search failed', details: err.message });
+//     }
+// });
 
 // potential flexible route for querying
 // router.get('/main.py', async (req, res) => {
