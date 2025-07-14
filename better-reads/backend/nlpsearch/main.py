@@ -4,13 +4,21 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from fastapi import FastAPI, Query
 from typing import Optional
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 client = MongoClient("mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/retryWrites=true&w=majority&appName=Sandbox")
 books = client.bookdb.books_with_embeddings
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-
+# Add this to allow requests from frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root():
