@@ -7,7 +7,7 @@ import {
   Box
 } from '@mui/material';
 
-const PaperbackPureWhite = '#ffffff';
+import { DetectiveDustyBlue, PaperbackPureWhite } from '../../styles/colors';
 
 const ITEM_HEIGHT = 30;
 const MenuProps = {
@@ -30,22 +30,14 @@ const YearSelection = ({ fromYear, toYear, onChangeFrom, onChangeTo }) => {
           value={fromYear}
           onChange={onChangeFrom}
           displayEmpty
-          input={<OutlinedInput sx={{ height: 48 }} />}
+          input={<OutlinedInput />}
           MenuProps={MenuProps}
           sx={{
-            height: 48,
-            color: PaperbackPureWhite,
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
+            borderRadius: '25px',
+            backgroundColor: DetectiveDustyBlue,
+            color: 'black',
             '& .MuiSvgIcon-root': {
-              color: PaperbackPureWhite,
+              color: 'black',
             },
           }}
         >
@@ -63,22 +55,14 @@ const YearSelection = ({ fromYear, toYear, onChangeFrom, onChangeTo }) => {
           value={toYear}
           onChange={onChangeTo}
           displayEmpty
-          input={<OutlinedInput sx={{ height: 48 }} />}
+          input={<OutlinedInput />}
           MenuProps={MenuProps}
           sx={{
-            height: 48,
-            color: PaperbackPureWhite,
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
+            borderRadius: '25px',
+            backgroundColor: DetectiveDustyBlue,
+            color: 'black',
             '& .MuiSvgIcon-root': {
-              color: PaperbackPureWhite,
+              color: 'black',
             },
           }}
         >

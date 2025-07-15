@@ -9,7 +9,7 @@ import {
   FormControl,
 } from '@mui/material';
 
-const PaperbackPureWhite = '#ffffff';
+import { DetectiveDustyBlue, PaperbackPureWhite } from '../../styles/colors';
 
 const genres = [
   'Fantasy',
@@ -62,31 +62,23 @@ const GenreSelection = ({ onSelectGenres = () => {} }) => {
           input={<OutlinedInput />}
           renderValue={(selected) => {
             if (selected.length === 0) {
-              return <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Favorite Genres</span>;
+              return <span style={{ color: 'rgba(0, 0, 0, 0.6)' }}>Favorite Genres</span>;
             }
             return selected.join(', ');
           }}
           MenuProps={MenuProps}
           sx={{
-            height: 48,
-            color: PaperbackPureWhite,
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
+            borderRadius: '25px',
+            backgroundColor: DetectiveDustyBlue,
+            color: 'black',
             '& .MuiSvgIcon-root': {
-              color: PaperbackPureWhite,
+              color: 'black',
             },
           }}
         >
           {genres.map((genre) => (
             <MenuItem key={genre} value={genre}>
-              <Checkbox checked={selectedGenres.indexOf(genre) > -1} sx={{color: PaperbackPureWhite, '&.Mui-checked': {color: PaperbackPureWhite}}}/>
+              <Checkbox checked={selectedGenres.indexOf(genre) > -1} />
               <ListItemText primary={genre} />
             </MenuItem>
           ))}

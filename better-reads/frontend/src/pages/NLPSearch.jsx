@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import HeroBanner from '../components/common/HeroBanner';
 import { Typography, Button, Box, Grid } from '@mui/material';
+import { DetectiveDustyBlue } from '../styles/colors';
 import GenreSelection from "../components/NLPSearch/GenreSelection";
 import YearSelection from '../components/NLPSearch/YearSelection';
 import { TextField } from '@mui/material';
@@ -43,7 +44,7 @@ const NLPSearch = () => {
       backgroundColor: '#fff',
     }}>
     <HeroBanner title="Use our Natural Language Processing engine to find books" />
-    <section style={{ color: "white", padding: "6rem" }}>
+    <section style={{ backgroundColor: "white", padding: "2rem" }}>
         <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: "1rem" }}>
             <div style={{ flex: 1 }}>
             <GenreSelection onSelectGenres={setGenre} />
@@ -62,20 +63,8 @@ const NLPSearch = () => {
                 onChange={(e) => setKeyword(e.target.value)}
                 sx={{
                     '& .MuiOutlinedInput-root': {
-                    height: {
-                        xs: 48,
-                        sm: 56,
-                        md: 64,
-                    },
-                    borderRadius: '8px',
-                    backgroundColor: '#ffffff',
-                    },
-                    '& .MuiInputBase-input': {
-                    fontSize: {
-                        xs: '0.9rem',
-                        sm: '1rem',
-                    },
-                    padding: '0.75rem 1rem',
+                        borderRadius: '25px',
+                        backgroundColor: DetectiveDustyBlue,
                     },
                 }}
             />
