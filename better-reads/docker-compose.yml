@@ -27,6 +27,8 @@ services:
       - betterreads-network
 
   # Backend service
+
+  # Backend service
   backend:
     build:
       context: ./backend
@@ -38,6 +40,7 @@ services:
       - mongodb
       - redis
       - recommender
+      - nlpsearch
     environment:
       - MONGO_URI=mongodb://root:rootpassword@mongodb:27017/betterreads?authSource=admin
       - REDIS_HOST=redis
@@ -46,11 +49,22 @@ services:
       - JWT_SECRET=your_jwt_secret_key
       - PORT=3000
       - DOCKER_ENV=true
+      - PYTHON_API_NLPTEXTSEARCH_URL=http://nlpsearch:5002/search
     networks:
       - betterreads-network
     volumes:
       - ./backend:/app
       - /app/node_modules
+
+  # NLP Search service (FastAPI)
+  nlpsearch:
+    build:
+      context: ./backend/nlpsearch
+    container_name: betterreads-nlpsearch
+    ports:
+      - "5002:5002"
+    networks:
+      - betterreads-network
 
   # Recommender service
   recommender:
