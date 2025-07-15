@@ -16,6 +16,8 @@ const NLPSearch = () => {
     const [loading, setLoading] = useState(false);
 
     const handleSearch = async () => {
+    if (loading) return;
+
     setLoading(true);
     setResults([]);
     try {
@@ -39,6 +41,12 @@ const NLPSearch = () => {
     } finally {
         setLoading(false);
     }
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
     };
 
   return (
@@ -66,6 +74,7 @@ const NLPSearch = () => {
                 variant="outlined"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
+                onKeyDown={handleKeyDown}
                 sx={{
                     '& .MuiOutlinedInput-root': {
                         borderRadius: '25px',
