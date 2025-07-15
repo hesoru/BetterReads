@@ -37,7 +37,7 @@ const BookGalleryManager = ({ books, limit }) => {
     }, [books, limit]);
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} justifyContent="center">
             {bookData.map((book) => (
                 <Grid item key={book._id} xs={6} sm={4} md={3} lg={2.4}>
                     <BookPreview

@@ -7,15 +7,17 @@ import {
   Box
 } from '@mui/material';
 
-const PaperbackPureWhite = '#ffffff';
+import { DetectiveDustyBlue, PaperbackPureWhite } from '../../styles/colors';
 
 const ITEM_HEIGHT = 30;
 const MenuProps = {
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 6,
-      backgroundColor: '#1e213d',
-      color: PaperbackPureWhite,
+      backgroundColor: PaperbackPureWhite,
+      color: 'rgba(0, 0, 0, 0.87)',
+      borderRadius: '4px',
+      boxShadow: '0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12)',
     },
   },
 };
@@ -30,22 +32,14 @@ const YearSelection = ({ fromYear, toYear, onChangeFrom, onChangeTo }) => {
           value={fromYear}
           onChange={onChangeFrom}
           displayEmpty
-          input={<OutlinedInput sx={{ height: 48 }} />}
+          input={<OutlinedInput />}
           MenuProps={MenuProps}
           sx={{
-            height: 48,
-            color: PaperbackPureWhite,
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
+            borderRadius: '25px',
+            backgroundColor: DetectiveDustyBlue,
+            color: 'black',
             '& .MuiSvgIcon-root': {
-              color: PaperbackPureWhite,
+              color: 'black',
             },
           }}
         >
@@ -63,22 +57,14 @@ const YearSelection = ({ fromYear, toYear, onChangeFrom, onChangeTo }) => {
           value={toYear}
           onChange={onChangeTo}
           displayEmpty
-          input={<OutlinedInput sx={{ height: 48 }} />}
+          input={<OutlinedInput />}
           MenuProps={MenuProps}
           sx={{
-            height: 48,
-            color: PaperbackPureWhite,
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
-            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-              borderColor: PaperbackPureWhite,
-            },
+            borderRadius: '25px',
+            backgroundColor: DetectiveDustyBlue,
+            color: 'black',
             '& .MuiSvgIcon-root': {
-              color: PaperbackPureWhite,
+              color: 'black',
             },
           }}
         >

@@ -1,7 +1,7 @@
 {
   "user": {
     "username": "username_123",
-    "avatarUrl": "/src/assets/icons/UserProfile.svg",
+    "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
     "dateJoined": "2025-01-01",
     "favoriteGenres": ["Fantasy", "Mystery", "Science Fiction", "Romance", "Thriller"]
   },
@@ -27,21 +27,21 @@
     ]
   },
   "userReview": {
-    "avatarUrl": "/src/assets/icons/UserProfile.svg",
+    "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
     "username": "MyUsername123"
   },
   "otherReviews": [
     {
       "id": 1,
       "username": "JaneDoe",
-      "avatarUrl": "/src/assets/icons/UserProfile.svg",
+      "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
       "rating": 4,
       "text": "Great read. Loved the characters!"
     },
     {
       "id": 2,
       "username": "JohnSmith",
-      "avatarUrl": "/src/assets/icons/UserProfile.svg",
+      "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
       "rating": 3,
       "text": "Enjoyable, but the pacing was off."
     }

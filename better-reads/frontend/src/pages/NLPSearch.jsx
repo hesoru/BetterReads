@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import BackgroundImage from '../images/background.png';
-import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
-import { Typography, Button, Box, Grid } from '@mui/material';
+import HeroBanner from '../components/common/HeroBanner';
+import { Typography, Button, Box, Grid, CircularProgress } from '@mui/material';
+import { DetectiveDustyBlue, NoirNavy } from '../styles/colors';
 import GenreSelection from "../components/NLPSearch/GenreSelection";
 import YearSelection from '../components/NLPSearch/YearSelection';
 import { TextField } from '@mui/material';
@@ -13,8 +13,13 @@ const NLPSearch = () => {
     const [endYear, setEndYear] = useState("");
     const [keyword, setKeyword] = useState("");
     const [result, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleSearch = async () => {
+    if (loading) return;
+
+    setLoading(true);
+    setResults([]);
     try {
         const params = new URLSearchParams();
 
@@ -33,7 +38,15 @@ const NLPSearch = () => {
         setResults(data);
     } catch (err) {
         console.error('Search failed:', err);
+    } finally {
+        setLoading(false);
     }
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
     };
 
   return (
@@ -42,37 +55,9 @@ const NLPSearch = () => {
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: '#fff',
-      backgroundImage: `url(${BackgroundImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center center',
-      backgroundAttachment: 'fixed',
     }}>
-    <section style={{
-        textAlign: 'center',
-        padding: '4rem 2rem',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        color: 'white',
-        position: 'relative',
-      }}>
-        <div style={{
-          height: '100px',
-          width: '100%',
-          backgroundImage: `url(${BetterReadsLogo})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          backgroundSize: 'contain',
-          marginBottom: '1rem',
-        }} />
-        <Typography variant="h5" style={{
-          fontFamily: "'Source Serif Pro', serif",
-          fontStyle: 'italic',
-          color: '#FFFFFF',
-          textShadow: '1px 1px 3px rgba(0,0,0,0.7)',
-        }}>
-          Use our Natural Language Processing engine to find books
-        </Typography>
-    </section>
-    <section style={{ color: "white", padding: "6rem" }}>
+    <HeroBanner title="Use our Natural Language Processing engine to find books" />
+    <section style={{ backgroundColor: "white", padding: "2rem" }}>
         <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: "1rem" }}>
             <div style={{ flex: 1 }}>
             <GenreSelection onSelectGenres={setGenre} />
@@ -89,22 +74,11 @@ const NLPSearch = () => {
                 variant="outlined"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
+                onKeyDown={handleKeyDown}
                 sx={{
                     '& .MuiOutlinedInput-root': {
-                    height: {
-                        xs: 48,
-                        sm: 56,
-                        md: 64,
-                    },
-                    borderRadius: '8px',
-                    backgroundColor: '#ffffff',
-                    },
-                    '& .MuiInputBase-input': {
-                    fontSize: {
-                        xs: '0.9rem',
-                        sm: '1rem',
-                    },
-                    padding: '0.75rem 1rem',
+                        borderRadius: '25px',
+                        backgroundColor: DetectiveDustyBlue,
                     },
                 }}
             />
@@ -125,7 +99,12 @@ const NLPSearch = () => {
     >
       Find NLP Match
     </Button>
-    {result.length > 0 && (
+    {loading && (
+      <Box display="flex" justifyContent="center" mt={4}>
+        <CircularProgress sx={{ color: NoirNavy }} />
+      </Box>
+    )}
+    {!loading && result.length > 0 && (
       <Box
         mt={4}
         px={6}
@@ -159,12 +138,13 @@ const NLPSearch = () => {
                 variant="caption"
                 sx={{
                   mb: 1,
-                  color: 'yellow',
+                  color: 'black',
+                  fontStyle: 'italic',
                   fontSize: '1.2rem',
                   textAlign: 'center',
                 }}
               >
-                Match Score: {book.score?.toFixed(3)}
+                Match Score: {book.score ? `${(book.score * 100).toFixed(2)}%` : null}
               </Typography>
 
               <BookPreview
