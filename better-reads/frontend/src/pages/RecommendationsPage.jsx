@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import BookGalleryManager from '../components/Book/BookGalleryManager';
 import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
-import BackgroundImage from '../images/background.svg';
+import BackgroundImage from '../images/background.png';
 import '../components/Book/BookPage.css';
 
 const RecommendationsPage = () => {
@@ -79,7 +79,7 @@ const RecommendationsPage = () => {
     };
     
     fetchRecommendations();
-  }, []);
+  }, [isGuest]);
 
   // Fetch popular books as a fallback
   useEffect(() => {

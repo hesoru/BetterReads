@@ -1,7 +1,7 @@
 {
   "user": {
     "username": "username_123",
-    "avatarUrl": "/src/assets/icons/UserProfile.svg",
+    "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
     "dateJoined": "2025-01-01",
     "favoriteGenres": ["Fantasy", "Mystery", "Science Fiction", "Romance", "Thriller"],
     "favoriteBooks": ["978-1-23456-789-7", "978-1-00000-111-1"]
@@ -17,7 +17,7 @@
         "averageRating": 4.2
       },
       "userReview": {
-        "avatarUrl": "/src/assets/icons/UserProfile.svg",
+        "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
         "username": "MyUsername123",
         "rating": 3,
         "text": "Every chapter ended on a cliffhanger. Loved it."
@@ -26,14 +26,14 @@
         {
           "id": 1,
           "username": "JaneDoe",
-          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
           "rating": 4,
           "text": "Great read. Loved the characters!"
         },
         {
           "id": 2,
           "username": "JohnSmith",
-          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
           "rating": 3,
           "text": "Enjoyable, but the pacing was off."
         }
@@ -50,7 +50,7 @@
         "averageRating": 4.1
       },
       "userReview": {
-        "avatarUrl": "/src/assets/icons/UserProfile.svg",
+        "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
         "username": "MyUsername123",
         "rating": 3,
         "text": "Every chapter ended on a cliffhanger. Loved it."
@@ -59,14 +59,14 @@
         {
           "id": 1,
           "username": "JaneDoe",
-          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
           "rating": 2,
           "text": "Great read. Hated the characters!"
         },
         {
           "id": 2,
           "username": "JohnSmith1",
-          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
           "rating": 3.5,
           "text": "Enjoyable, but the pacing was off."
         }
@@ -85,7 +85,7 @@
         "averageRating": 4.7
       },
       "userReview": {
-        "avatarUrl": "/src/assets/icons/UserProfile.svg",
+        "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
         "username": "MyUsername123",
         "rating": 3,
         "text": "Every chapter ended on a cliffhanger. Loved it."
@@ -94,14 +94,14 @@
         {
           "id": 1,
           "username": "JaneDoe",
-          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
           "rating": 4,
           "text": "Fast-paced and explosive. Couldn’t put it down!"
         },
         {
           "id": 2,
           "username": "ThrillSeekerJane",
-          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
           "rating": 3,
           "text": "Every chapter ended on a cliffhanger. Loved it."
         }
@@ -118,7 +118,7 @@
         "averageRating": 4.7
       },
       "userReview": {
-        "avatarUrl": "/src/assets/icons/UserProfile.svg",
+        "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
         "username": "MyUsername123",
         "rating": 3,
         "text": "Every chapter ended on a cliffhanger. Loved it."
@@ -127,14 +127,14 @@
         {
           "id": 1,
           "username": "JaneDoe",
-          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
           "rating": 4,
           "text": "Fast-paced and explosive. Couldn’t put it down!"
         },
         {
           "id": 2,
           "username": "ThrillSeekerJane",
-          "avatarUrl": "/src/assets/icons/UserProfile.svg",
+          "avatarUrl": "../../src/images/icons/User_Profile_Image_NoLogo.png",
           "rating": 3,
           "text": "Every chapter ended on a cliffhanger. Loved it."
         }
