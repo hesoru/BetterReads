@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import HeroBanner from '../components/common/HeroBanner';
-import { Typography, Button, Box, Grid } from '@mui/material';
-import { DetectiveDustyBlue } from '../styles/colors';
+import { Typography, Button, Box, Grid, CircularProgress } from '@mui/material';
+import { DetectiveDustyBlue, NoirNavy } from '../styles/colors';
 import GenreSelection from "../components/NLPSearch/GenreSelection";
 import YearSelection from '../components/NLPSearch/YearSelection';
 import { TextField } from '@mui/material';
@@ -13,8 +13,11 @@ const NLPSearch = () => {
     const [endYear, setEndYear] = useState("");
     const [keyword, setKeyword] = useState("");
     const [result, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleSearch = async () => {
+    setLoading(true);
+    setResults([]);
     try {
         const params = new URLSearchParams();
 
@@ -33,6 +36,8 @@ const NLPSearch = () => {
         setResults(data);
     } catch (err) {
         console.error('Search failed:', err);
+    } finally {
+        setLoading(false);
     }
     };
 
@@ -85,7 +90,12 @@ const NLPSearch = () => {
     >
       Find NLP Match
     </Button>
-    {result.length > 0 && (
+    {loading && (
+      <Box display="flex" justifyContent="center" mt={4}>
+        <CircularProgress sx={{ color: NoirNavy }} />
+      </Box>
+    )}
+    {!loading && result.length > 0 && (
       <Box
         mt={4}
         px={6}
@@ -119,12 +129,13 @@ const NLPSearch = () => {
                 variant="caption"
                 sx={{
                   mb: 1,
-                  color: 'yellow',
+                  color: 'black',
+                  fontStyle: 'italic',
                   fontSize: '1.2rem',
                   textAlign: 'center',
                 }}
               >
-                Match Score: {book.score?.toFixed(3)}
+                Match Score: {book.score ? `${(book.score * 100).toFixed(2)}%` : null}
               </Typography>
 
               <BookPreview
