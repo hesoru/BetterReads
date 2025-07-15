@@ -70,10 +70,11 @@ const Login = () => {
 							onClick={() => {
 								dispatch(clearUser());
 								dispatch(clearBooklist());
-								navigate('/search');
+								// Set guest user in localStorage
+								localStorage.setItem('user', JSON.stringify({ isGuest: true }));
 								localStorage.removeItem('appState');
-
-								navigate("/search"); }}
+								navigate("/search");
+							}}
 						>
 							Enter as a Guest
 						</button>

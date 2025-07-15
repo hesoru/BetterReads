@@ -30,7 +30,7 @@ const BookUtils = {
 
         if (!res.ok) {
             const error = await res.json().catch(() => ({}));
-            throw new Error(error?.error || 'Failed to search books');
+            throw new Error(error?.error || 'Failed to main.py books');
         }
 
         const data = await res.json();
@@ -114,12 +114,12 @@ const BookUtils = {
     },
 
     // Create or update a user's review for a book
-    async upsertReview(bookId, userId, { rating, description }) {
+    async upsertReview(bookId, username, { rating, description }) {
         //console.log(bookId, userId, { rating, description });
         const res = await fetch(`${BASE_URL}/books/${bookId}/reviews`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, rating, description }),
+            body: JSON.stringify({ username, rating, description }),
         });
         if (!res.ok) throw new Error('Failed to submit review');
         return res.json();

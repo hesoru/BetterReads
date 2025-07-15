@@ -1,31 +1,24 @@
 services:
-
   redis:
     image: redis:7
     container_name: redis
     ports:
-      - "6379:6379"  # Expose Redis for local dev
+      - "6379:6379"
     volumes:
       - redis-data:/data
 
-  frontend:
-    build:
-      context: ./better-reads/frontend
-      dockerfile: Dockerfile
+  mongodb:
+    image: mongo:latest
     ports:
-      - "5173:5173"
+      - "27017:27017"
     volumes:
-      - ./better-reads/frontend:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-    depends_on:
-      - backend
+      - mongodb_data:/data/db
 
   backend:
     build:
       context: ./better-reads/backend
       dockerfile: Dockerfile
+    container_name: betterreads-backend
     ports:
       - "3000:3000"
     volumes:
@@ -36,8 +29,20 @@ services:
       - MONGODB_URI=mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/bookdb?retryWrites=true&w=majority&appName=Sandbox
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - PYTHON_API_NLPTEXTSEARCH_URL=http://nlpsearch:5002/search
     depends_on:
       - redis
+      - mongodb
+      - nlpsearch
+
+  nlpsearch:
+    build:
+      context: ./better-reads/backend/nlpsearch
+    container_name: betterreads-nlpsearch
+    ports:
+      - "5002:5002"
+    networks:
+      - default
 
   recommender:
     build: ./better-reads/recommender
@@ -50,12 +55,20 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
 
-  mongodb:
-    image: mongo:latest
+  frontend:
+    build:
+      context: ./better-reads/frontend
+      dockerfile: Dockerfile
+    container_name: betterreads-frontend
     ports:
-      - "27017:27017"
+      - "5173:5173"
     volumes:
-      - mongodb_data:/data/db
+      - ./better-reads/frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
 
 volumes:
   mongodb_data:

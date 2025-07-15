@@ -62,7 +62,7 @@ const SearchPage = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      handleSearch(1, false); // Always fetch page 1 and replace results on new search
+      handleSearch(1, false); // Always fetch page 1 and replace results on new main.py
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
