@@ -13,8 +13,7 @@ import {
   Button,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
-import BackgroundImage from '../images/background.png';
+import HeroBanner from '../components/common/HeroBanner';
 import { DetectiveDustyBlue } from '../styles/colors';
 import { BookPreview } from '../components/Book/BookPreview';
 import '../components/Book/BookPage.css';
@@ -85,36 +84,8 @@ const SearchPage = () => {
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: '#fff',
-      backgroundImage: `url(${BackgroundImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center center',
-      backgroundAttachment: 'fixed',
     }}>
-      <section style={{
-        textAlign: 'center',
-        padding: '4rem 2rem',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        color: 'white',
-        position: 'relative',
-      }}>
-        <div style={{
-          height: '100px',
-          width: '100%',
-          backgroundImage: `url(${BetterReadsLogo})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          backgroundSize: 'contain',
-          marginBottom: '1rem',
-        }} />
-        <Typography variant="h5" style={{
-          fontFamily: "'Source Serif Pro', serif",
-          fontStyle: 'italic',
-          color: '#FFFFFF',
-          textShadow: '1px 1px 3px rgba(0,0,0,0.7)',
-        }}>
-          Reading is good for you. But we can make it better.
-        </Typography>
-      </section>
+      <HeroBanner title="Reading is good for you. But we can make it better." />
 
       <Box sx={{ backgroundColor: 'white', flexGrow: 1, paddingTop: '2rem' }}>
         <Box sx={{

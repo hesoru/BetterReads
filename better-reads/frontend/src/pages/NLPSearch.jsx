@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import BackgroundImage from '../images/background.png';
-import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
+import HeroBanner from '../components/common/HeroBanner';
 import { Typography, Button, Box, Grid } from '@mui/material';
 import GenreSelection from "../components/NLPSearch/GenreSelection";
 import YearSelection from '../components/NLPSearch/YearSelection';
@@ -42,36 +41,8 @@ const NLPSearch = () => {
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: '#fff',
-      backgroundImage: `url(${BackgroundImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center center',
-      backgroundAttachment: 'fixed',
     }}>
-    <section style={{
-        textAlign: 'center',
-        padding: '4rem 2rem',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        color: 'white',
-        position: 'relative',
-      }}>
-        <div style={{
-          height: '100px',
-          width: '100%',
-          backgroundImage: `url(${BetterReadsLogo})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center',
-          backgroundSize: 'contain',
-          marginBottom: '1rem',
-        }} />
-        <Typography variant="h5" style={{
-          fontFamily: "'Source Serif Pro', serif",
-          fontStyle: 'italic',
-          color: '#FFFFFF',
-          textShadow: '1px 1px 3px rgba(0,0,0,0.7)',
-        }}>
-          Use our Natural Language Processing engine to find books
-        </Typography>
-    </section>
+    <HeroBanner title="Use our Natural Language Processing engine to find books" />
     <section style={{ color: "white", padding: "6rem" }}>
         <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: "1rem" }}>
             <div style={{ flex: 1 }}>

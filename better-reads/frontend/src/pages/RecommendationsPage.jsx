@@ -7,8 +7,8 @@ import {
   Paper,
 } from '@mui/material';
 import BookGalleryManager from '../components/Book/BookGalleryManager';
-import BetterReadsLogo from '../images/icons/BetterReadsLogo.svg';
-import BackgroundImage from '../images/background.png';
+
+import HeroBanner from '../components/common/HeroBanner';
 import '../components/Book/BookPage.css';
 
 const RecommendationsPage = () => {
@@ -100,13 +100,7 @@ const RecommendationsPage = () => {
 
   return (
     <div style={styles.container}>
-      {/* Banner with logo and title */}
-      <Box sx={styles.banner}>
-        <img src={BetterReadsLogo} alt="BetterReads Logo" style={styles.logoImage} />
-        <Typography variant="h6" sx={styles.bannerText}>
-          Discover your next favorite book.
-        </Typography>
-      </Box>
+      <HeroBanner title="Get book recs machine-learning curated to your taste!" />
 
       <Container maxWidth="lg">
         {loading ? (
@@ -152,30 +146,6 @@ const RecommendationsPage = () => {
 const styles = {
   container: {
     padding: 0,
-  },
-  banner: {
-    width: '100%',
-    textAlign: 'center',
-    padding: '2rem',
-    marginBottom: '2rem',
-    backgroundImage: `url(${BackgroundImage})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: '0',
-  },
-  bannerText: {
-    fontSize: '1.2rem',
-    color: '#fff',
-    marginBottom: '1rem',
-    fontWeight: 500,
-    fontFamily: 'Georgia, serif',
-    marginTop: 4,
-    fontStyle: 'italic'
-  },
-  logoImage: {
-    width: '360px',
-    height: '160px',
   },
 };
 
