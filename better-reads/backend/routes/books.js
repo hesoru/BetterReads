@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import axios from 'axios';
 const router = express.Router();
 
-// retrieve books via a generic search query
+// retrieve books via a generic main.py query
 router.get('/search', async (req, res) => {
     try {
         const { q } = req.query;
@@ -33,44 +33,39 @@ router.get('/search', async (req, res) => {
 
 router.get('/genre-search', async (req, res) => {
     try {
-        const { q, genre, page, limit  } = req.query;
+        const { q, genre, page, limit } = req.query;
 
-        const parsedPage = Math.max(parseInt(page, 10), 1);
-        const parsedLimit = Math.min(Math.max(parseInt(limit, 10), 1), 50); // Max 50 per page
+        const parsedPage = Math.max(parseInt(page, 10) || 1, 1);
+        const parsedLimit = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 50);
         const skip = (parsedPage - 1) * parsedLimit;
 
+        const query = {};
 
-        const andConditions = [];
-
-        if (q && q.trim() !== '') {
-            andConditions.push({
-                $or: [
-                    { title: { $regex: q, $options: 'i' } },
-                    { author: { $regex: q, $options: 'i' } },
-                    { description: { $regex: q, $options: 'i' } }
-                ]
-            });
+        // Text search
+        if (q && q.trim()) {
+            query.$or = [
+                { title: { $regex: q, $options: 'i' } },
+                { author: { $regex: q, $options: 'i' } },
+                { description: { $regex: q, $options: 'i' } }
+            ];
         }
 
+        // Soft genre match: at least one genre matches
         if (genre) {
             const genreList = Array.isArray(genre)
                 ? genre
                 : genre.split(',').map((g) => g.trim());
 
             if (genreList.length > 0) {
-                andConditions.push({ genre: { $all: genreList } });
+                query.genre = { $in: genreList };
             }
         }
-
-        // Final query
-        const query = andConditions.length > 0 ? { $and: andConditions } : {};
 
         const [books, totalCount] = await Promise.all([
             Books.find(query).skip(skip).limit(parsedLimit),
             Books.countDocuments(query)
         ]);
 
-        console.log("totalCount", totalCount);
         res.json({
             page: parsedPage,
             limit: parsedLimit,
@@ -83,8 +78,62 @@ router.get('/genre-search', async (req, res) => {
     }
 });
 
+
+// SEARCH ENDPOINT WITH AND SEARCHES FOR ALL GENRES
+// router.get('/genre-search', async (req, res) => {
+//     try {
+//         const { q, genre, page, limit  } = req.query;
+//
+//         const parsedPage = Math.max(parseInt(page, 10), 1);
+//         const parsedLimit = Math.min(Math.max(parseInt(limit, 10), 1), 50); // Max 50 per page
+//         const skip = (parsedPage - 1) * parsedLimit;
+//
+//
+//         const andConditions = [];
+//
+//         if (q && q.trim() !== '') {
+//             andConditions.push({
+//                 $or: [
+//                     { title: { $regex: q, $options: 'i' } },
+//                     { author: { $regex: q, $options: 'i' } },
+//                     { description: { $regex: q, $options: 'i' } }
+//                 ]
+//             });
+//         }
+//
+//         if (genre) {
+//             const genreList = Array.isArray(genre)
+//                 ? genre
+//                 : genre.split(',').map((g) => g.trim());
+//
+//             if (genreList.length > 0) {
+//                 andConditions.push({ genre: { $all: genreList } });
+//             }
+//         }
+//
+//         // Final query
+//         const query = andConditions.length > 0 ? { $or: andConditions } : {};
+//
+//         const [books, totalCount] = await Promise.all([
+//             Books.find(query).skip(skip).limit(parsedLimit),
+//             Books.countDocuments(query)
+//         ]);
+//
+//         console.log("totalCount", totalCount);
+//         res.json({
+//             page: parsedPage,
+//             limit: parsedLimit,
+//             totalPages: Math.ceil(totalCount / parsedLimit),
+//             totalResults: totalCount,
+//             results: books
+//         });
+//     } catch (err) {
+//         res.status(500).json({ error: 'Search failed', details: err.message });
+//     }
+// });
+
 // potential flexible route for querying
-// router.get('/search', async (req, res) => {
+// router.get('/main.py', async (req, res) => {
 //     try {
 //         const query = {};
 //
@@ -184,26 +233,27 @@ router.get('/', async (req, res) => {
     res.json(categories);
 });
 
+
 // POST /books/:id/reviews - Create or update a review for a book
 router.post('/:id/reviews', async (req, res) => {
     try {
         const { id: bookId } = req.params;
-        const { userId, rating, description } = req.body;
+        const { username, rating, description } = req.body;
 
-        if (!userId) {
-            return res.status(400).json({ error: 'userId is required' });
+        if (!username) {
+            return res.status(400).json({ error: 'username is required' });
         }
 
         const updateFields = {};
         if (rating !== undefined) updateFields.rating = rating;
         if (description !== undefined) updateFields.description = description;
 
-        const existingReview = await Reviews.findOne({ bookId, userId });
+        const existingReview = !!(await Reviews.findOne({ bookId, userId: username }));
 
         if (existingReview) {
             // Update the existing review
             const updated = await Reviews.findOneAndUpdate(
-                { bookId, userId },
+                { bookId, userId: username },
                 { ...updateFields, updatedAt: new Date() },
                 { new: true }
             );
@@ -223,7 +273,7 @@ router.post('/:id/reviews', async (req, res) => {
         // Create a new review if none exists
         const newReview = new Reviews({
             bookId,
-            userId,
+            userId: username,
             ...updateFields,
             createdAt: new Date(),
         });
@@ -233,11 +283,11 @@ router.post('/:id/reviews', async (req, res) => {
         const book = await Books.findById(bookId);
         if (!book) throw new Error('Book not found');
 
-        const user = await Users.findById(userId);
+        const user = await Users.findOne({username});
         if (!user) throw new Error('User not found');
 
         //  Increment book review count
-        book.reviewCount += 1;
+        book.reviewCount = (book.reviewCount || 0) + 1;
         await book.save();
 
         //  Add review to user if not already included
@@ -258,6 +308,7 @@ router.post('/:id/reviews', async (req, res) => {
         res.status(500).json({ error: 'Failed to create or update review', details: err.message });
     }
 });
+
 
 // add book to wishlist
 router.post('/:bookId/wishlist', async (req, res) => {

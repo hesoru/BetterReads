@@ -21,6 +21,21 @@ router.get('/', async (req, res) => {
     }
 });
 
+// retrieve userImageURL by busername// GET /avatarUrl/:username - Retrieve avatar URL by username
+router.get('/avatarUrl/:username', async (req, res) => {
+    try {
+        const user = await Users.findOne({ username: req.params.username });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json( user.avatarUrl );
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch avatar URL', details: err.message });
+    }
+});
+
 // Get user details by ID or username
 router.get('/details/:identifier', async (req, res) => {
     try {
@@ -126,16 +141,21 @@ router.post('/login', async (req, res) => {
         if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
 
         const user = await Users.findOne({ username });
+        if (!user) {
+            return res.status(401).json({ error: 'This username does not exist. Please make sure username is correct and try again.' });
+        }
         const match = await bcrypt.compare(password, user.password);
 
-        if (!user || !match ) {
+        if (!match ) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
         const token = jwt.sign({ id: user._id, username }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRY
         });
-        res.json({token, user});
+        const userObject = user.toObject();
+        delete userObject.password;
+        res.json({token, user: userObject});
         // TODO: Replace with real session or JWT
         //res.json({ message: 'Login successful', userId: user._id });
     } catch (err) {

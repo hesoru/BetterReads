@@ -7,17 +7,37 @@
 
 Our application is an intelligent, social book discovery platform tailored to passionate readers who want a more engaging and personalized experience than traditional apps like Goodreads. It allows users to explore and write reviews for books; receive personalized reading recommendations; and curate reading wishlists. By storing book metadata, user preferences, and behavioral insights, the platform delivers a highly individualized user experience. Built on MongoDB, it features account management, a natural language processing (NLP)–powered search engine, a reading recommendation system, and interactive user features.
 
-## Instruction for run the app with Docker
+## Instruction for Running the App with Docker
 
 Clone the repository and run with Docker Compose. In your bash terminal, run:
 
 ```bash
 # After downloading our app, ensure you are under TEAM25_BETTERREADS to run the following command
-docker-compose up --build  # start container
+docker-compose up -d --build  # start container
 docker-compose down        # tear down container
 ```
 
+## Accessing the Application
+
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:3000
+- **Recommender API**: http://localhost:5001
+
+## Environment Variables
+
+The Docker Compose files include default environment variables. For custom configurations, create a `.env` file in the project root directory.
+
+Example `.env` file:
+```
+MONGO_URI=mongodb://root:rootpassword@mongodb:27017/betterreads?authSource=admin
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+JWT_SECRET=your_custom_jwt_secret
+```
+
 ## Milestones
+
 ### Milestone 1:
 The following frontend features have been implemented:
 - Book product card component
@@ -48,16 +68,24 @@ The following features have been implemented for Milestone 2:
 
 ### Milestone 3:
 The following featuers have been implemented for Milestone 3:
-- UI has been made responsive. 
+- UI has been made responsive to fix some bugs.
+   - Functional 'make reviews' button to autoscroll to right component.
+   - Select rating when creating or editing a new review.
+   - Filtering the user review from other reviews on detail page of book
+   - Cleaner UI for the search page
 - NLP Book search bar now has additional genre selection option.
-- Fixed background images. 
+   - Search bar allows you to search (if wanted) to allow for stricter limitation
+- Fixed background images.
+- Hashed and salted user passwords in the backend with bcrypt for security.
+- Ability to persist wishlist from guest session when user signs up for a new account
 - Added pagination for book search results.
-- Added genre expansion on book details and book cards
+- Implemented recommender system (external API): genre-based, collaborative filtering, and popularity-based recommendations.
+- Implemented Redis caching for user-item matrix and popular books.
 
-### TEST section
+### Test Suite Section
 1. Test folder were created including setup.js, books.test.js, reviews.tests.js and users.test.js. 
 2. Test using Mocha, Chai, Supertest, Mongodb-Memory-Server. Test report is generated using mochawesome.
-3. There are 34 total tests covering API calls of books.js, reviews.js and users.js
+3. There are 39 total tests covering API calls of books.js, reviews.js and users.js
 3. Instruction to run the test:
 ```bash
 # After downloading our app, cd better-reads/backend to run the following command
@@ -66,3 +94,5 @@ npm test    # run test
 
 # The test result report can be reviewed by opending mochawesome.html by browser. The mochawesome.html is located at better-reads/backend/mochawesome-report/mochawesome.html
 ```
+## Accessing test suite html file instrutions: 
+   - The test result report can be reviewed by opending mochawesome.html by browser. The mochawesome.html is located at better-reads/backend/mochawesome-report/mochawesome.html

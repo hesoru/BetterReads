@@ -1,4 +1,4 @@
-import { getFromRedis, storeInRedis } from './backend/services/redisClient.js';
+import { getFromRedis, storeInRedis } from '../services/redisClient.js';
 
 async function testRedisConnection() {
   try {
