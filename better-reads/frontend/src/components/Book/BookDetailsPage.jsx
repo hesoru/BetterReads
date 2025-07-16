@@ -133,8 +133,8 @@ export default function BookDetailsPage() {
 
     return (
         <Container sx={{ py: { xs: 2, md: 4 } }}>
-            <Grid container spacing={{ xs: 2, md: 4 }}>
-                                <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div className="book-details-layout">
+                <div className="book-cover-column">
                     <Box
                         component="img"
                         src={book.image}
@@ -145,17 +145,14 @@ export default function BookDetailsPage() {
                             borderRadius: '12px',
                             boxShadow: '4px 4px 4px 0px rgba(0, 0, 0, 0.25)',
                             objectFit: 'cover',
-                            mx: 'auto',
                         }}
                     />
                     <StarRating rating={Math.round(book.averageRating)} />
                     <div className="load-more">
                         <button className="btn" onClick={handleScrollToReview}>Make Review</button>
                     </div>
-
-                </Grid>
-
-                                <Grid item xs={12} md={8} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                </div>
+                <div className="book-info-column">
                     <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2, fontSize: { xs: '1.8rem', md: '2.5rem' } }}>
                         {book.title}
                     </Typography>
@@ -165,9 +162,9 @@ export default function BookDetailsPage() {
                     <Typography sx={{ fontSize: '0.9rem', color: 'var(--color-text-light)', mb: 2 }}>
                         ISBN: {book.ISBN}
                     </Typography>
-                    
-                    <GenreTags genres={book.genre} />                </Grid>
-            </Grid>
+                    <GenreTags genres={book.genre} />
+                </div>
+            </div>
 
             <div className="reviews-container">
                 {!isGuest && (

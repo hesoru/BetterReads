@@ -721,6 +721,42 @@ header .button {
     color: var(--color-bg);
 }
 
+/* Book Details Layout - New Styles */
+.book-details-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem; /* Adjust gap as needed */
+    align-items: flex-start; /* Align items to the top */
+}
+
+.book-cover-column {
+    flex: 1 1 300px; /* Flex-grow, flex-shrink, flex-basis */
+    max-width: 300px; /* Max width for the cover column */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.book-info-column {
+    flex: 2 1 60%; /* Let it take more space */
+    text-align: left;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+    .book-details-layout {
+        flex-direction: column;
+        align-items: center; /* Center items when stacked */
+    }
+
+    .book-cover-column,
+    .book-info-column {
+        flex: 1 1 100%;
+        max-width: 100%;
+        text-align: center; /* Center text on small screens */
+    }
+}
+
 
 .books-row-scroll {
     display: flex;
