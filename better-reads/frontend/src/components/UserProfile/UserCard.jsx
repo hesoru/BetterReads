@@ -3,6 +3,8 @@ import { Box, Avatar, Typography, Button, Paper, Stack, Divider } from '@mui/mat
 import { styled } from '@mui/material/styles';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LockResetIcon from '@mui/icons-material/LockReset';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { useNavigate } from 'react-router-dom';
 import { GenreTags } from '../Book/BookUtils';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -17,6 +19,11 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 
 const UserCard = ({ user, onChangePassword, onSignOut }) => {
   const isGuest = user?.isGuest;
+  const navigate = useNavigate();
+
+  const handleSignUp = () => {
+    navigate('/signup');
+  };
   const formatDate = (date) => {
     if (!date) return '';
     return new Date(date).toLocaleDateString('en-US', {
@@ -68,9 +75,13 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
         </Box>
 
         <Stack
-          direction={{ xs: 'row', sm: 'column', md: 'row' }}
+          direction="row"
           spacing={1}
-          sx={{ width: { xs: '100%', sm: 'auto' }, mt: { xs: 2, sm: 0 }, justifyContent: 'flex-start' }}
+          sx={{ 
+            width: { xs: '100%', sm: 'auto' }, 
+            mt: { xs: 2, sm: 0 }, 
+            justifyContent: 'flex-end'
+          }}
         >
           <Button
             variant="text"
@@ -86,7 +97,22 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
           >
             Change Password
           </Button>
-          {!isGuest && (
+          {isGuest ? (
+            <Button
+              variant="text"
+              startIcon={<PersonAddIcon />}
+              onClick={handleSignUp}
+              sx={{
+                fontStyle: 'italic',
+                textTransform: 'none',
+                color: 'text.secondary',
+                p: { xs: '4px 8px', sm: '6px 16px' },
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
+              }}
+            >
+              Sign Up
+            </Button>
+          ) : (
             <Button
               variant="text"
               startIcon={<LogoutIcon />}

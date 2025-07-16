@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import HeroBanner from '../components/common/HeroBanner';
 import { Typography, Button, Box, Grid, CircularProgress } from '@mui/material';
-import { DetectiveDustyBlue, NoirNavy } from '../styles/colors';
+import { DetectiveDustyBlue, NoirNavy, NovellaNavy } from '../styles/colors';
 import GenreSelection from "../components/NLPSearch/GenreSelection";
 import YearSelection from '../components/NLPSearch/YearSelection';
 import { TextField } from '@mui/material';
@@ -57,16 +57,16 @@ const NLPSearch = () => {
       backgroundColor: '#fff',
     }}>
     <HeroBanner title="Use our Natural Language Processing engine to find books" />
-    <section style={{ backgroundColor: "white", padding: "2rem" }}>
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: "1rem" }}>
-            <div style={{ flex: 1 }}>
-            <GenreSelection onSelectGenres={setGenre} />
-            </div>
+    <Box component="section" sx={{ backgroundColor: "white", padding: "2rem" }}>
+        <Box sx={{ display: "flex", flexDirection: { xs: 'column', md: 'row' }, gap: "1rem", alignItems: "center", marginBottom: "1rem" }}>
+            <Box sx={{ flex: 1, width: '100%' }}>
+              <GenreSelection onSelectGenres={setGenre} />
+            </Box>
 
-            <div style={{ display: "flex", gap: "0.5rem", flex: 2 }}>
-            <YearSelection fromYear={startYear} toYear={endYear} onChangeFrom={(e) => setStartYear(e.target.value)} onChangeTo={(e) => setEndYear(e.target.value)}/>
-            </div>
-        </div>
+            <Box sx={{ display: "flex", gap: "0.5rem", flex: 2, width: '100%' }}>
+              <YearSelection fromYear={startYear} toYear={endYear} onChangeFrom={(e) => setStartYear(e.target.value)} onChangeTo={(e) => setEndYear(e.target.value)}/>
+            </Box>
+        </Box>
         <div>
             <TextField
                 fullWidth
@@ -83,7 +83,7 @@ const NLPSearch = () => {
                 }}
             />
         </div>
-    </section>
+    </Box>
     <Button
       variant="contained"
       onClick={handleSearch}
@@ -138,8 +138,10 @@ const NLPSearch = () => {
                 variant="caption"
                 sx={{
                   mb: 1,
-                  color: 'black',
+                  color: NovellaNavy,
                   fontStyle: 'italic',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
                   fontSize: '1.2rem',
                   textAlign: 'center',
                 }}
