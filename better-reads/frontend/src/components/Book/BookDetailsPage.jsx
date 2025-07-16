@@ -19,6 +19,23 @@ const sectionTitleStyle = {
     marginTop: 3,
 };
 
+const deleteButtonStyle = {
+    backgroundColor: 'transparent',
+    border: '1px solid #D32F2F',
+    color: '#D32F2F',
+    borderRadius: '8px',
+    padding: '0.5rem 1rem',
+    fontFamily: 'Albert Sans, sans-serif',
+    fontStyle: 'italic',
+    fontSize: '0.9rem',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s ease-in-out, color 0.2s ease-in-out',
+    '&:hover': {
+        backgroundColor: '#D32F2F',
+        color: '#FFFFFF',
+    },
+};
+
 const buttonStyle = {
     backgroundColor: 'transparent',
     border: '1px solid #151B54',
@@ -117,7 +134,7 @@ export default function BookDetailsPage() {
     return (
         <Container sx={{ py: { xs: 2, md: 4 } }}>
             <Grid container spacing={{ xs: 2, md: 4 }}>
-                <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
+                                <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Box
                         component="img"
                         src={book.image}
@@ -138,7 +155,7 @@ export default function BookDetailsPage() {
 
                 </Grid>
 
-                <Grid item xs={12} md={8}>
+                                <Grid item xs={12} md={8} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                     <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2, fontSize: { xs: '1.8rem', md: '2.5rem' } }}>
                         {book.title}
                     </Typography>
@@ -173,10 +190,15 @@ export default function BookDetailsPage() {
                                 setIsEditing(false);
                             }}
                         />
-                        {userReview && !isEditing && (
-                            <Button sx={{ ...buttonStyle, mt: 2 }} onClick={() => setIsEditing(true)}>
-                                Edit Review
-                            </Button>
+                                                                        {userReview && !isEditing && (
+                            <Box sx={{ display: 'flex', gap: 2, mt: 2, justifyContent: 'flex-start' }}>
+                                <Button sx={buttonStyle} onClick={() => setIsEditing(true)}>
+                                    Edit Review
+                                </Button>
+                                <Button sx={deleteButtonStyle} onClick={() => console.log('Delete review clicked')}>
+                                    Delete Review
+                                </Button>
+                            </Box>
                         )}
                     </div>
                 )}
