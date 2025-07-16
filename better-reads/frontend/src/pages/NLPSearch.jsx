@@ -70,7 +70,9 @@ const NLPSearch = () => {
         <div>
             <TextField
                 fullWidth
-                placeholder="Enter keywords..."
+                multiline
+                rows={2}
+                placeholder="Show me a gay love story between a werewolf and a vampire..."
                 variant="outlined"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
