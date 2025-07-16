@@ -725,35 +725,59 @@ header .button {
 .book-details-layout {
     display: flex;
     flex-wrap: wrap;
-    gap: 2rem; /* Adjust gap as needed */
-    align-items: flex-start; /* Align items to the top */
+    gap: 4rem; /* Increased gap for more space between columns */
+    align-items: flex-start;
 }
 
 .book-cover-column {
-    flex: 1 1 300px; /* Flex-grow, flex-shrink, flex-basis */
-    max-width: 300px; /* Max width for the cover column */
+    flex: 1 1 300px;
+    max-width: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
+.book-cover-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.book-cover-actions .load-more {
+    margin-top: 1rem;
+}
+
 .book-info-column {
-    flex: 2 1 60%; /* Let it take more space */
+    flex: 2 1 60%;
     text-align: left;
+    margin-top: 1rem; /* Added top margin */
+}
+
+/* Ensure genre tags are left-aligned in the info column */
+.book-info-column .genre-tags {
+    justify-content: flex-start;
 }
 
 /* Responsive layout for smaller screens */
 @media (max-width: 768px) {
     .book-details-layout {
         flex-direction: column;
-        align-items: center; /* Center items when stacked */
+        align-items: center;
+        gap: 2rem; /* Adjust gap for stacked layout */
     }
 
     .book-cover-column,
     .book-info-column {
         flex: 1 1 100%;
         max-width: 100%;
-        text-align: center; /* Center text on small screens */
+        text-align: center;
+        margin-top: 0; /* Reset margin for stacked layout */
+    }
+
+    .book-info-column .genre-tags {
+        justify-content: center; /* Center tags on small screens */
     }
 }
 

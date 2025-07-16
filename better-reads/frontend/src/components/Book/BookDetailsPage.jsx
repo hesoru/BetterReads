@@ -147,9 +147,11 @@ export default function BookDetailsPage() {
                             objectFit: 'cover',
                         }}
                     />
-                    <StarRating rating={Math.round(book.averageRating)} />
-                    <div className="load-more">
-                        <button className="btn" onClick={handleScrollToReview}>Make Review</button>
+                    <div className="book-cover-actions">
+                        <StarRating rating={Math.round(book.averageRating)} />
+                        <div className="load-more">
+                            <button className="btn" onClick={handleScrollToReview}>Make Review</button>
+                        </div>
                     </div>
                 </div>
                 <div className="book-info-column">
