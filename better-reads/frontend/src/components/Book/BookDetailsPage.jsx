@@ -48,6 +48,7 @@ export default function BookDetailsPage() {
     const [isEditing, setIsEditing] = useState(false);
     const [userReview, setUserReview] = useState(null);
     const [bookReviews, setBookReviews] = useState([]);
+    const [reviewsToShow, setReviewsToShow] = useState(3);
     const [avatarMap, setAvatarMap] = useState({});
     const [loading, setLoading] = useState(true);
 
@@ -183,7 +184,7 @@ export default function BookDetailsPage() {
 
                 <Box sx={{ mt: 4 }}>
                     <Typography sx={sectionTitleStyle}>Reviews from Other Readers</Typography>
-                    {bookReviews.map((review, idx) => (
+                    {bookReviews.slice(0, reviewsToShow).map((review, idx) => (
                         <BookReview
                             key={idx}
                             userImage={avatarMap[review.userId]}
@@ -192,9 +193,11 @@ export default function BookDetailsPage() {
                             reviewText={review.description}
                         />
                     ))}
-                    <Box sx={{ textAlign: 'center', mt: 2 }}>
-                        <Button sx={buttonStyle}>Look at more reviews...</Button>
-                    </Box>
+                    {bookReviews.length > reviewsToShow && bookReviews.length > 3 && (
+                        <Box sx={{ textAlign: 'center', mt: 2 }}>
+                            <Button sx={buttonStyle} onClick={() => setReviewsToShow(prev => prev + 10)}>Look at more reviews...</Button>
+                        </Box>
+                    )}
                 </Box>
             </div>
         </Container>
