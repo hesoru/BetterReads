@@ -780,6 +780,11 @@ header .button {
     }
 }
 
+.review-submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .books-row-scroll {
     display: flex;
     flex-direction: row;

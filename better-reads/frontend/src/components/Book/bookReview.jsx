@@ -17,6 +17,8 @@ const BookReview = ({
   const [editText, setEditText] = useState(reviewText && reviewText !== "No review left yet." ? reviewText : "");
   const [submitting, setSubmitting] = useState(false);
 
+  const isSubmittable = editRating !== null || (editText && editText.trim() !== "");
+
   useEffect(() => {
     setEditRating(rating ?? null);
     setEditText(reviewText && reviewText !== "No review left yet." ? reviewText : "");
@@ -58,13 +60,13 @@ const BookReview = ({
               placeholder="Write your review..."
               rows={4}
             />
-            <button className="review-submit-button" onClick={handleSubmit} disabled={submitting}>
+            <button className="review-submit-button" onClick={handleSubmit} disabled={!isSubmittable || submitting}>
               {submitting ? 'Submitting...' : 'Submit Review'}
             </button>
           </>
         ) : (
           <>
-                        <StarRating rating={rating} isEditable={false} />
+            <StarRating rating={rating} isEditable={false} />
             <p className="review-text">{reviewText}</p>
           </>
         )}
