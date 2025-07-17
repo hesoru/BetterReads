@@ -396,6 +396,14 @@ header .button {
     margin-left: auto;
 }
 
+.load-more {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Adds space between the buttons */
+    width: 100%;
+    align-items: stretch; /* Ensures buttons have same width */
+}
+
 .review-card .review-text {
     font-size: 0.95rem;
     color: var(--color-text-light);
@@ -464,14 +472,18 @@ header .button {
 }
 
 .review-submit-button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background-color: #1E213D; /* NoirNavy */
-  color: #FFFFFF; /* PaperbackPureWhite */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
+    background-color: #151B54; /* NovellaNavy */
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px; /* Match other buttons */
+    font-weight: bold;
+    font-family: 'Albert Sans', sans-serif;
+    font-size: 0.9rem; /* Match MUI button */
+    text-transform: none; /* Prevent all-caps */
+    transition: background-color 0.3s;
+    border: none; /* Remove default border */
+    line-height: 1.75; /* Align with MUI button */
+    cursor: pointer;
 }
 
 /* Responsive styles for the review card */

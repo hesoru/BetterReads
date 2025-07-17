@@ -2,8 +2,12 @@ import React, {useEffect, useState, useRef} from 'react';
 import './BookPage.css';
 import {BookPreview} from './BookPreview';
 import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addToBookListThunk, removeFromBookListThunk } from '../../redux/BooklistThunks.js';
 import { useSelector } from 'react-redux';
 import { Container, Grid, Box, Typography, Button, CircularProgress } from '@mui/material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import StarRating from '../ratings/starRating';
 import BookReview from './bookReview.jsx';
 import { GenreTags } from "./BookUtils.jsx";
@@ -58,7 +62,10 @@ export default function BookDetailsPage() {
     const username = useSelector((state) => state.user?.user?.username);
     const reviewRef = useRef(null);
     const userAvatar = useSelector((state) => state.user?.user?.avatarUrl);
-    const isGuest = useSelector((state) => state.user?.isGuest);
+        const isGuest = useSelector((state) => state.user?.isGuest);
+    const dispatch = useDispatch();
+    const userId = useSelector((state) => state.user?.user?._id);
+    const booklist = useSelector((state) => state.booklist.items);
     console.log("bookId", bookId);
 
     const [book, setBook] = useState(null);
@@ -66,8 +73,10 @@ export default function BookDetailsPage() {
     const [userReview, setUserReview] = useState(null);
     const [bookReviews, setBookReviews] = useState([]);
     const [reviewsToShow, setReviewsToShow] = useState(3);
-    const [avatarMap, setAvatarMap] = useState({});
+        const [avatarMap, setAvatarMap] = useState({});
     const [loading, setLoading] = useState(true);
+    const [isInWishlist, setIsInWishlist] = useState(false);
+    const [wishlistLoading, setWishlistLoading] = useState(false);
 
     const handleScrollToReview = () => {
         reviewRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -97,10 +106,14 @@ export default function BookDetailsPage() {
             }
         };
 
-        if (bookId) {
+                if (bookId) {
             fetchData();
         }
-    }, [bookId, username]);
+
+        if (booklist && bookId) {
+            setIsInWishlist(booklist.includes(bookId));
+        }
+    }, [bookId, username, booklist]);
 
     useEffect(() => {
         const fetchAvatars = async () => {
@@ -129,7 +142,25 @@ export default function BookDetailsPage() {
         );
     }
 
-    if (!book) return <Typography sx={{ textAlign: 'center', mt: 4 }}>Book not found.</Typography>;
+        if (!book) return <Typography sx={{ textAlign: 'center', mt: 4 }}>Book not found.</Typography>;
+
+    const handleWishlistToggle = async () => {
+        if (isGuest || !userId) {
+            alert('Please log in to manage your wishlist.');
+            return;
+        }
+        setWishlistLoading(true);
+        try {
+            const thunk = isInWishlist ? removeFromBookListThunk : addToBookListThunk;
+            await dispatch(thunk({ userId, bookId })).unwrap();
+            setIsInWishlist(!isInWishlist); // Optimistic update
+        } catch (error) {
+            console.error('Failed to update wishlist:', error);
+            alert('Failed to update your wishlist. Please try again.');
+        } finally {
+            setWishlistLoading(false);
+        }
+    };
 
     return (
         <Container sx={{ py: { xs: 2, md: 4 } }}>
@@ -148,8 +179,26 @@ export default function BookDetailsPage() {
                         }}
                     />
                     <StarRating rating={Math.round(book.averageRating)} />
-                    <div className="load-more">
+                                        <div className="load-more">
                         <button className="btn" onClick={handleScrollToReview}>Make Review</button>
+                        <Button
+                            variant="contained"
+                            startIcon={isInWishlist ? <FavoriteIcon sx={{ color: 'red' }} /> : <FavoriteBorderIcon />}
+                            onClick={handleWishlistToggle}
+                            disabled={wishlistLoading || isGuest}
+                                                        sx={{
+                                mt: 1, // margin top
+                                backgroundColor: '#151B54', // NovellaNavy
+                                borderRadius: '10px', // Match 'Make Review' button
+                                textTransform: 'none', // Prevent all-caps
+                                fontWeight: 'bold',
+                                '&:hover': {
+                                    backgroundColor: '#1E213D', // NoirNavy
+                                },
+                            }}
+                        >
+                            {wishlistLoading ? 'Updating...' : (isInWishlist ? 'In Wishlist' : 'Add to Wishlist')}
+                        </Button>
                     </div>
                 </div>
                 <div className="book-info-column">
