@@ -259,6 +259,10 @@ header .button {
     letter-spacing: 1px;
 }
 
+.book-title {
+    text-align: center;
+}
+
 .book-page .book-summary {
     font-size: 16px;
     font-style: normal;
@@ -392,6 +396,15 @@ header .button {
     margin-left: auto;
 }
 
+.load-more {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem; /* Space between buttons */
+    width: 100%;
+}
+
 .review-card .review-text {
     font-size: 0.95rem;
     color: var(--color-text-light);
@@ -460,14 +473,18 @@ header .button {
 }
 
 .review-submit-button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background-color: #1E213D; /* NoirNavy */
-  color: #FFFFFF; /* PaperbackPureWhite */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
+    background-color: #151B54; /* NovellaNavy */
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px; /* Match other buttons */
+    font-weight: bold;
+    font-family: 'Albert Sans', sans-serif;
+    font-size: 0.9rem; /* Match MUI button */
+    text-transform: none; /* Prevent all-caps */
+    transition: background-color 0.3s;
+    border: none; /* Remove default border */
+    line-height: 1.75; /* Align with MUI button */
+    cursor: pointer;
 }
 
 /* Responsive styles for the review card */
@@ -777,6 +794,16 @@ header .button {
 
     .book-info-column .genre-tags {
         justify-content: center;
+    }
+
+    .book-title {
+        text-align: center;
+    }
+}
+
+@media (min-width: 956px) {
+    .book-title {
+        text-align: left;
     }
 }
 
