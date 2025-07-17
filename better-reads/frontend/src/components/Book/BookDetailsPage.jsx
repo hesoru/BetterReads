@@ -189,7 +189,6 @@ export default function BookDetailsPage() {
                             onClick={handleWishlistToggle}
                             disabled={wishlistLoading || isGuest}
                                                         sx={{
-                                // marginTop: '8px',
                                 backgroundColor: '#151B54', // NovellaNavy
                                 borderRadius: '10px', // Match 'Make Review' button
                                 textTransform: 'none', // Prevent all-caps

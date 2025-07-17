@@ -398,9 +398,11 @@ header .button {
 
 .load-more {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem; /* Space between buttons */
     width: 100%;
-    align-items: stretch; /* Ensures buttons have same width */
 }
 
 .review-card .review-text {
