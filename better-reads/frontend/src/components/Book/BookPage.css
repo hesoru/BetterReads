@@ -243,13 +243,12 @@ header .button {
 }
 
 /* Book Info Section */
-.book-page .book-info {
-    flex: 1 1 auto;
+.book-page .book-info-column {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    text-align: left;
-    gap: 1rem;
+    /* Spacing is now handled by the parent .book-details-layout */
 }
 
 .book-page .book-title {
@@ -279,7 +278,7 @@ header .button {
     flex-wrap: wrap;
     gap: 8px;
     margin: 8px 0;
-    justify-content: center; /* Center align tags */
+    justify-content: flex-start; /* Default to left-aligned */
 }
 
 .genre-tag {
@@ -721,6 +720,70 @@ header .button {
     color: var(--color-bg);
 }
 
+/* Book Details Layout - New Styles */
+.book-details-layout {
+    display: flex;
+    gap: 4rem; /* Increased gap for more space between columns */
+    margin-top: 2rem; /* Add space below the header */
+    align-items: flex-start;
+}
+
+.book-cover-column {
+    flex: 1 1 300px;
+    max-width: 300px;
+    min-width: 250px; /* Prevent shrinking */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Targeting the MUI Rating component and the button container for specific spacing */
+.book-cover-column .MuiRating-root {
+    margin-top: 1.5rem;
+}
+
+.book-cover-column .load-more {
+    margin-top: 0.25rem;
+}
+
+.book-info-column {
+    flex: 2 1 60%;
+    text-align: left;
+    margin-top: 2rem; /* Added top margin */
+}
+
+/* Ensure genre tags are left-aligned in the info column */
+.book-info-column .genre-tags {
+    justify-content: flex-start;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 956px) {
+    .book-details-layout {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .book-cover-column {
+        max-width: 100%;
+        margin-bottom: 2rem;
+    }
+
+    .book-info-column {
+        align-items: center; /* Center align on smaller screens */
+        text-align: center;
+        margin-top: 1rem; /* Adjust margin for smaller screens */
+    }
+
+    .book-info-column .genre-tags {
+        justify-content: center;
+    }
+}
+
+.review-submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 
 .books-row-scroll {
     display: flex;

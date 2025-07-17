@@ -32,7 +32,7 @@ const Header = ({ userAvatar }) => {
   return (
     <AppBar position="sticky" sx={{ backgroundColor: NoirNavy, padding: '5px 0' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <RouterLink to="/">
+        <RouterLink to="/search">
           <Box
             component="img"
             src={BetterReadsLogo}
