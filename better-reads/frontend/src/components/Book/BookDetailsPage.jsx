@@ -153,7 +153,7 @@ export default function BookDetailsPage() {
                     </div>
                 </div>
                 <div className="book-info-column">
-                    <Typography variant="h3" component="h1" sx={{ fontWeight: 'bold', mb: 2, fontSize: { xs: '1.8rem', md: '2.5rem' } }}>
+                    <Typography variant="h3" component="h1" className="book-title" sx={{ fontWeight: 'bold', mb: 2, fontSize: { xs: '1.8rem', md: '2.5rem' } }}>
                         {book.title}
                     </Typography>
                     <Typography sx={{ color: 'var(--color-text-light)', mb: 2 }}>

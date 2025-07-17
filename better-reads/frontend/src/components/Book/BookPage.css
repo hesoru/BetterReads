@@ -259,6 +259,10 @@ header .button {
     letter-spacing: 1px;
 }
 
+.book-title {
+    text-align: center;
+}
+
 .book-page .book-summary {
     font-size: 16px;
     font-style: normal;
@@ -777,6 +781,16 @@ header .button {
 
     .book-info-column .genre-tags {
         justify-content: center;
+    }
+
+    .book-title {
+        text-align: center;
+    }
+}
+
+@media (min-width: 956px) {
+    .book-title {
+        text-align: left;
     }
 }
 
