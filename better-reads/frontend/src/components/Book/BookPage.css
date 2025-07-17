@@ -399,7 +399,6 @@ header .button {
 .load-more {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem; /* Adds space between the buttons */
     width: 100%;
     align-items: stretch; /* Ensures buttons have same width */
 }

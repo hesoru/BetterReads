@@ -106,14 +106,16 @@ export default function BookDetailsPage() {
             }
         };
 
-                if (bookId) {
+        if (bookId) {
             fetchData();
         }
+    }, [bookId, username]);
 
+    useEffect(() => {
         if (booklist && bookId) {
             setIsInWishlist(booklist.includes(bookId));
         }
-    }, [bookId, username, booklist]);
+    }, [booklist, bookId]);
 
     useEffect(() => {
         const fetchAvatars = async () => {
@@ -187,7 +189,7 @@ export default function BookDetailsPage() {
                             onClick={handleWishlistToggle}
                             disabled={wishlistLoading || isGuest}
                                                         sx={{
-                                mt: 1, // margin top
+                                // marginTop: '8px',
                                 backgroundColor: '#151B54', // NovellaNavy
                                 borderRadius: '10px', // Match 'Make Review' button
                                 textTransform: 'none', // Prevent all-caps
