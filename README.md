@@ -138,3 +138,4 @@ placeholder text placeholder textplaceholder textplaceholder textplaceholder tex
 - **Editable/Deletable Reviews:** Implemented functionality for users to edit and delete their own reviews.
 - **Half-Star Ratings:** Enabled backend support for half-star increments in reviews for more nuanced feedback.
 - **Updated Navigation:** Rerouted the main logo to the `/search` page, making it the functional home page.
+- **Add to Wishlist:** Implemented functionality for users to add books to their wishlist.
