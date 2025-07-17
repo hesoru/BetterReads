@@ -100,9 +100,8 @@ npm test    # run test
 
 
 ### Milestone 4:
-*Note the app summary is above in this read me. Simpyl scroll up to the top of this page to see it.
 
-#### Standard Goals Completed
+#### Standard Goals 
 - _Allow users with an account to write, edit, and delete reviews for books._ – Completed. User can edit and delete reviews on each book page. The review is saved to the database accordingly. 
 - _Implement a reading recommendation system (possibly content-based filtering and/or user profile-based filtering). If the user has an account, book recommendations are given using a recommendation system based on the user’s past reviews and/or user profile._ – Completed.
 - _Implement standard cybersecurity practices eg. HTTPS connection, database encryption, sanitizing database inputs, etc. Will refer to OWASP resources._ – Completed. Refer to the section "XSS Security Assessment" below. 
@@ -120,11 +119,10 @@ npm test    # run test
 | Hybrid Recommendation System  | Completed           |
 | Semantic NLP Search Engine    | Completed           |
 
-- **Hybrid Recommendation System:** The main Node.js backend acts as an orchestrator, querying a dedicated Python-based Recommender Service for personalized suggestions. The system makes recommendations using Collaborative Filtering, analyzing the user's past interactions (book ratings) and comparing them to the behavior of similar users to predict which books the user might enjoy next. It uses a user-item matrix to map user preferences against book items and is cached in Redis for performance. We also implemented fallback strategies to ensure recommendations are always available:
-   - If the primary model doesn't yield enough results, the system suggests books from the user's **favorite genres**.
-   - If the user has no favorite genres, the app recommends the **most popular books** on the platform.
 
-- **Semantic NLP Search Engine:** We use the `sentence-transformers` library with the pre-trained `all-MiniLM-L6-v2` model to understand the *semantic meaning* of text, not just keywords. We use **vector embedding** so that the titles and descriptions of all books are converted into numerical vectors (embeddings) and stored in our MongoDB database. When a user enters a search query, it's also converted into a vector using this model. The system then uses **cosine similarity** to compare the user's query vector against every book vector in the database. This calculates the "conceptual distance" between the query and each book. Books are ranked based on their similarity score, allowing users to find relevant books even if their search terms don't exactly match the title or description. The similarity score (a value from 0.0 to 1.0) is also converted into the **percentage match** displayed in the UI, giving users immediate and quantifiable feedback on the relevance of each result.
+**About the Hybrid Recommendation System:** The main Node.js backend acts as an orchestrator, querying a dedicated Python-based Recommender Service for personalized suggestions. The system makes recommendations using Collaborative Filtering, analyzing the user's past interactions (book ratings) and comparing them to the behavior of similar users to predict which books the user might enjoy next. It uses a user-item matrix to map user preferences against book items and is cached in Redis for performance. We also implemented fallback strategies to ensure recommendations are always available.If the primary model doesn't yield enough results, the system suggests books from the user's **favorite genres**. If the user has no favorite genres, the app recommends the **most popular books** on the platform.
+
+**About the Semantic NLP Search Engine:** We use the `sentence-transformers` library with the pre-trained `all-MiniLM-L6-v2` model to understand the *semantic meaning* of text, not just keywords. We use **vector embedding** so that the titles and descriptions of all books are converted into numerical vectors and stored in our MongoDB database. When a user enters a search query, it's also converted into a vector using this model. The system then uses **cosine similarity** to compare the user's query vector against every book vector in the database. This calculates the "conceptual distance" between the query and each book. Books are ranked based on their similarity score, allowing users to find relevant books even if their search terms don't exactly match the title or description. The similarity score is displayed as a **percentage match** in the UI, giving users immediate and quantifiable feedback on the relevance of each result.
 
 #### XSS Security Assessment
 placeholder text placeholder textplaceholder textplaceholder textplaceholder textplaceholder text
@@ -141,7 +139,7 @@ Users can further make advanced filtered searched in their semantic search resul
 
 - **Enhanced Responsive and Adaptive UI:** We significantly improved the responsive design of the Book Details page. We refined the two-column layout to gracefully stack into a single, centered column on smaller devices, ensuring readability and a consistent user experience across desktop and mobile.
 
-- **Implemented Intuitive User Input Validation:** To improve the quality of user-submitted content and prevent errors, we added client-side validation to the review submission form. The "Submit Review" button is now disabled until the user has provided either a star rating or written some text. This was achieved by dynamically updating the button's state based on user input and styling it with reduced opacity to provide clear visual feedback.
+- **Implemented Intuitive User Input Validation:** We added client-side validation to the review submission form. The "Submit Review" button is now disabled until the user has provided either a star rating or written some text. This was achieved by dynamically updating the button's state based on user input and styling it with reduced opacity to provide clear visual feedback.
 
-- **Changed Default Navigation:** Based on user flow analysis, we changed the primary navigation link on the site logo to direct users to the `/search` page instead of the login page, establishing the search page as the main hub for authenticated users.
+- **Changed Default Navigation:** Based on cross-play feedback, we changed the primary navigation link on the site logo to direct users to the `/search` page instead of the login page, establishing the search page as the main hub for authenticated users.
 
