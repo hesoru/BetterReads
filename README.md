@@ -5,6 +5,7 @@
 
 **Team members:** Oreoluwa Akinwunmi, Renbo Xu, Helena Sokolovska, and Marvel Hariadi
 
+## App Summary
 Our application is an intelligent, social book discovery platform tailored to passionate readers who want a more engaging and personalized experience than traditional apps like Goodreads. It allows users to explore and write reviews for books; receive personalized reading recommendations; and curate reading wishlists. By storing book metadata, user preferences, and behavioral insights, the platform delivers a highly individualized user experience. Built on MongoDB, it features account management, a natural language processing (NLP)–powered search engine, a reading recommendation system, and interactive user features.
 
 ## Instruction for Running the App with Docker
@@ -94,5 +95,51 @@ npm test    # run test
 
 # The test result report can be reviewed by opending mochawesome.html by browser. The mochawesome.html is located at better-reads/backend/mochawesome-report/mochawesome.html
 ```
-## Accessing test suite html file instrutions: 
+## Accessing test suite html file instructions: 
    - The test result report can be reviewed by opending mochawesome.html by browser. The mochawesome.html is located at better-reads/backend/mochawesome-report/mochawesome.html
+
+
+### Milestone 4:
+
+#### Standard Goals 
+- _Allow users with an account to write, edit, and delete reviews for books._ – Completed. User can edit and delete reviews on each book page. The review is saved to the database accordingly. 
+- _Implement a reading recommendation system (possibly content-based filtering and/or user profile-based filtering). If the user has an account, book recommendations are given using a recommendation system based on the user’s past reviews and/or user profile._ – Completed.
+- _Implement standard cybersecurity practices eg. HTTPS connection, database encryption, sanitizing database inputs, etc. Will refer to OWASP resources._ – Completed. Refer to the section "XSS Security Assessment" below. 
+- _Basic reading list functionality. Add/remove books from personal reading list._ – Completed. User can remove books from their wishlist on the /profile page. They can add books as they browse by clicking the heart button on the corner of a book card
+
+
+#### Stretch Goals 
+- _The user’s rich-text input is analyzed using natural language processing (NLP), to identify semantic similarities between keywords in the user’s input and book descriptions._ – Completed. We now have a page for making NLP recommendations, /nlpsearch.
+- All other stretch goals dropped for M4 due to time constraints.
+
+#### Non-trivial elements
+
+| Element                       | Stage of Completion |
+| ----------------------------- | ------------------- |
+| Hybrid Recommendation System  | Completed           |
+| Semantic NLP Search Engine    | Completed           |
+
+
+**About the Hybrid Recommendation System:** The main Node.js backend acts as an orchestrator, querying a dedicated Python-based Recommender Service for personalized suggestions. The system makes recommendations using Collaborative Filtering, analyzing the user's past interactions (book ratings) and comparing them to the behavior of similar users to predict which books the user might enjoy next. It uses a user-item matrix to map user preferences against book items and is cached in Redis for performance. We also implemented fallback strategies to ensure recommendations are always available.If the primary model doesn't yield enough results, the system suggests books from the user's **favorite genres**. If the user has no favorite genres, the app recommends the **most popular books** on the platform.
+
+**About the Semantic NLP Search Engine:** We use the `sentence-transformers` library with the pre-trained `all-MiniLM-L6-v2` model to understand the *semantic meaning* of text, not just keywords. We use **vector embedding** so that the titles and descriptions of all books are converted into numerical vectors and stored in our MongoDB database. When a user enters a search query, it's also converted into a vector using this model. The system then uses **cosine similarity** to compare the user's query vector against every book vector in the database. This calculates the "conceptual distance" between the query and each book. Books are ranked based on their similarity score, allowing users to find relevant books even if their search terms don't exactly match the title or description. The similarity score is displayed as a **percentage match** in the UI, giving users immediate and quantifiable feedback on the relevance of each result.
+
+#### XSS Security Assessment
+placeholder text placeholder textplaceholder textplaceholder textplaceholder textplaceholder text
+
+#### M4 Highlights
+Key UX changes since M3 include:
+
+- **Launched Semantic NLP Search:** The largest new feature is our powerful semantic search engine. Users can now search for books using natural language queries. The backend service uses a `sentence-transformers` model to understand the meaning behind the query and returns results based on conceptual relevance, not just keyword matching.
+Users can further make advanced filtered searched in their semantic search results by specifying a **genre** or a **publication year range**, allowing for highly specific and relevant discovery.
+
+- **Implemented UI Loading States:** We implemented loading state indicators (spinners) across the application. This provides clear visual feedback to the user, letting them know that content is being loaded in the background.
+
+- **Added Dynamic Content Loading (Pagination):** To improve performance and maintain a snappy user experience, we added pagination to the reviews section on the Book Details page. Here, only the first three user reviews are loaded initially. A "Look at more reviews..." button was added to allow users to progressively load more reviews on demand. We did the same with book gallery component, preventing long initial load times on pages with extensive content that previously made our app lag heavily.
+
+- **Enhanced Responsive and Adaptive UI:** We significantly improved the responsive design of the Book Details page. We refined the two-column layout to gracefully stack into a single, centered column on smaller devices, ensuring readability and a consistent user experience across desktop and mobile.
+
+- **Implemented Intuitive User Input Validation:** We added client-side validation to the review submission form. The "Submit Review" button is now disabled until the user has provided either a star rating or written some text. This was achieved by dynamically updating the button's state based on user input and styling it with reduced opacity to provide clear visual feedback.
+
+- **Changed Default Navigation:** Based on cross-play feedback, we changed the primary navigation link on the site logo to direct users to the `/search` page instead of the login page, establishing the search page as the main hub for authenticated users.
+
