@@ -123,6 +123,16 @@ const BookUtils = {
         });
         if (!res.ok) throw new Error('Failed to submit review');
         return res.json();
+    },
+
+    //Delete a user's review
+    async deleteReview(reviewId) {
+        const res = await fetch(`${BASE_URL}/reviews/${reviewId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reviewId }),
+        });
+        if (!res.ok) throw new Error('Failed to delete review');
     }
 };
 
