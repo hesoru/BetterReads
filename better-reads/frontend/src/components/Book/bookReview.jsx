@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import StarRating from '../ratings/starRating.jsx'; // Assumes StarRating is in components/ratings/
 import { DetectiveDustyBlue, NoirNavy, PaperbackPureWhite } from '../../styles/colors.js';
+import { sanitizeContent } from '../../utils/sanitize';
 
 const BookReview = ({
   userImage, // Default placeholder image
@@ -27,7 +28,9 @@ const BookReview = ({
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      await onSave({ rating: editRating, description: editText });
+      // Sanitize the review text before saving
+      const sanitizedText = sanitizeContent(editText);
+      await onSave({ rating: editRating, description: sanitizedText });
     } catch (err) {
       console.error('Failed to save review:', err);
     } finally {
@@ -35,19 +38,11 @@ const BookReview = ({
     }
   };
 
-
-
-
-
-
-
-
-
   return (
     <div className="book-review-card">
       <div className="review-left-column">
         <img src={userImage} alt={`${username}'s profile`} className="review-profile-image" />
-        <div className="review-username">{username}</div>
+        <div className="review-username">{sanitizeContent(username)}</div>
       </div>
       <div className="review-right-column">
         {editable ? (
@@ -67,7 +62,7 @@ const BookReview = ({
         ) : (
           <>
             <StarRating rating={rating} isEditable={false} />
-            <p className="review-text">{reviewText}</p>
+            <p className="review-text">{sanitizeContent(reviewText)}</p>
           </>
         )}
       </div>

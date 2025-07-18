@@ -18,6 +18,7 @@ import { DetectiveDustyBlue } from '../styles/colors';
 import { BookPreview } from '../components/Book/BookPreview';
 import '../components/Book/BookPage.css';
 import BookUtils from "../utils/BookUtils.js";
+import { sanitizeContent, sanitizeObject } from '../utils/sanitize';
 
 const genres = [
   "Fantasy", "Fiction", "Nonfiction", "Classics", "Science Fiction",
@@ -35,21 +36,32 @@ const SearchPage = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   const handleSearch = useCallback(async (pageToFetch = 1, append = false) => {
-    const trimmedQuery = searchQuery.trim();
+    // Sanitize search query and genres before sending to API
+    const trimmedQuery = sanitizeContent(searchQuery.trim());
+    const sanitizedGenres = selectedGenres.map(genre => sanitizeContent(genre));
+    
     setLoading(true);
     setError(null);
     try {
-      const data = await BookUtils.searchBooks({ q: trimmedQuery, genres: selectedGenres, page: pageToFetch });
+      const data = await BookUtils.searchBooks({ 
+        q: trimmedQuery, 
+        genres: sanitizedGenres, 
+        page: pageToFetch 
+      });
+      
+      // Sanitize the results before setting state
+      const sanitizedResults = data.results ? sanitizeObject(data.results) : [];
+      
       if (append) {
-        setSearchResults(prev => [...prev, ...(data.results || [])]);
+        setSearchResults(prev => [...prev, ...sanitizedResults]);
       } else {
-        setSearchResults(data.results || []);
+        setSearchResults(sanitizedResults);
       }
       setTotalPages(data.totalPages || 0);
       setPage(pageToFetch);
     } catch (err) {
       console.error('FETCH ERROR:', err);
-      setError(err.message);
+      setError(sanitizeContent(err.message));
       if (!append) {
         setSearchResults([]);
       }
@@ -73,9 +85,12 @@ const SearchPage = () => {
 
   const handleGenreChange = (event) => {
     const { target: { value } } = event;
-    setSelectedGenres(
-      typeof value === 'string' ? value.split(',') : value,
-    );
+    // Sanitize genre selections
+    const sanitizedValue = typeof value === 'string' 
+      ? sanitizeContent(value).split(',') 
+      : value.map(item => sanitizeContent(item));
+    
+    setSelectedGenres(sanitizedValue);
   };
 
   return (
@@ -104,6 +119,7 @@ const SearchPage = () => {
           placeholder="Search for books by title, author, or ISBN..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onBlur={(e) => setSearchQuery(sanitizeContent(e.target.value))}
           onKeyPress={(e) => e.key === 'Enter' && handleSearch(1)}
           sx={{
             flexGrow: 1,

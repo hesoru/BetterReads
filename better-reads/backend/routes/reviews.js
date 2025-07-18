@@ -5,10 +5,11 @@ import Users from "../model/users.js";
 import Books from "../model/books.js";
 import mongoose from "mongoose";
 import axios from 'axios';
+import { validateRequest, reviewValidationRules, paramValidation, queryValidation } from '../middleware/validators.js';
 const router = express.Router();
 
 // PUT /reviews/:reviewId - Edit a user's review
-router.put('/:reviewId', async (req, res) => {
+router.put('/:reviewId', [paramValidation.reviewId, ...reviewValidationRules.update], validateRequest, async (req, res) => {
     try {
         const { reviewId } = req.params;
         const { rating, description } = req.body;
@@ -37,7 +38,7 @@ router.put('/:reviewId', async (req, res) => {
 });
 
 // DELETE /reviews/:reviewId - Delete a user's review
-router.delete('/:reviewId', async (req, res) => {
+router.delete('/:reviewId', paramValidation.reviewId, validateRequest, async (req, res) => {
     try {
         const { reviewId } = req.params;
         const review = await Reviews.findByIdAndDelete(reviewId);
@@ -75,7 +76,7 @@ router.delete('/:reviewId', async (req, res) => {
 
 // GET /reviews/user-review?bookId=...&userId=...
 // Get the single review on a given book (bookID) left by current user (pass the username)
-router.get('/user-review', async (req, res) => {
+router.get('/user-review', queryValidation.userReview, validateRequest, async (req, res) => {
     const { bookId, userId } = req.query;
 
     if (!bookId || !userId) {

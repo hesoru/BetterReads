@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 
 import { DetectiveDustyBlue, PaperbackPureWhite } from '../../styles/colors';
+import { sanitizeContent } from '../../utils/sanitize';
 
 const genres = [
   'Fantasy',
@@ -48,7 +49,16 @@ const GenreSelection = ({ onSelectGenres = () => {} }) => {
 
   const handleChange = (event) => {
     const { target: { value } } = event;
-    const newSelectedGenres = typeof value === 'string' ? value.split(',') : value;
+    
+    // Sanitize genre selections
+    const sanitizedValue = typeof value === 'string' 
+      ? sanitizeContent(value) 
+      : value;
+    
+    const newSelectedGenres = typeof sanitizedValue === 'string' 
+      ? sanitizedValue.split(',') 
+      : sanitizedValue.map(genre => sanitizeContent(genre));
+    
     setSelectedGenres(newSelectedGenres);
     onSelectGenres(newSelectedGenres);
   };

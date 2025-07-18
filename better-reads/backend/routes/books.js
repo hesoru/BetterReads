@@ -2,12 +2,12 @@ import express from 'express';
 import Books from '../model/books.js';
 import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
-import mongoose from "mongoose";
 import axios from 'axios';
+import { validateRequest, bookValidationRules, queryValidation, paramValidation, reviewValidationRules } from '../middleware/validators.js';
 const router = express.Router();
 
 // retrieve books via a generic main.py query
-router.get('/search', async (req, res) => {
+router.get('/search', queryValidation.search, validateRequest, async (req, res) => {
     try {
         const { q } = req.query;
         let query = {};
@@ -31,7 +31,7 @@ router.get('/search', async (req, res) => {
     }
 });
 
-router.get('/genre-search', async (req, res) => {
+router.get('/genre-search', queryValidation.search, validateRequest, async (req, res) => {
     try {
         const { q, genre, page, limit } = req.query;
 
@@ -213,7 +213,7 @@ router.get('/:id/reviews', async (req, res) => {
 });
 
 // retrieve a book by bookId
-router.get('/:id', async (req, res) => {
+router.get('/:id', paramValidation.bookId, validateRequest, async (req, res) => {
     try {
         const book = await Books.findById(req.params.id);
         if (!book) return res.status(404).json({ error: 'Book not found' });
@@ -235,7 +235,7 @@ router.get('/', async (req, res) => {
 
 
 // POST /books/:id/reviews - Create or update a review for a book
-router.post('/:id/reviews', async (req, res) => {
+router.post('/:id/reviews', [paramValidation.bookId, ...reviewValidationRules.create], validateRequest, async (req, res) => {
     try {
         const { id: bookId } = req.params;
         const { username, rating, description } = req.body;

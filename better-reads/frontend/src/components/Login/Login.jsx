@@ -5,17 +5,23 @@ import {useDispatch} from "react-redux";
 import { loginUser } from "../../redux/UserThunks";
 import {clearUser} from "../../redux/UserSlice.js";
 import {clearBooklist} from "../../redux/Booklist.js";
+import { sanitizeContent } from '../../utils/sanitize';
 
 const Login = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		try {
-			dispatch(loginUser({username, password}));
+			// Sanitize inputs before sending to backend
+			const sanitizedUsername = sanitizeContent(username);
+			const sanitizedPassword = sanitizeContent(password);
+			dispatch(loginUser({username: sanitizedUsername, password: sanitizedPassword}));
 
 			navigate('/search');
 		} catch (err) {
@@ -45,6 +51,7 @@ const Login = () => {
 							placeholder="Enter your username"
 							value={username}
 							onChange={(e) => setUsername(e.target.value)}
+							onBlur={(e) => setUsername(sanitizeContent(e.target.value))}
 							required
 						/>
 					</div>
@@ -70,7 +77,7 @@ const Login = () => {
 							onClick={() => {
 								dispatch(clearUser());
 								dispatch(clearBooklist());
-								// Set guest user in localStorage
+								// Set guest user in localStorage - no need to sanitize as we're creating this object
 								localStorage.setItem('user', JSON.stringify({ isGuest: true }));
 								localStorage.removeItem('appState');
 								navigate("/search");

@@ -7,6 +7,7 @@ import {
   Paper,
 } from '@mui/material';
 import BookGalleryManager from '../components/Book/BookGalleryManager';
+import { sanitizeContent, safelyParseJSON, getSanitizedItem } from '../utils/sanitize';
 
 import HeroBanner from '../components/common/HeroBanner';
 import '../components/Book/BookPage.css';
@@ -22,7 +23,7 @@ const RecommendationsPage = () => {
 
   useEffect(() => {
     // Check if the user is a guest
-    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const currentUser = getSanitizedItem('user', {});
     setIsGuest(currentUser?.isGuest === true);
   }, []);
 
@@ -39,8 +40,8 @@ const RecommendationsPage = () => {
       setError(null);
       try {
         // Get the current user from localStorage if available
-        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-        const userId = currentUser?.username || '';
+        const currentUser = getSanitizedItem('user', {});
+        const userId = currentUser?._id || '';
         console.log("userId: ", userId);
         
         if (!userId) {

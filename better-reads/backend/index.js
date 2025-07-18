@@ -1,6 +1,8 @@
 import express from 'express';
 import connectDB from './db.js';
 import cors from 'cors';
+import helmet from 'helmet';
+import xssClean from 'xss-clean';
 import userRoutes from "./routes/users.js";
 import reviewRoutes from "./routes/reviews.js";
 import bookRoutes from "./routes/books.js";
@@ -13,6 +15,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
+
+// security middleware
+app.use(helmet()); // set security headers
+app.use(xssClean()); // sanitize user input
 
 app.use('/users', userRoutes);
 app.use('/reviews', reviewRoutes);

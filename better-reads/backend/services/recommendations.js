@@ -11,10 +11,11 @@ import { getFromRedis, storeInRedis } from './redisClient.js';
  */
 async function getRecommendations(userId) {
   try {
-    const user = await User.findOne({ username: userId }).exec();
+    // Look up user by ID instead of username
+    const user = await User.findById(userId).exec();
     
     if (!user) {
-      throw new Error(`User with ID/username ${userId} not found`);
+      throw new Error(`User with ID ${userId} not found`);
     }
 
     // For backward compatibility, we'll still check if the matrix exists in Redis
