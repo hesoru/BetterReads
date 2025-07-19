@@ -92,7 +92,7 @@ export default function BookDetailsPage() {
             }
         } catch (err) {
             console.error('Failed to delete review:', err);
-            alert('Could not delete the review. Please try again.');
+            alert('Could not delete the revigew. Please try again.');
         }
     };
 

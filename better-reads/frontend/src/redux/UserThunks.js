@@ -20,18 +20,17 @@ export const loginUser = createAsyncThunk(
 
             if (!res.ok) {
                 const error = await res.json();
-                return thunkAPI.rejectWithValue(error.message || 'Login failed');
+                return thunkAPI.rejectWithValue(error);
             }
 
             const data = await res.json();
             // Store both token and user data in localStorage
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
-            console.log('User data stored in localStorage:', data.user);
             thunkAPI.dispatch(setBooklist(data.user.wishList || []));
             return data.user;
         } catch (err) {
-            return thunkAPI.rejectWithValue('Login request failed', err);
+            return thunkAPI.rejectWithValue( err);
         }
     }
 );
@@ -41,7 +40,6 @@ export const signupUser = createAsyncThunk(
     'user/signupUser',
     async ({ username, password, favoriteGenres}, thunkAPI) => {
         try {
-            const { getState } = thunkAPI;
             //const state = getState();
             const wishList  = thunkAPI.getState().booklist.items;
             
@@ -84,7 +82,7 @@ export const signupUser = createAsyncThunk(
 
             return user;
         } catch (err) {
-            return thunkAPI.rejectWithValue('Signup request failed');
+            return thunkAPI.rejectWithValue(err);
         }
     }
 );
