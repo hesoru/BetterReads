@@ -8,6 +8,12 @@ const BookUtils = {
         return res.json();
     },
 
+    async getAllGenreTags() {
+        const res = await fetch(`${BASE_URL}/books/genre-tags`);
+        const data = await res.json();
+        return data.genres || [];
+    },
+
     // Search for books by query (title, author, genre, etc.)
     //TODO: decide on page/limit
     async searchBooks({ q = '', genres = [], page = 1, limit = 10 } = {}) {
