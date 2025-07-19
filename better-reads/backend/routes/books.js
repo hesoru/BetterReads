@@ -31,6 +31,24 @@ router.get('/search', async (req, res) => {
     }
 });
 
+// GET /books/genres - Get all genre tags in db
+router.get('/genre-tags', async (req, res) => {
+    try {
+        const genres = await Books.aggregate([
+            { $unwind: '$genre' },
+            { $group: { _id: '$genre' } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        const genreList = genres.map(g => g._id);
+
+        res.json({ genres: genreList });
+    } catch (err) {
+        console.error('Failed to fetch genres:', err.message);
+        res.status(500).json({ error: 'Failed to fetch genres', details: err.message });
+    }
+});
+
 router.get('/genre-search', async (req, res) => {
     try {
         const { q, genre, page, limit } = req.query;
