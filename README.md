@@ -1,28 +1,31 @@
 # BetterReads
 ### Reading is good for you, but we can make it *better*.
 
-**Team 25 - Datababes**
+### Datababes (Team 25)
 
 **Team members:** Oreoluwa Akinwunmi, Renbo Xu, Helena Sokolovska, and Marvel Hariadi
 
 ## App Summary
 Our application is an intelligent, social book discovery platform tailored to passionate readers who want a more engaging and personalized experience than traditional apps like Goodreads. It allows users to explore and write reviews for books; receive personalized reading recommendations; and curate reading wishlists. By storing book metadata, user preferences, and behavioral insights, the platform delivers a highly individualized user experience. Built on MongoDB, it features account management, a natural language processing (NLP)–powered search engine, a reading recommendation system, and interactive user features.
 
-## Instruction for Running the App with Docker
+## Instructions for Running the App with Docker
 
 Clone the repository and run with Docker Compose. In your bash terminal, run:
 
 ```bash
 # After downloading our app, ensure you are under TEAM25_BETTERREADS to run the following command
 docker-compose up -d --build  # start container
-docker-compose down        # tear down container
+docker-compose down           # tear down container
 ```
 
 ## Accessing the Application
 
 - **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:3000
+- **Backend**: http://localhost:3000
 - **Recommender API**: http://localhost:5001
+- **NLP Search API**: http://localhost:5002s
+- **Redis**: http://localhost:6379
+- **MongoDB**: http://localhost:27017
 
 ## Environment Variables
 
@@ -40,7 +43,9 @@ JWT_SECRET=your_custom_jwt_secret
 ## Milestones
 
 ### Milestone 1:
-The following frontend features have been implemented:
+The following features have been implemented this milestone:
+
+#### Frontend
 - Book product card component
 - Book gallery component (carousel of many book cards)
 - Book review card component
@@ -52,7 +57,8 @@ The following frontend features have been implemented:
 - User profile page
 
 ### Milestone 2:
-The following features have been implemented for Milestone 2:
+The following features have been implemented this milestone:
+
 #### Database
 1. Designed the relational schema for `Books`, `Reviews`, and `Users`, and created corresponding backend models.
 2. Established a MongoDB connection and initialized the project database (`booksdb`) with the necessary collections: `books`, `reviews`, and `users`.
@@ -68,7 +74,9 @@ The following features have been implemented for Milestone 2:
    - **Book Search Page**: Implemented a keyword-based search feature that matches against book titles and descriptions.
 
 ### Milestone 3:
-The following featuers have been implemented for Milestone 3:
+The following features have been implemented this milestone:
+
+#### Frontend
 - UI has been made responsive to fix some bugs.
    - Functional 'make reviews' button to autoscroll to right component.
    - Select rating when creating or editing a new review.
@@ -84,10 +92,12 @@ The following featuers have been implemented for Milestone 3:
 - Implemented Redis caching for user-item matrix and popular books.
 
 ### Test Suite Section
-1. Test folder were created including setup.js, books.test.js, reviews.tests.js and users.test.js. 
-2. Test using Mocha, Chai, Supertest, Mongodb-Memory-Server. Test report is generated using mochawesome.
-3. There are 39 total tests covering API calls of books.js, reviews.js and users.js
-3. Instruction to run the test:
+- A test folder was created including setup.js, books.test.js, reviews.tests.js and users.test.js. 
+- Tests were written using Mocha, Chai, Supertest, Mongodb-Memory-Server. Test report is generated using mochawesome.
+- There are 39 total tests covering API calls of books.js, reviews.js and users.js
+
+#### Instructions to run the test:
+
 ```bash
 # After downloading our app, cd better-reads/backend to run the following command
 npm install # install all required dependencies for testing
@@ -95,9 +105,7 @@ npm test    # run test
 
 # The test result report can be reviewed by opending mochawesome.html by browser. The mochawesome.html is located at better-reads/backend/mochawesome-report/mochawesome.html
 ```
-## Accessing test suite html file instructions: 
-   - The test result report can be reviewed by opending mochawesome.html by browser. The mochawesome.html is located at better-reads/backend/mochawesome-report/mochawesome.html
-
+The test report can be reviewed by opening mochawesome.html by browser. The mochawesome.html is located in `better-reads/backend/mochawesome-report/`.
 
 ### Milestone 4:
 
@@ -119,16 +127,13 @@ npm test    # run test
 
 | Element                       | Stage of Completion |
 | ----------------------------- | ------------------- |
-| Hybrid Recommendation System  | Completed           |
+| Book Recommendation System  | Completed           |
 | Semantic NLP Search Engine    | Completed           |
 
 
-Our app features two non-trivial systems. The **Hybrid Recommendation System** uses collaborative filtering on a Python microservice to generate personalized suggestions, with genre and popularity-based fallbacks. The **Semantic NLP Search Engine** uses a `sentence-transformers` model to convert book data and user queries into vector embeddings, returning results ranked by cosine similarity.
+Our app features two non-trivial systems. The **Book Recommendation System** harnesses user-based collaborative filtering on a Python microservice to generate personalized suggestions, with genre and popularity-based fallbacks. The **Semantic NLP Search Engine** uses a `sentence-transformers` model to convert book data and user queries into vector embeddings, returning results ranked by cosine similarity.
 
-#### XSS Security Assessment
-placeholder text placeholder textplaceholder textplaceholder textplaceholder textplaceholder text
-
-#### M4 Highlights
+#### M4 Updates
 
 - **Semantic NLP Search:** Launched a semantic search engine with advanced filters for genre and publication year.
 - **UI Loading States:** Added spinners to provide visual feedback during data fetching.
@@ -139,3 +144,89 @@ placeholder text placeholder textplaceholder textplaceholder textplaceholder tex
 - **Half-Star Ratings:** Enabled backend support for half-star increments in reviews for more nuanced feedback.
 - **Updated Navigation:** Rerouted the main logo to the `/search` page, making it the functional home page.
 - **Add to Wishlist:** Implemented functionality for users to add books to their wishlist.
+
+## XSS Security Assessment
+
+### Potential XSS Entry Points
+
+**Authentication Forms**
+- **Login Form:** username and password fields
+- **Signup Form:** username, password, and genre selection fields
+
+**Search Pages (Regular and NLP Search)**
+- **Search Bar:** search query input field
+- **Genre Filter:** genre selection dropdown
+
+**Book Reviews**
+- **User Reviews:** review text submission
+- **User Profile:** profile information fields
+
+**Data Display Areas**
+- **Book Details Page:** how book information is rendered
+- **Review Display:** how user reviews are displayed
+
+### Testing Methods
+
+1. Static code analysis
+2. OWASP ZAP for automated scanning (see [full report](security_assessment/2025-07-18-M4-ZAP-Report/2025-07-18-M4-ZAP-Report.html))
+3. Manual testing with XSS payloads, using browser developer tools to monitor execution (see **Penetration Testing** section below)
+
+### Assessment Focus
+
+- Input validation and sanitization
+- Output encoding
+- Content Security Policy implementation
+- Use of dangerous React patterns (like `dangerouslySetInnerHTML`)
+- DOM-based XSS vulnerabilities
+
+### Penetration Testing
+
+See our [script](security_assessment/xss-test-payloads.md) for the payloads we used to test for XSS vulnerabilities, and the results of our penetration testing.
+
+### Risk Report
+
+### High Risk
+
+**Unsanitized User Input in Frontend**
+- **Files to Patch:** `Login.jsx`, `Signup.jsx`, `SearchPage.jsx`, `NLPSearch.jsx`, book data and reviews in `BookDetailsPage.jsx`, `bookReview.jsx`, `UserCard.jsx` rendering, `GenreSelection.jsx` rendering, and `YearSelection.jsx` rendering.
+- **Issue:** Keyword input from text fields is directly passed to the backend and rendered without sanitization. An attacker could inject malicious scripts that might be stored or reflected back to users.
+- **Patch:** Sanitized user inputs in affected pages using `DOMPurify`.
+
+### Medium Risk
+
+**Lack of Input Validation and Sanitization in Backend Routes**
+- **Files to Patch:** `nlptextsearch.js`, `books.js`, `reviews.js`, and `users.js`.
+- **Issue:** Backend routes for user management and reviews lack proper input validation and sanitization, potentially allowing malicious content to be stored in the database.
+- **Patch:** Sanitized HTML and validated request parameters match existing models (books, reviews, users) using `sanitize-html` and `express-validator` (respectively).
+
+**Missing Content Security Policy (CSP)**
+- **File to Patch:** `index.js` (backend).
+- **Issue:** Without a CSP, the application is more vulnerable to XSS attacks as there are no restrictions on which scripts can be executed in the context of the application.
+- **Patch:** Implemented enforcement of the Same Origin Policy using `Helmet` middleware.
+
+**Cross-Domain Misconfiguration**
+- **File to Patch:** `index.js` (backend).
+- **Issue:** The CORS misconfiguration on the web server permits cross-domain read requests from arbitrary third party domains, using unauthenticated APIs on this domain. 
+- **Patch:** Configured CORS to allow a more restrictive set of domains in the HTTP headers.
+
+**Hidden Files Accessible**
+- **File to Patch:** `index.js` (backend).
+- **Issue:** The frontend is served by Vite's server during development, which automatically serves `index.html` as the default file for all routes. During deployment, routes not explicitly configured are not protected, and hidden files (eg. git files) may be accessed.
+- **Patch:** Created a “catchall” handler in Express: undeclared routes throw a 404 error.
+
+**Missing Anti-clickjacking Header**
+- **File to Patch:** `index.js` (backend).
+- **Issue:** Modern browsers support the `Content-Security-Policy` and `X-Frame-Options` HTTP headers, and one of them must be set on all web pages returned by the app.
+- **Patch:** Set the `X-Frame-Options` header and the CSP `frame-ancestors` directive in the Helmet configuration to protect against clickjacking.
+
+### Low Risk
+
+**Server Leaks Information via "X-Powered-By" HTTP Response Header**
+- **File to Patch:** `index.js` (backend).
+- **Issue:** `X-Powered-By` header reveals that application is powered by Express, which reveals technology stack.
+- **Patch:** Disabled `X-Powered-By` headers in Express to prevent information leaks.
+
+**Absence of XSS Protection Headers**
+- **File to Patch:** `index.js` (backend).
+- **Issue:** The application does not set security headers like `X-XSS-Protection` and `X-Content-Type-Options` which can provide additional protection against XSS attacks and MIME-type sniffing vulnerabilities.
+- **Patch:** Added the `X-XSS-Protection` and `X-Content-Type-Options` security headers to the Helmet configuration.
