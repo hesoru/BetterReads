@@ -12,21 +12,22 @@ const Login = () => {
 	const dispatch = useDispatch();
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
-
+	// Add state for signup error
+	const [loginError, setLoginError] = useState('');
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
+		// Clear previous errors
+		setLoginError('');
 		try {
 			// Sanitize inputs before sending to backend
 			const sanitizedUsername = sanitizeContent(username);
 			const sanitizedPassword = sanitizeContent(password);
-			dispatch(loginUser({username: sanitizedUsername, password: sanitizedPassword}));
-
+			await dispatch(loginUser({ username: sanitizedUsername, password: sanitizedPassword })).unwrap();
 			navigate('/search');
 		} catch (err) {
-			console.error('Login error:', err);
-			alert('Something went wrong. Please try again.');
+			setLoginError(err.error);
+
 		}
 	};
 	return (
@@ -67,6 +68,11 @@ const Login = () => {
 							required
 						/>
 					</div>
+					{loginError && (
+						<div className="signup-error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '10px', textAlign: 'center', padding: '5px', backgroundColor: 'rgba(255,0,0,0.1)', borderRadius: '4px' }}>
+							Error: {loginError}
+						</div>
+					)}
 
 					{/* Move this inside the form */}
 					<div className="button-row">
