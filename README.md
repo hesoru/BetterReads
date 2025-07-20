@@ -132,7 +132,7 @@ The test report can be reviewed by opening mochawesome.html by browser. The moch
 | Semantic NLP Search Engine    | Completed           |
 
 
-Our app features two non-trivial systems. The **Book Recommendation System** harnesses user-based collaborative filtering on a Python microservice to generate personalized suggestions, with genre and popularity-based fallbacks. The **Semantic NLP Search Engine** uses a `sentence-transformers` model to convert book data and user queries into vector embeddings, returning results ranked by cosine similarity.
+Our app features two non-trivial systems. The **Hybrid Recommendation System** uses collaborative filtering on a Python microservice to generate personalized suggestions, with genre and popularity-based fallbacks. The **Semantic NLP Search Engine** processes book metadata (titles and descriptions) through the Sentence-transformers library using the 'all-MiniLM-L6-v2' model to create vector embeddings. These embeddings are indexed in our database, allowing users to perform semantic searches where query results are ranked by cosine similarity to find the most contextually relevant books.
 
 #### M4 Updates
 
@@ -147,7 +147,7 @@ Our app features two non-trivial systems. The **Book Recommendation System** har
 - **Add to Wishlist:** Implemented functionality for users to add books to their wishlist.
 - **Genre Selection:** Modified the list of displayed genre tags in the UI to dynamically pull unique genre tags associated with all books in our database.
 - **Login Error:** Fixed bug to ensure UI warning is displayed with informative message upon unsucessful login attempt and prevents navigation to search page as guest.
-  
+- **User Password Change:** Users now have functionality to change their passwords.
 
 ## XSS Security Assessment
 

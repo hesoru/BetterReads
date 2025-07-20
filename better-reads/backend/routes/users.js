@@ -187,9 +187,10 @@ router.post('/change-password', async (req, res) => {
             return res.status(404).json({ error: 'User not found.' });
         }
 
-        const isMatch = await bcrypt.compare(currentPassword, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ error: 'Current password is incorrect.' });
+        if (!isStrongPassword(newPassword)) {
+            return res.status(400).json({
+                error: 'Password must be at least 12 characters and include uppercase, lowercase, number, and symbol.'
+            });
         }
 
         if (currentPassword === newPassword) {
@@ -198,11 +199,11 @@ router.post('/change-password', async (req, res) => {
             });
         }
 
-        if (!isStrongPassword(newPassword)) {
-            return res.status(400).json({
-                error: 'Password must be at least 12 characters and include uppercase, lowercase, number, and symbol.'
-            });
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Current password is incorrect.' });
         }
+
 
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedNewPassword;
