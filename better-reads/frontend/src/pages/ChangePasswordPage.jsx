@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import '../styles/auth.css';
 
 const ChangePasswordPage = () => {
+    useEffect(() => {
+        // Disable scrolling when the component mounts
+        document.body.style.overflow = 'hidden';
+
+        // Re-enable scrolling when the component unmounts
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, []);
+
     const navigate = useNavigate();
     const user = useSelector((state) => state.user.user);
     const [oldPassword, setOldPassword] = useState('');
