@@ -164,7 +164,65 @@ describe('Test user login', () => {
         expect(res.status).to.equal(401);
         expect(res.body.error).to.equals('This username does not exist. Please make sure username is correct and try again.');
     });
+
+
 });
+
+
+describe('Test user changing password', () => {
+    beforeEach(async () => {
+        const password = 'Password1?321234567890';
+        const hashedPassword = await bcrypt.hash(password, 10);
+        console.log("hashedPassword", hashedPassword);
+        await Users.create({
+            username:       "User123",
+            password:       hashedPassword,
+            join_time:      new Date(),
+        });
+    });
+
+
+    it('changes password with invalid password- too short', async () => {
+        const res = await request(app)
+            .post('/users/change-password')
+            .send({ username: 'User123', currentPassword: 'Password1?321234567890', newPassword:'weak' });
+
+        expect(res.status).to.equal(400);
+        expect(res.body.error).to.equal('Password must be at least 12 characters and include uppercase, lowercase, number, and symbol.');
+    });
+
+    it('changes password with invalid password- wrong original password', async () => {
+        const res = await request(app)
+            .post('/users/change-password')
+            .send({ username: 'User123', currentPassword: 'Password1?32123456789012', newPassword:'Password1?321234567891' });
+
+
+        expect(res.body.error).to.equal('Current password is incorrect.');
+        expect(res.status).to.equal(401);
+    });
+
+    it('changes password with invalid password- same password', async () => {
+        const res = await request(app)
+            .post('/users/change-password')
+            .send({ username: 'User123', currentPassword: 'Password1?32123456789012', newPassword:'Password1?32123456789012' });
+
+        expect(res.status).to.equal(400);
+        expect(res.body.error).to.equal('New password must be different from the current password.');
+    });
+
+    it('changes password with valid password', async () => {
+        const res = await request(app)
+            .post('/users/change-password')
+            .send({ username: 'User123', currentPassword: 'Password1?321234567890', newPassword:'Password1?3aG421234567891' });
+
+        expect(res.status).to.equal(200);
+        expect(res.body.message).to.equal('Password updated successfully.');
+    });
+
+
+});
+
+
 
 describe('Test updating user Favourite Genres', () => {
     let user;
