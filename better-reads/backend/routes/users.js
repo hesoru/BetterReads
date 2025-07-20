@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import mongoose from "mongoose";
 import axios from 'axios';
-import {isStrongPassword} from "./utils.js";
+import {isStrongPassword, isValidUsername} from "./utils.js";
 
 const router = express.Router();
 
@@ -98,6 +98,12 @@ router.post('/signup', async (req, res) => {
         if (!isStrongPassword(password)) {
             return res.status(400).json({
                 error: 'Password must be at least 12 characters and include uppercase, lowercase, number, and symbol.'
+            });
+        }
+
+        if (!isValidUsername(username)) {
+            return res.status(400).json({
+                error: 'The username must be between 3 and 20 characters long and may include letters, numbers, underscores (_), periods (.), or hyphens (-).'
             });
         }
         const existing = await Users.findOne({ username });

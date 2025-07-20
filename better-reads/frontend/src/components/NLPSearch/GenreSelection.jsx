@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Box,
   Select,
@@ -10,23 +10,24 @@ import {
 } from '@mui/material';
 
 import { DetectiveDustyBlue, PaperbackPureWhite } from '../../styles/colors';
+import BookUtils from "../../utils/BookUtils.js";
 
-const genres = [
-  'Fantasy',
-  'Fiction',
-  'Nonfiction',
-  'Classics',
-  'Science Fiction',
-  'Mystery',
-  'Thriller',
-  'Romance',
-  'Historical Fiction',
-  'Horror',
-  'Literary Fiction',
-  'Young Adult',
-  'Biography',
-  'Contemporary',
-];
+// const genres = [
+//   'Fantasy',
+//   'Fiction',
+//   'Nonfiction',
+//   'Classics',
+//   'Science Fiction',
+//   'Mystery',
+//   'Thriller',
+//   'Romance',
+//   'Historical Fiction',
+//   'Horror',
+//   'Literary Fiction',
+//   'Young Adult',
+//   'Biography',
+//   'Contemporary',
+// ];
 
 const ITEM_HEIGHT = 30;
 const ITEM_PADDING_TOP = 8;
@@ -45,6 +46,20 @@ const MenuProps = {
 
 const GenreSelection = ({ onSelectGenres = () => {} }) => {
   const [selectedGenres, setSelectedGenres] = useState([]);
+  const [genres, setAllGenres] = useState([]);
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const genreList = await BookUtils.getAllGenreTags();
+        setAllGenres(genreList);
+      } catch (err) {
+        console.error("Failed to load genres", err);
+      }
+    };
+
+    fetchGenres();
+  }, []);
 
   const handleChange = (event) => {
     const { target: { value } } = event;

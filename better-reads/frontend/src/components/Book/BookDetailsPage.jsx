@@ -66,7 +66,6 @@ export default function BookDetailsPage() {
     const dispatch = useDispatch();
     const userId = useSelector((state) => state.user?.user?._id);
     const booklist = useSelector((state) => state.booklist.items);
-    console.log("bookId", bookId);
 
     const [book, setBook] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -81,6 +80,22 @@ export default function BookDetailsPage() {
     const handleScrollToReview = () => {
         reviewRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
+
+    const deleteReview = async () => {
+        try {
+            console.log("clicked delete review");
+            const review = await BookUtils.getUserReview(bookId, username);
+            if (review) {
+                await BookUtils.deleteReview(review._id);
+                setUserReview(null);
+                setBookReviews(prev => prev.filter(r => r.userId !== username));
+            }
+        } catch (err) {
+            console.error('Failed to delete review:', err);
+            alert('Could not delete the revigew. Please try again.');
+        }
+    };
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -242,7 +257,7 @@ export default function BookDetailsPage() {
                                 <Button sx={buttonStyle} onClick={() => setIsEditing(true)}>
                                     Edit Review
                                 </Button>
-                                <Button sx={deleteButtonStyle} onClick={() => console.log('Delete review clicked')}>
+                                <Button sx={deleteButtonStyle} onClick={() => deleteReview()}>
                                     Delete Review
                                 </Button>
                             </Box>
