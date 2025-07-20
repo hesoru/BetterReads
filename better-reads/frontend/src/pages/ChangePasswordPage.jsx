@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import '../styles/auth.css';
+import UserUtils from "../utils/UserUtils.js";
 
 const ChangePasswordPage = () => {
     useEffect(() => {
@@ -19,12 +20,52 @@ const ChangePasswordPage = () => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [error, setError] = useState('');
+    // Add this state for password validation
+    const [passwordError, setPasswordError] = useState('');
 
+    const checkPasswordStrength = (password) => {
+        const minLength = 12;
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        const hasDigit = /[0-9]/.test(password);
+        const hasSymbol = /[^A-Za-z0-9]/.test(password);
+
+        if (password.length < minLength) {
+            setPasswordError('Password must be at least 12 characters long');
+            return false;
+        } else if (!hasUpper) {
+            setPasswordError('Password must include at least one uppercase letter');
+            return false;
+        } else if (!hasLower) {
+            setPasswordError('Password must include at least one lowercase letter');
+            return false;
+        } else if (!hasDigit) {
+            setPasswordError('Password must include at least one number');
+            return false;
+        } else if (!hasSymbol) {
+            setPasswordError('Password must include at least one special character');
+            return false;
+        } else {
+            setPasswordError('');
+            return true;
+        }
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        // Backend logic to be implemented later
-        console.log('Password change submitted');
+
+        // Validate password first
+        if (!checkPasswordStrength(newPassword)) {
+            return; // Stop submission if password is invalid
+        }
+
+        try {
+            await UserUtils.changeUserPassword(user.username, oldPassword, newPassword);
+            navigate('/search');
+        } catch (err) {
+            setError(err.message);
+            console.error(err);
+        }
     };
 
     return (
@@ -64,8 +105,14 @@ const ChangePasswordPage = () => {
                             />
                         </div>
                         {error && (
-                            <div className="signup-error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '10px', textAlign: 'center', padding: '5px', backgroundColor: 'rgba(255,0,0,0.1)', borderRadius: '4px' }}>
-                                Error: {error}
+                            <div className="password-error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '10px', textAlign: 'center', padding: '5px', backgroundColor: 'rgba(255,0,0,0.1)', borderRadius: '4px' }}>
+                                {error}
+                            </div>
+                        )}
+
+                        {passwordError && (
+                            <div className="password-error" style={{ color: 'red', fontSize: '0.8rem', marginTop: '5px', textAlign: 'center' }}>
+                                {passwordError}
                             </div>
                         )}
                         <div className="button-row">
