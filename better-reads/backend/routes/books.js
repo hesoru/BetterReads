@@ -278,7 +278,7 @@ router.post('/:id/reviews', [paramValidation.bookId, ...reviewValidationRules.cr
             
             // Update the recommender matrix
             try {
-                await axios.post('http://localhost:5001/update-matrix');
+                await axios.post('http://recommender:5001/update-matrix');
                 console.log('Recommender matrix updated after review update');
             } catch (updateError) {
                 console.error('Failed to update recommender matrix:', updateError.message);
@@ -314,7 +314,7 @@ router.post('/:id/reviews', [paramValidation.bookId, ...reviewValidationRules.cr
         
         // Update the recommender matrix
         try {
-            await axios.post('http://localhost:5001/update-matrix');
+            await axios.post('http://recommender:5001/update-matrix');
             console.log('Recommender matrix updated after new review');
         } catch (updateError) {
             console.error('Failed to update recommender matrix:', updateError.message);

@@ -24,7 +24,7 @@ router.put('/:reviewId', [paramValidation.reviewId, ...reviewValidationRules.upd
 
         // Update the recommender matrix
         try {
-            await axios.post('http://localhost:5001/update-matrix');
+            await axios.post('http://recommender:5001/update-matrix');
             console.log('Recommender matrix updated after review edit');
         } catch (updateError) {
             console.error('Failed to update recommender matrix:', updateError.message);
@@ -46,7 +46,7 @@ router.delete('/:reviewId', paramValidation.reviewId, validateRequest, async (re
 
         // Update the recommender matrix
         try {
-            await axios.post('http://localhost:5001/update-matrix');
+            await axios.post('http://recommender:5001/update-matrix');
             console.log('Recommender matrix updated after review deletion');
         } catch (updateError) {
             console.error('Failed to update recommender matrix:', updateError.message);

@@ -4,17 +4,17 @@ import { getRecommendations } from '../services/recommendations.js';
 const router = express.Router();
 
 /**
- * @route   GET /api/recommend/:userId
+ * @route   GET /api/recommend/:username
  * @desc    Get book recommendations for a specific user
  * @access  Public
  */
-router.get('/:userId', async (req, res) => {
+router.get('/:username', async (req, res) => {
   try {
-    if (!req.params.userId) {
-      return res.status(400).json({ error: 'User ID is required' });
+    if (!req.params.username) {
+      return res.status(400).json({ error: 'Username is required' });
     }
     
-    const books = await getRecommendations(req.params.userId);
+    const books = await getRecommendations(req.params.username);
     
     if (!books || books.length === 0) {
       return res.json({ 

@@ -39,7 +39,7 @@ const Login = () => {
 					<span className="reads">Reads</span>
 				</h1>
 				<h2 className="tagline">
-					Reading is good for you. But we can make it better
+					Reading is good for you. But we can make it better.
 				</h2>
 
 				<form className="auth-form" onSubmit={handleSubmit}>

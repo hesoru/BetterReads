@@ -156,6 +156,7 @@ Our app features two non-trivial systems. The **Book Recommendation System** har
 **Authentication Forms**
 - **Login Form:** username and password fields
 - **Signup Form:** username, password, and genre selection fields
+- **Change Password Form:** old password and new password fields
 
 **Search Pages (Regular and NLP Search)**
 - **Search Bar:** search query input field
@@ -192,7 +193,7 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 ### High Risk
 
 **Unsanitized User Input in Frontend**
-- **Files to Patch:** `Login.jsx`, `Signup.jsx`, `SearchPage.jsx`, `NLPSearch.jsx`, book data and reviews in `BookDetailsPage.jsx`, `bookReview.jsx`, `UserCard.jsx` rendering, `GenreSelection.jsx` rendering, and `YearSelection.jsx` rendering.
+- **Files to Patch:** `Login.jsx`, `Signup.jsx`, `ChangePasswordPage.jsx`, `SearchPage.jsx`, `NLPSearch.jsx`, book data and reviews in `BookDetailsPage.jsx`, `bookReview.jsx`, `UserCard.jsx` rendering, `GenreSelection.jsx` rendering, and `YearSelection.jsx` rendering.
 - **Issue:** Keyword input from text fields is directly passed to the backend and rendered without sanitization. An attacker could inject malicious scripts that might be stored or reflected back to users.
 - **Patch:** Sanitized user inputs in affected pages using `DOMPurify`.
 

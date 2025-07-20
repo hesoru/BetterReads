@@ -129,7 +129,7 @@ router.post('/signup', userValidationRules.signup, validateRequest, async (req, 
         
         // Update the recommender matrix to include the new user
         try {
-            await axios.post('http://localhost:5001/update-matrix');
+            await axios.post('http://recommender:5001/update-matrix');
             console.log('Recommender matrix updated after new user signup');
         } catch (updateError) {
             console.error('Failed to update recommender matrix:', updateError.message);
