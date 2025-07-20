@@ -1,4 +1,4 @@
-import { body, param, validationResult } from 'express-validator';
+import { body, param, query, validationResult } from 'express-validator';
 import sanitizeHtml from 'sanitize-html';
 
 // Middleware to check validation results
@@ -35,7 +35,7 @@ export const userValidationRules = {
     
     body('password')
       .notEmpty().withMessage('Password is required')
-      .isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
+      .isLength({ min: 12 }).withMessage('Password must be at least 12 characters'),
     
     body('favoriteGenres')
       .isArray().withMessage('Favorite genres must be an array')
@@ -63,32 +63,28 @@ export const userValidationRules = {
       .notEmpty().withMessage('Password is required'),
   ],
   
-  update: [
-    body('favoriteGenres')
-      .optional()
-      .isArray().withMessage('Favorite genres must be an array')
-      .customSanitizer(values => {
-        if (Array.isArray(values)) {
-          return values.map(sanitizeInput);
-        }
-        return values;
-      }),
-      
-    body('avatarUrl')
-      .optional()
-      .isURL().withMessage('Avatar URL must be a valid URL')
-      .customSanitizer(sanitizeInput),
-      
-    body('bio')
-      .optional()
-      .customSanitizer(sanitizeInput),
-  ],
+  // update: [
+  //   body('favoriteGenres')
+  //     .optional()
+  //     .isArray().withMessage('Favorite genres must be an array')
+  //     .customSanitizer(values => {
+  //       if (Array.isArray(values)) {
+  //         return values.map(sanitizeInput);
+  //       }
+  //       return values;
+  //     }),
+  // 
+  //   body('avatarUrl')
+  //     .optional()
+  //     .isURL().withMessage('Avatar URL must be a valid URL')
+  //     .customSanitizer(sanitizeInput),
+  // 
+  //   body('bio')
+  //     .optional()
+  //     .customSanitizer(sanitizeInput),
+  // ],
   
-  addToBooklist: [
-    body('userId')
-      .notEmpty().withMessage('User ID is required')
-      .isMongoId().withMessage('Invalid user ID format'),
-      
+  addToBooklist: [      
     body('bookId')
       .notEmpty().withMessage('Book ID is required')
       .isMongoId().withMessage('Invalid book ID format'),
@@ -98,17 +94,14 @@ export const userValidationRules = {
 // Review validation rules
 export const reviewValidationRules = {
   create: [
-    body('bookId')
-      .notEmpty().withMessage('Book ID is required')
-      .isMongoId().withMessage('Invalid book ID format'),
-      
-    body('userId')
-      .notEmpty().withMessage('User ID is required')
+    body('username')
+      .notEmpty().withMessage('Username is required')
+      .trim()
       .customSanitizer(sanitizeInput),
       
     body('rating')
-      .notEmpty().withMessage('Rating is required')
-      .isInt({ min: 1, max: 5 }).withMessage('Rating must be between 1 and 5'),
+      .optional()
+      .isFloat({ min: 1, max: 5 }).withMessage('Rating must be between 1 and 5'),
       
     body('description')
       .optional()
@@ -118,7 +111,7 @@ export const reviewValidationRules = {
   update: [
     body('rating')
       .optional()
-      .isInt({ min: 1, max: 5 }).withMessage('Rating must be between 1 and 5'),
+      .isFloat({ min: 1, max: 5 }).withMessage('Rating must be between 1 and 5'),
       
     body('description')
       .optional()
@@ -128,128 +121,53 @@ export const reviewValidationRules = {
 
 // Parameter validation
 export const paramValidation = {
-  userId: param('userId')
-    .isMongoId().withMessage('Invalid user ID format'),
-    
-  bookId: param('bookId')
-    .isMongoId().withMessage('Invalid book ID format'),
-    
-  reviewId: param('reviewId')
-    .isMongoId().withMessage('Invalid review ID format'),
-};
-
-// Book validation rules
-export const bookValidationRules = {
-  search: [
-    body('q')
-      .optional()
-      .trim()
-      .escape()
-      .customSanitizer(sanitizeInput),
-      
-    body('genre')
-      .optional()
-      .customSanitizer(sanitizeInput),
+  userId: [
+    param('id')
+      .isMongoId().withMessage('Invalid user ID format'),
   ],
-  
-  create: [
-    body('title')
-      .notEmpty().withMessage('Title is required')
-      .trim()
-      .customSanitizer(sanitizeInput),
-      
-    body('author')
-      .notEmpty().withMessage('Author is required')
-      .trim()
-      .customSanitizer(sanitizeInput),
-      
-    body('description')
-      .optional()
-      .customSanitizer(sanitizeInput),
-      
-    body('genre')
-      .optional()
-      .isArray().withMessage('Genre must be an array')
-      .customSanitizer(values => {
-        if (Array.isArray(values)) {
-          return values.map(sanitizeInput);
-        }
-        return values;
-      }),
-      
-    body('image')
-      .optional()
-      .isURL().withMessage('Image must be a valid URL')
-      .customSanitizer(sanitizeInput),
-      
-    body('ISBN')
-      .optional()
-      .trim()
-      .customSanitizer(sanitizeInput),
+    
+  bookId: [
+    param('id')
+      .isMongoId().withMessage('Invalid book ID format'),
   ],
-  
-  update: [
-    body('title')
-      .optional()
-      .trim()
-      .customSanitizer(sanitizeInput),
-      
-    body('author')
-      .optional()
-      .trim()
-      .customSanitizer(sanitizeInput),
-      
-    body('description')
-      .optional()
-      .customSanitizer(sanitizeInput),
-      
-    body('genre')
-      .optional()
-      .isArray().withMessage('Genre must be an array')
-      .customSanitizer(values => {
-        if (Array.isArray(values)) {
-          return values.map(sanitizeInput);
-        }
-        return values;
-      }),
-      
-    body('image')
-      .optional()
-      .isURL().withMessage('Image must be a valid URL')
-      .customSanitizer(sanitizeInput),
+    
+  reviewId: [
+    param('id')
+      .isMongoId().withMessage('Invalid review ID format'),
   ],
 };
 
 // Query validation rules
 export const queryValidation = {
-  bookSearch: [
-    param('q')
-      .optional()
-      .trim()
-      .escape()
-      .customSanitizer(sanitizeInput),
+  // bookSearch: [
+  //   param('q')
+  //     .optional()
+  //     .trim()
+  //     .escape()
+  //     .customSanitizer(sanitizeInput),
       
-    param('genre')
-      .optional()
-      .customSanitizer(sanitizeInput),
+  //   param('genre')
+  //     .optional()
+  //     .customSanitizer(sanitizeInput),
       
-    param('page')
-      .optional()
-      .isInt({ min: 1 }).withMessage('Page must be a positive integer'),
+  //   param('page')
+  //     .optional()
+  //     .isInt({ min: 1 }).withMessage('Page must be a positive integer'),
       
-    param('limit')
-      .optional()
-      .isInt({ min: 1, max: 50 }).withMessage('Limit must be between 1 and 50'),
-  ],
+  //   param('limit')
+  //     .optional()
+  //     .isInt({ min: 1, max: 50 }).withMessage('Limit must be between 1 and 50'),
+  // ],
   
   userReview: [
     query('bookId')
       .isMongoId().withMessage('Invalid book ID format'),
       
     query('userId')
-      .optional()
-      .isMongoId().withMessage('Invalid user ID format'),
-  ],
+      .notEmpty().withMessage('Username is required')
+      .trim()
+      .customSanitizer(sanitizeInput),
+],
   
   search: [
     query('q')

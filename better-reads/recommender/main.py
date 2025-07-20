@@ -38,8 +38,8 @@ users_collection = db['users']
 
 # Redis key for user-item matrix
 USER_ITEM_MATRIX_KEY = 'user_item_matrix'
-# Path to initial user-item matrix JSON file
-INITIAL_MATRIX_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'backend', 'data', 'initial-user-item-matrix.json')
+# Path to initial user-item matrix JSON file (now located in recommender/data directory)
+INITIAL_MATRIX_PATH = os.path.join('/app', 'data', 'initial-user-item-matrix.json')
 # Update interval in seconds
 UPDATE_INTERVAL = int(os.getenv('UPDATE_INTERVAL', 3600))  # Default: update every hour
 
@@ -175,6 +175,10 @@ def update_matrix_with_reviews():
             book_id = str(review['bookId'])
             rating = review['rating']
             
+            # Skip reviews with null/None ratings
+            if rating is None:
+                continue
+                
             # Initialize user entry if not exists (should already be done above)
             if user_id not in matrix_data:
                 matrix_data[user_id] = {}
@@ -258,7 +262,7 @@ def recommend_books(data: RecommendRequest):
     for user, user_idx in user_mapping.items():
         user_ratings = matrix_dict.get(user, {})
         for item, rating in user_ratings.items():
-            if item in item_mapping:
+            if item in item_mapping and rating is not None:
                 row_indices.append(user_idx)
                 col_indices.append(item_mapping[item])
                 ratings.append(float(rating))

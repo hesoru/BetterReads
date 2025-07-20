@@ -7,7 +7,7 @@ dotenv.config();
 import mongoose from "mongoose";
 import axios from 'axios';
 import {isStrongPassword} from "./utils.js";
-import { userValidationRules, validateRequest, sanitizeInput } from '../middleware/validators.js';
+import { userValidationRules, validateRequest, sanitizeInput, paramValidation } from '../middleware/validators.js';
 import { param } from 'express-validator';
 
 const router = express.Router();
@@ -172,7 +172,7 @@ router.post('/logout', (req, res) => {
 
 
 // PUT /users/:id/genres/add-multiple
-router.put('/:id/genres/add-multiple', [paramValidation.userId, ...userValidationRules.update], validateRequest, async (req, res) => {
+router.put('/:id/genres/add-multiple', paramValidation.userId, validateRequest, async (req, res) => {
     try {
         const { genres } = req.body;
 
@@ -194,7 +194,7 @@ router.put('/:id/genres/add-multiple', [paramValidation.userId, ...userValidatio
 });
 
 // PUT /users/:id - update a total user
-router.put('/:id', [paramValidation.userId, ...userValidationRules.update], validateRequest, async (req, res) => {
+router.put('/:id', paramValidation.userId, validateRequest, async (req, res) => {
     try {
         const updated = await Users.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updated) return res.status(404).json({ error: 'User not found' });

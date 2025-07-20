@@ -3,7 +3,7 @@ import Books from '../model/books.js';
 import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
 import axios from 'axios';
-import { validateRequest, bookValidationRules, queryValidation, paramValidation, reviewValidationRules } from '../middleware/validators.js';
+import { validateRequest, queryValidation, paramValidation, reviewValidationRules } from '../middleware/validators.js';
 const router = express.Router();
 
 // retrieve books via a generic main.py query

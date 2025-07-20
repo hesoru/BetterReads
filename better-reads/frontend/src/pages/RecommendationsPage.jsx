@@ -101,7 +101,7 @@ const RecommendationsPage = () => {
 
   return (
     <div style={styles.container}>
-      <HeroBanner title="Get book recs machine-learning curated to your taste!" />
+      <HeroBanner title="Get personalized book recommendations!" />
 
       <Container maxWidth="lg">
         {loading ? (
