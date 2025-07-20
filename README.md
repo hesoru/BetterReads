@@ -160,13 +160,13 @@ Our app features two non-trivial systems. The **Hybrid Recommendation System** u
 
 **Search Pages (Regular and NLP Search)**
 - **Search Bar:** search query input field
-- **Genre Filter:** genre selection dropdown
+- **Genre/Year Filters:** genre/year selection dropdown
 
 **Book Reviews**
 - **User Reviews:** review text submission
 - **Review Display:** how user reviews are displayed
 
-### Testing Methods
+### Methods
 
 1. Static code analysis
 2. OWASP ZAP for automated scanning (see [full report](security_assessment/2025-07-18-M4-ZAP-Report/2025-07-18-M4-ZAP-Report.html))
