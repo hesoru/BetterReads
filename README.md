@@ -139,3 +139,6 @@ placeholder text placeholder textplaceholder textplaceholder textplaceholder tex
 - **Half-Star Ratings:** Enabled backend support for half-star increments in reviews for more nuanced feedback.
 - **Updated Navigation:** Rerouted the main logo to the `/search` page, making it the functional home page.
 - **Add to Wishlist:** Implemented functionality for users to add books to their wishlist.
+- **Genre Selection:** Modified the list of displayed genre tags in the UI to dynamically pull unique genre tags associated with all books in our database.
+- **Login Error:** Fixed bug to ensure UI warning is displayed with informative message upon unsucessful login attempt and prevents navigation to search page as guest.
+  
