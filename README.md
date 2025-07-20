@@ -109,10 +109,11 @@ npm test    # run test
 
 
 #### Stretch Goals 
-- _The user’s rich-text input is analyzed using natural language processing (NLP), to identify semantic similarities between keywords in the user’s input and book descriptions._ – Completed. Viewable in /nlpsearch page.
-- _Ability to scrape book data and add new books to the database._ – Not started. Will impliment in final release provided there is time.
-- _Users can create a non-existent book in the app and add related information._ – Not started. Will impliment in final release provided there is time. 
-- _Allow users to post current reads on their profiles. Let users post or mark what they’re currently reading. Optionally timestamp or add commentary._ – In-development. This feature requires significant database and UI refactoring and is being developed on a separate branch. It will be merged into `main` upon successful completion within the project timeline.
+- _The user’s rich-text input is analyzed using natural language processing (NLP), to identify semantic similarities between keywords in the user’s input and book descriptions._ – **Completed**. Viewable in /nlpsearch page.
+- _Summarize book reviews. Possibly identify if the user’s overall sentiment on a specific book is positive or negative & possibly find common themes among reviews for a book (ie. clustering)._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
+- _Ability to scrape book data and add new books to the database._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
+- _Users can create a non-existent book in the app and add related information._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
+- _Allow users to post current reads on their profiles. Let users post or mark what they’re currently reading. Optionally timestamp or add commentary._ – **In-development**. This feature requires significant database and UI refactoring and is being developed on a separate branch. It will be merged into `main` upon successful completion within the project timeline. 
 
 
 #### Non-trivial elements
