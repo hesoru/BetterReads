@@ -14,6 +14,10 @@ export function isStrongPassword(pwd) {
     return pwd.length >= minLength && hasUpper && hasLower && hasDigit && hasSymbol;
 }
 
+export function isValidUsername(username) {
+  return /^[a-zA-Z0-9_.-]{3,20}$/.test(username);
+}
+
 export const authenticate = (req, res, next) => {
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(' ')[1];

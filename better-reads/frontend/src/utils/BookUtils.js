@@ -8,6 +8,12 @@ const BookUtils = {
         return res.json();
     },
 
+    async getAllGenreTags() {
+        const res = await fetch(`${BASE_URL}/books/genre-tags`);
+        const data = await res.json();
+        return data.genres || [];
+    },
+
     // Search for books by query (title, author, genre, etc.)
     //TODO: decide on page/limit
     async searchBooks({ q = '', genres = [], page = 1, limit = 10 } = {}) {
@@ -123,6 +129,16 @@ const BookUtils = {
         });
         if (!res.ok) throw new Error('Failed to submit review');
         return res.json();
+    },
+
+    //Delete a user's review
+    async deleteReview(reviewId) {
+        const res = await fetch(`${BASE_URL}/reviews/${reviewId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reviewId }),
+        });
+        if (!res.ok) throw new Error('Failed to delete review');
     }
 };
 

@@ -19,20 +19,22 @@ import { BookPreview } from '../components/Book/BookPreview';
 import '../components/Book/BookPage.css';
 import BookUtils from "../utils/BookUtils.js";
 
-const genres = [
-  "Fantasy", "Fiction", "Nonfiction", "Classics", "Science Fiction",
-  "Mystery", "Thriller", "Romance", "Historical Fiction", "Horror",
-  "Literary Fiction", "Young Adult", "Biography", "Contemporary"
-];
+// const genres = [
+//   "Fantasy", "Fiction", "Nonfiction", "Classics", "Science Fiction",
+//   "Mystery", "Thriller", "Romance", "Historical Fiction", "Horror",
+//   "Literary Fiction", "Young Adult", "Biography", "Contemporary"
+// ];
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [genres, setAllGenres] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+
 
   const handleSearch = useCallback(async (pageToFetch = 1, append = false) => {
     const trimmedQuery = searchQuery.trim();
@@ -58,6 +60,19 @@ const SearchPage = () => {
       setLoading(false);
     }
   }, [searchQuery, selectedGenres]);
+
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const genreList = await BookUtils.getAllGenreTags();
+        setAllGenres(genreList);
+      } catch (err) {
+        console.error("Failed to load genres", err);
+      }
+    };
+
+    fetchGenres();
+  }, []);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
