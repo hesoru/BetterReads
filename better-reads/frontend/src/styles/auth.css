@@ -12,6 +12,11 @@ html, body {
 	background-size: cover;
 	background-position: center;
     background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
 }
 
 h1 {
@@ -53,13 +58,10 @@ h2 {
 }
 
 .auth-container {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	min-height: 100vh;
-	padding: 2rem 1rem;
-    box-sizing: border-box;
+    /* This container is now just a simple wrapper. */
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .auth-information {
@@ -67,8 +69,8 @@ h2 {
 	padding: 2rem;
 	border-radius: 12px;
 	box-shadow: 0 4px 12px white;
-	width: 100%;
-	max-width: 500px; /* Use a fixed max-width for better control */
+	width: 90%;
+	max-width: 550px;
 	box-sizing: border-box;
 }
 
@@ -131,21 +133,4 @@ h2 {
 	font-weight: bold;
 }
 
-@media (max-width: 992px) {
-  .auth-information {
-    max-width: 60%;
-  }
-}
 
-@media (max-width: 768px) {
-  .auth-information {
-    max-width: 80%;
-  }
-}
-
-@media (max-width: 576px) {
-  .auth-information {
-    max-width: 95%;
-    padding: 1.5rem;
-  }
-}

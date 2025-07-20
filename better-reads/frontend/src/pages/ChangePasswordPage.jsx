@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import '../styles/auth.css';
 
 const ChangePasswordPage = () => {
     const navigate = useNavigate();
+    const user = useSelector((state) => state.user.user);
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [error, setError] = useState('');
@@ -24,7 +26,7 @@ const ChangePasswordPage = () => {
                         <span className="reads">Reads</span>
                     </h1>
                     <h2 className="tagline">
-                        Change Your Password
+                        Change Password for {user?.username || 'user'}
                     </h2>
                     <form className="auth-form" onSubmit={handleSubmit}>
                         <div className="form-row">
