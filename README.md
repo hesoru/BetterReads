@@ -164,10 +164,6 @@ Our app features two non-trivial systems. The **Hybrid Recommendation System** u
 
 **Book Reviews**
 - **User Reviews:** review text submission
-- **User Profile:** profile information fields
-
-**Data Display Areas**
-- **Book Details Page:** how book information is rendered
 - **Review Display:** how user reviews are displayed
 
 ### Testing Methods
