@@ -1,22 +1,23 @@
-/* 
-  DEPRECATED: This file is no longer in use.
-  The Login component has been refactored with Material-UI and this stylesheet is not linked to any component.
-  It is kept for reference purposes only.
-*/
-.login-page {
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.auth-page {
 	min-height: 100vh;
 	margin: 0;
 	color: white;
 	background-image: url('../images/background.png');
 	background-size: cover;
 	background-position: center;
+    background-attachment: fixed;
 }
 
 h1 {
     font-family: 'Source Serif Pro', serif;
     font-weight: bold;
   text-align: center;
-  /* Use clamp to ensure font size is responsive but doesn't get too large */
   font-size: clamp(2.5rem, 8vw, 4rem);
   margin: 1rem 0;
   word-wrap: break-word;
@@ -39,38 +40,39 @@ h2 {
 	font-size: 1rem;
 	font-style: italic;
 	color: white;
-	margin-bottom: 5rem;
+	margin-bottom: 2rem;
 	text-align: center;
 }
 
-.login-container {
+
+
+.auth-form {
 	display: flex;
 	flex-direction: column;
-	background-color: transparent;
+	align-items: center;
+}
+
+.auth-container {
+	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	min-height: 100vh;
 	padding: 2rem 1rem;
+    box-sizing: border-box;
 }
 
-.login-form {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.login-information {
+.auth-information {
 	background-color: #1e213d;
 	padding: 2rem;
 	border-radius: 12px;
 	box-shadow: 0 4px 12px white;
 	width: 100%;
-	max-width: 40%;
-	max-height: 60%;
+	max-width: 500px; /* Use a fixed max-width for better control */
 	box-sizing: border-box;
 }
 
-button {
+.auth-information button {
 	padding: 0.7rem 1.3rem;
 	font-size: 0.9rem;
 	font-weight: bold;
@@ -83,17 +85,19 @@ button {
 
 .form-row {
 	display: flex;
+    flex-direction: column;
 	align-items: center;
 	justify-content: center;
+    width: 100%;
 }
 
-.login-form label {
+.auth-form label {
 	font-weight: bold;
-	margin-right: 1rem;
-	margin-bottom: 0.5rem;
+    align-self: flex-start;
+    margin-bottom: 0.5rem;
 }
 
-.login-form input {
+.auth-form input {
 	padding: 0.5rem;
 	border-radius: 0.3rem;
 	border: 1px solid #ccc;
@@ -110,7 +114,7 @@ button {
 	margin-top: 1rem;
 }
 
-button:hover {
+.auth-information button:hover {
 	background-color: #45a049;
 }
 
@@ -127,22 +131,21 @@ button:hover {
 	font-weight: bold;
 }
 
-/* Responsive adjustments for smaller screens */
 @media (max-width: 992px) {
-  .login-information {
+  .auth-information {
     max-width: 60%;
   }
 }
 
 @media (max-width: 768px) {
-  .login-information {
+  .auth-information {
     max-width: 80%;
   }
 }
 
 @media (max-width: 576px) {
-  .login-information {
+  .auth-information {
     max-width: 95%;
-    padding: 1.5rem; /* Slightly reduce padding on very small screens */
+    padding: 1.5rem;
   }
 }
