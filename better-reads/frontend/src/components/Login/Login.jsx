@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import "../../styles/login.css";
+import "../../styles/auth.css";
 import { useNavigate, Link } from "react-router-dom";
 import {useDispatch} from "react-redux";
 import { loginUser } from "../../redux/UserThunks";
@@ -31,9 +31,9 @@ const Login = () => {
 		}
 	};
 	return (
-		<div className="login-page">
-			<div className="login-container">
-			<div className="login-information">
+		<div className="auth-page">
+			<div className="auth-container">
+				<div className="auth-information">
 				<h1>
 					<span className="better">Better</span>
 					<span className="reads">Reads</span>
@@ -42,7 +42,7 @@ const Login = () => {
 					Reading is good for you. But we can make it better
 				</h2>
 
-				<form className="login-form" onSubmit={handleSubmit}>
+				<form className="auth-form" onSubmit={handleSubmit}>
 					<div className="form-row">
 						<label className="username">Username</label>
 						<input
@@ -96,7 +96,7 @@ const Login = () => {
 				<p className="form-footer">
 					Don't have an account? <Link to="/signup">Signup</Link>
 				</p>
-			</div>
+				</div>
 			</div>
 		</div>
 	);

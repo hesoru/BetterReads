@@ -16,8 +16,7 @@ const UserProfile = () => {
   const navigate = useNavigate();
 
   const handleChangePassword = () => {
-    // TODO: password change functionality
-    console.log("Change password clicked");
+    navigate('/change-password');
   };
 
   const handleSignOut = async () => {

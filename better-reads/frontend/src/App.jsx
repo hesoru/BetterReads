@@ -9,6 +9,7 @@ import Header from "./components/Home/Header";
 import Login from './components/Login/Login.jsx'
 import Signup from "./components/Signup/Signup.jsx";
 import NLPSearch from "./pages/NLPSearch.jsx";
+import ChangePasswordPage from "./pages/ChangePasswordPage.jsx";
 
 function Layout() {
   const location = useLocation();
@@ -40,6 +41,7 @@ function App() {
           <Route path="/books/:bookId" element={<BookDetailsPage />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/nlpsearch" element={<NLPSearch />} />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
