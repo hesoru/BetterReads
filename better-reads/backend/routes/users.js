@@ -140,6 +140,7 @@ router.post('/signup', async (req, res) => {
     }
 });
 
+
 // POST /login - basic login
 router.post('/login', async (req, res) => {
     try {
@@ -166,6 +167,49 @@ router.post('/login', async (req, res) => {
         //res.json({ message: 'Login successful', userId: user._id });
     } catch (err) {
         res.status(500).json({ error: 'Login failed', details: err.message });
+    }
+});
+
+router.post('/change-password', async (req, res) => {
+    try {
+        const { username, currentPassword, newPassword } = req.body;
+
+        if (!username || !currentPassword || !newPassword) {
+            return res.status(400).json({
+                error: 'Username, current password, and new password are required.'
+            });
+        }
+
+        const user = await Users.findOne({ username });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Current password is incorrect.' });
+        }
+
+        if (currentPassword === newPassword) {
+            return res.status(400).json({
+                error: 'New password must be different from the current password.'
+            });
+        }
+
+        if (!isStrongPassword(newPassword)) {
+            return res.status(400).json({
+                error: 'Password must be at least 12 characters and include uppercase, lowercase, number, and symbol.'
+            });
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedNewPassword;
+        await user.save();
+
+        res.json({ message: 'Password updated successfully.' });
+    } catch (err) {
+        console.error('Password change error:', err.message);
+        res.status(500).json({ error: 'Failed to change password', details: err.message });
     }
 });
 
