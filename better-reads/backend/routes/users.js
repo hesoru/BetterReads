@@ -7,6 +7,8 @@ dotenv.config();
 import mongoose from "mongoose";
 import axios from 'axios';
 import {isStrongPassword, isValidUsername} from "./utils.js";
+import { userValidationRules, validateRequest, sanitizeInput, paramValidation } from '../middleware/validators.js';
+import { param } from 'express-validator';
 
 const router = express.Router();
 
@@ -22,7 +24,7 @@ router.get('/', async (req, res) => {
 });
 
 // retrieve userImageURL by busername// GET /avatarUrl/:username - Retrieve avatar URL by username
-router.get('/avatarUrl/:username', async (req, res) => {
+router.get('/avatarUrl/:username', param('username').escape().customSanitizer(sanitizeInput), validateRequest, async (req, res) => {
     try {
         const user = await Users.findOne({ username: req.params.username });
 
@@ -37,7 +39,7 @@ router.get('/avatarUrl/:username', async (req, res) => {
 });
 
 // Get user details by ID or username
-router.get('/details/:identifier', async (req, res) => {
+router.get('/details/:identifier', param('identifier').customSanitizer(sanitizeInput), validateRequest, async (req, res) => {
     try {
         const { identifier } = req.params;
         let user;
@@ -66,7 +68,7 @@ router.get('/details/:identifier', async (req, res) => {
 });
 
 // GET /users/:id - get profile
-router.get('/:id', async (req, res) => {
+router.get('/:id', paramValidation.userId, validateRequest, async (req, res) => {
     try {
         const user = await Users.findById(req.params.id);
         if (!user) return res.status(404).json({ error: 'User not found' });
@@ -77,8 +79,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// GET /users/:id - get profile bu suername
-router.get('/get-user/:username', async (req, res) => {
+// GET /users/:id - get profile by username
+router.get('/get-user/:username', param('username').customSanitizer(sanitizeInput), validateRequest, async (req, res) => {
     try {
         const user = await Users.findOne({username: req.params.username});
         if (!user) return res.status(404).json({ error: 'User not found' });
@@ -90,7 +92,7 @@ router.get('/get-user/:username', async (req, res) => {
 });
 
 // POST /signup - register new user
-router.post('/signup', async (req, res) => {
+router.post('/signup', userValidationRules.signup, validateRequest, async (req, res) => {
     try {
         const { username, password, avatarUrl, favoriteGenres, wishList } = req.body;
         if (!username || !password || !favoriteGenres ) return res.status(400).json({ error: 'Username and password required' });
@@ -127,7 +129,7 @@ router.post('/signup', async (req, res) => {
         
         // Update the recommender matrix to include the new user
         try {
-            await axios.post('http://localhost:5001/update-matrix');
+            await axios.post('http://recommender:5001/update-matrix');
             console.log('Recommender matrix updated after new user signup');
         } catch (updateError) {
             console.error('Failed to update recommender matrix:', updateError.message);
@@ -142,7 +144,7 @@ router.post('/signup', async (req, res) => {
 
 
 // POST /login - basic login
-router.post('/login', async (req, res) => {
+router.post('/login', userValidationRules.login, validateRequest, async (req, res) => {
     try {
         const { username, password } = req.body;
         if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
@@ -221,7 +223,7 @@ router.post('/logout', (req, res) => {
 
 
 // PUT /users/:id/genres/add-multiple
-router.put('/:id/genres/add-multiple', async (req, res) => {
+router.put('/:id/genres/add-multiple', paramValidation.userId, validateRequest, async (req, res) => {
     try {
         const { genres } = req.body;
 
@@ -243,7 +245,7 @@ router.put('/:id/genres/add-multiple', async (req, res) => {
 });
 
 // PUT /users/:id - update a total user
-router.put('/:id', async (req, res) => {
+router.put('/:id', paramValidation.userId, validateRequest, async (req, res) => {
     try {
         const updated = await Users.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updated) return res.status(404).json({ error: 'User not found' });
@@ -255,7 +257,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // PATCH /users/update-wishlist/:id
-router.patch('/update-wishlist/:id', async (req, res) => {
+router.patch('/update-wishlist/:id', [paramValidation.userId, ...userValidationRules.addToBooklist], validateRequest, async (req, res) => {
     try {
         const { bookId, operation } = req.body;
         if (!['add', 'remove'].includes(operation)) {
@@ -284,7 +286,7 @@ router.patch('/update-wishlist/:id', async (req, res) => {
 
 
 // DELETE /users/:id - delete user (optional/admin)
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', paramValidation.userId, validateRequest, async (req, res) => {
     try {
         const deleted = await Users.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ error: 'User not found' });

@@ -5,6 +5,7 @@ import {useDispatch} from "react-redux";
 import { loginUser } from "../../redux/UserThunks";
 import {clearUser} from "../../redux/UserSlice.js";
 import {clearBooklist} from "../../redux/Booklist.js";
+import { sanitizeContent } from '../../utils/sanitize';
 
 const Login = () => {
 	const navigate = useNavigate();
@@ -19,7 +20,10 @@ const Login = () => {
 		// Clear previous errors
 		setLoginError('');
 		try {
-			await dispatch(loginUser({ username, password })).unwrap();
+			// Sanitize inputs before sending to backend
+			const sanitizedUsername = sanitizeContent(username);
+			const sanitizedPassword = sanitizeContent(password);
+			await dispatch(loginUser({ username: sanitizedUsername, password: sanitizedPassword })).unwrap();
 			navigate('/search');
 		} catch (err) {
 			setLoginError(err.error);
@@ -35,7 +39,7 @@ const Login = () => {
 					<span className="reads">Reads</span>
 				</h1>
 				<h2 className="tagline">
-					Reading is good for you. But we can make it better
+					Reading is good for you. But we can make it better.
 				</h2>
 
 				<form className="auth-form" onSubmit={handleSubmit}>
@@ -48,6 +52,7 @@ const Login = () => {
 							placeholder="Enter your username"
 							value={username}
 							onChange={(e) => setUsername(e.target.value)}
+							onBlur={(e) => setUsername(sanitizeContent(e.target.value))}
 							required
 						/>
 					</div>
@@ -78,7 +83,7 @@ const Login = () => {
 							onClick={() => {
 								dispatch(clearUser());
 								dispatch(clearBooklist());
-								// Set guest user in localStorage
+								// Set guest user in localStorage - no need to sanitize as we're creating this object
 								localStorage.setItem('user', JSON.stringify({ isGuest: true }));
 								localStorage.removeItem('appState');
 								navigate("/search");

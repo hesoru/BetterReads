@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useState } from 'react';
 import {useDispatch} from "react-redux";
 import { signupUser} from "../../redux/UserThunks";
+import DOMPurify from 'dompurify';
 
 //TODO: ORE WAS HERE:
 const Signup = () => {
@@ -48,6 +49,11 @@ const Signup = () => {
 		}
 	};
 
+	// Sanitize user inputs to prevent XSS attacks
+	const sanitizeInput = (input) => {
+		return DOMPurify.sanitize(input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+	};
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
@@ -63,12 +69,21 @@ const Signup = () => {
 
 		// Ensure favoriteGenres is not empty
 		const genresToSubmit = favoriteGenres.length > 0 ? favoriteGenres : ['Fiction']; // Default to Fiction if no genres selected
+		
+		// Sanitize inputs before sending to backend
+		const sanitizedUsername = sanitizeInput(username);
+		// Don't sanitize password as it might contain special characters needed for security
+		// Sanitize each genre
+		const sanitizedGenres = genresToSubmit.map(genre => sanitizeInput(genre));
 
 		setLoading(true);
 
 		try {
-
-			const result = await dispatch(signupUser({ username, password, favoriteGenres: genresToSubmit}));
+			const result = await dispatch(signupUser({ 
+				username: sanitizedUsername, 
+				password, 
+				favoriteGenres: sanitizedGenres
+			}));
 
 			if (signupUser.fulfilled.match(result)) {
 				navigate('/search');
@@ -100,6 +115,7 @@ const Signup = () => {
 								placeholder="Enter your username"
 								value={username}
 								onChange={(e) => setUsername(e.target.value)}
+							onBlur={(e) => setUsername(sanitizeInput(e.target.value))}
 								required
 							/>
 						</div>

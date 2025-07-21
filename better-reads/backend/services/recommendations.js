@@ -6,15 +6,16 @@ import { getFromRedis, storeInRedis } from './redisClient.js';
 
 /**
  * Get personalized book recommendations for a user
- * @param {string} userId - The ID of the user to get recommendations for
+ * @param {string} fn_username - The username of the user to get recommendations for
  * @returns {Promise<Array>} - Array of recommended book objects
  */
-async function getRecommendations(userId) {
+async function getRecommendations(fn_username) {
   try {
-    const user = await User.findOne({ username: userId }).exec();
+    // Look up user by username
+    const user = await User.findOne({ username: fn_username }).exec();
     
     if (!user) {
-      throw new Error(`User with ID/username ${userId} not found`);
+      throw new Error(`User with username ${fn_username} not found`);
     }
 
     // For backward compatibility, we'll still check if the matrix exists in Redis
@@ -31,7 +32,7 @@ async function getRecommendations(userId) {
     let apiRecommendations = [];
     try {
       const response = await axios.post('http://recommender:5001/recommend', {
-        user_id: userId.toString(),
+        username: fn_username,
         interactions: [] // Add empty interactions array to satisfy API requirement
       });
       
@@ -42,7 +43,7 @@ async function getRecommendations(userId) {
       console.error("Error details:", error.response?.data || error.message);
     }
 
-    const interactedBookIds = await getInteractedBookIds(userId);
+    const interactedBookIds = await getInteractedBookIds(user._id);
 
     // Filter out books the user has already interacted with
     const filteredApiRecs = apiRecommendations.filter(
@@ -57,7 +58,7 @@ async function getRecommendations(userId) {
 
     // Otherwise, combine multiple recommendation strategies
     const combinedRecommendations = await getCombinedRecommendations(
-      userId, 
+      user._id, 
       user.favoriteGenres, 
       interactedBookIds,
       filteredApiRecs

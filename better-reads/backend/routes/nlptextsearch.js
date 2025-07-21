@@ -1,6 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
+import { queryValidation, validateRequest } from '../middleware/validators.js';
 const router = express.Router();
 
 import dotenv from 'dotenv';
@@ -8,7 +9,7 @@ dotenv.config();
 
 const PYTHON_API_URL = process.env.PYTHON_API_NLPTEXTSEARCH_URL;
 
-router.get('/search', async (req, res) => {
+router.get('/search', queryValidation.nlpSearch, validateRequest, async (req, res) => {
     try {
         const { q, genre, min_year, max_year } = req.query;
 

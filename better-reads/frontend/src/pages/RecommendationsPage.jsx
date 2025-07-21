@@ -5,8 +5,11 @@ import {
   CircularProgress,
   Container,
   Paper,
+  Tooltip,
 } from '@mui/material';
+import { HelpOutline } from '@mui/icons-material';
 import BookGalleryManager from '../components/Book/BookGalleryManager';
+import { getSanitizedItem } from '../utils/sanitize';
 
 import HeroBanner from '../components/common/HeroBanner';
 import '../components/Book/BookPage.css';
@@ -22,7 +25,7 @@ const RecommendationsPage = () => {
 
   useEffect(() => {
     // Check if the user is a guest
-    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const currentUser = getSanitizedItem('user', {});
     setIsGuest(currentUser?.isGuest === true);
   }, []);
 
@@ -39,18 +42,18 @@ const RecommendationsPage = () => {
       setError(null);
       try {
         // Get the current user from localStorage if available
-        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-        const userId = currentUser?.username || '';
-        console.log("userId: ", userId);
+        const currentUser = getSanitizedItem('user', {});
+        const username = currentUser?.username || '';
+        console.log("username: ", username);
         
-        if (!userId) {
-          setError('User ID not found');
+        if (!username) {
+          setError('Username not found');
           return;
         }
         
         // Use the recommendations endpoint
         const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
-        const url = `${backendUrl}/recommendations/${userId}`;
+        const url = `${backendUrl}/recommendations/${username}`;
         console.log('Fetching recommendations from:', url);
         
         const res = await fetch(url);
@@ -100,7 +103,7 @@ const RecommendationsPage = () => {
 
   return (
     <div style={styles.container}>
-      <HeroBanner title="Get book recs machine-learning curated to your taste!" />
+      <HeroBanner title="Get personalized book recommendations!" />
 
       <Container maxWidth="lg">
         {loading ? (
@@ -110,9 +113,27 @@ const RecommendationsPage = () => {
         ) : (
           <>
             <Paper elevation={2} sx={{ p: 3, mb: 4 }}>
-              <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-                Recommended for You
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', mr: 1 }}>
+                  Recommended for You
+                </Typography>
+                <Tooltip 
+                  title="Our AI-powered recommender system analyzes your ratings and preferences to suggest books you'll love. It uses collaborative filtering to find users with similar tastes and recommends books they enjoyed. The more you rate, the better your recommendations become!"
+                  placement="top"
+                  arrow
+                >
+                  <HelpOutline 
+                    sx={{ 
+                      fontSize: 20, 
+                      color: 'text.secondary', 
+                      cursor: 'help',
+                      '&:hover': {
+                        color: 'primary.main'
+                      }
+                    }} 
+                  />
+                </Tooltip>
+              </Box>
               {isGuest ? (
                 <Typography>
                   Guest user: log in to see personalized recommendations.

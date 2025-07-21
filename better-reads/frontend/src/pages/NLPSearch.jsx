@@ -6,6 +6,7 @@ import GenreSelection from "../components/NLPSearch/GenreSelection";
 import YearSelection from '../components/NLPSearch/YearSelection';
 import { TextField } from '@mui/material';
 import { BookPreview } from "../components/Book/BookPreview";
+import { sanitizeContent, sanitizeObject } from '../utils/sanitize';
 
 const NLPSearch = () => {
     const [genre, setGenre] = useState([]);
@@ -21,12 +22,18 @@ const NLPSearch = () => {
     setLoading(true);
     setResults([]);
     try {
+        // Sanitize all inputs before sending to API
+        const sanitizedKeyword = sanitizeContent(keyword);
+        const sanitizedGenre = genre.map(g => sanitizeContent(g));
+        const sanitizedStartYear = sanitizeContent(startYear);
+        const sanitizedEndYear = sanitizeContent(endYear);
+        
         const params = new URLSearchParams();
 
-        if (keyword) params.append('q', keyword);
-        if (genre.length > 0) genre.forEach(g => params.append('genre', g));
-        if (startYear) params.append('min_year', startYear);
-        if (endYear) params.append('max_year', endYear);
+        if (sanitizedKeyword) params.append('q', sanitizedKeyword);
+        if (sanitizedGenre.length > 0) sanitizedGenre.forEach(g => params.append('genre', g));
+        if (sanitizedStartYear) params.append('min_year', sanitizedStartYear);
+        if (sanitizedEndYear) params.append('max_year', sanitizedEndYear);
 
         const response = await fetch(`http://localhost:5002/search?${params.toString()}`);
         const contentType = response.headers.get('content-type');
@@ -35,7 +42,9 @@ const NLPSearch = () => {
         throw new Error('Response is not valid JSON');
         }
         const data = await response.json();
-        setResults(data);
+        // Sanitize the results before setting state
+        const sanitizedResults = sanitizeObject(data);
+        setResults(sanitizedResults);
     } catch (err) {
         console.error('Search failed:', err);
     } finally {
@@ -76,6 +85,7 @@ const NLPSearch = () => {
                 variant="outlined"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
+                onBlur={(e) => setKeyword(sanitizeContent(e.target.value))}
                 onKeyDown={handleKeyDown}
                 sx={{
                     '& .MuiOutlinedInput-root': {

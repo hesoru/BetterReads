@@ -12,6 +12,7 @@ import StarRating from '../ratings/starRating';
 import BookReview from './bookReview.jsx';
 import { GenreTags } from "./BookUtils.jsx";
 import BookUtils from "../../utils/BookUtils.js";
+import { sanitizeContent, sanitizeObject } from '../../utils/sanitize';
 import './BookPage.css';
 
 const sectionTitleStyle = {
@@ -62,7 +63,7 @@ export default function BookDetailsPage() {
     const username = useSelector((state) => state.user?.user?.username);
     const reviewRef = useRef(null);
     const userAvatar = useSelector((state) => state.user?.user?.avatarUrl);
-        const isGuest = useSelector((state) => state.user?.isGuest);
+    const isGuest = useSelector((state) => state.user?.isGuest);
     const dispatch = useDispatch();
     const userId = useSelector((state) => state.user?.user?._id);
     const booklist = useSelector((state) => state.booklist.items);
@@ -72,7 +73,7 @@ export default function BookDetailsPage() {
     const [userReview, setUserReview] = useState(null);
     const [bookReviews, setBookReviews] = useState([]);
     const [reviewsToShow, setReviewsToShow] = useState(3);
-        const [avatarMap, setAvatarMap] = useState({});
+    const [avatarMap, setAvatarMap] = useState({});
     const [loading, setLoading] = useState(true);
     const [isInWishlist, setIsInWishlist] = useState(false);
     const [wishlistLoading, setWishlistLoading] = useState(false);
@@ -101,9 +102,14 @@ export default function BookDetailsPage() {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const bookData = await BookUtils.getBookById(bookId);
-                const review = await BookUtils.getUserReview(bookId, username);
-                const allReviews = await BookUtils.getBookReviews(bookId);
+                let bookData = await BookUtils.getBookById(bookId);
+                let review = await BookUtils.getUserReview(bookId, username);
+                let allReviews = await BookUtils.getBookReviews(bookId);
+                
+                // Sanitize data from API to prevent XSS
+                bookData = sanitizeObject(bookData);
+                review = sanitizeObject(review);
+                allReviews = sanitizeObject(allReviews);
               
                 // Ore was here
                 console.log("review", review);
@@ -159,7 +165,7 @@ export default function BookDetailsPage() {
         );
     }
 
-        if (!book) return <Typography sx={{ textAlign: 'center', mt: 4 }}>Book not found.</Typography>;
+    if (!book) return <Typography sx={{ textAlign: 'center', mt: 4 }}>Book not found.</Typography>;
 
     const handleWishlistToggle = async () => {
         if (isGuest || !userId) {
@@ -196,14 +202,14 @@ export default function BookDetailsPage() {
                         }}
                     />
                     <StarRating rating={Math.round(book.averageRating)} />
-                                        <div className="load-more">
+                    <div className="load-more">
                         <button className="btn" onClick={handleScrollToReview}>Make Review</button>
                         <Button
                             variant="contained"
                             startIcon={isInWishlist ? <FavoriteIcon sx={{ color: 'red' }} /> : <FavoriteBorderIcon />}
                             onClick={handleWishlistToggle}
                             disabled={wishlistLoading || isGuest}
-                                                        sx={{
+                            sx={{
                                 backgroundColor: '#151B54', // NovellaNavy
                                 borderRadius: '10px', // Match 'Make Review' button
                                 textTransform: 'none', // Prevent all-caps
@@ -219,13 +225,13 @@ export default function BookDetailsPage() {
                 </div>
                 <div className="book-info-column">
                     <Typography variant="h3" component="h1" className="book-title" sx={{ fontWeight: 'bold', mb: 2, fontSize: { xs: '1.8rem', md: '2.5rem' } }}>
-                        {book.title}
+                        {sanitizeContent(book.title)}
                     </Typography>
                     <Typography sx={{ color: 'var(--color-text-light)', mb: 2 }}>
-                        {book.description}
+                        {sanitizeContent(book.description)}
                     </Typography>
                     <Typography sx={{ fontSize: '0.9rem', color: 'var(--color-text-light)', mb: 2 }}>
-                        ISBN: {book.ISBN}
+                        ISBN: {sanitizeContent(book.ISBN)}
                     </Typography>
                     <GenreTags genres={book.genre} />
                 </div>
@@ -243,16 +249,19 @@ export default function BookDetailsPage() {
                             rating={userReview?.rating}
                             reviewText={userReview?.description}
                             onSave={async ({ rating, description }) => {
+                                // Description is already sanitized in BookReview component
                                 const newReview = await BookUtils.upsertReview(bookId, username, { rating, description });
-                                setUserReview(newReview);
+                                // Sanitize the response data
+                                const sanitizedReview = sanitizeObject(newReview);
+                                setUserReview(sanitizedReview);
                                 setBookReviews(prev => {
                                     const others = prev.filter(r => r.userId !== username);
-                                    return [newReview, ...others];
+                                    return [sanitizedReview, ...others];
                                 });
                                 setIsEditing(false);
                             }}
                         />
-                                                                        {userReview && !isEditing && (
+                        {userReview && !isEditing && (
                             <Box sx={{ display: 'flex', gap: 2, mt: 2, justifyContent: 'flex-start' }}>
                                 <Button sx={buttonStyle} onClick={() => setIsEditing(true)}>
                                     Edit Review

@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 
 import { DetectiveDustyBlue, PaperbackPureWhite } from '../../styles/colors';
+import { sanitizeContent } from '../../utils/sanitize';
 
 const ITEM_HEIGHT = 30;
 const MenuProps = {
@@ -24,13 +25,24 @@ const MenuProps = {
 
 const YearSelection = ({ fromYear, toYear, onChangeFrom, onChangeTo }) => {
   const years = Array.from({ length: 2025 - 1950 + 1 }, (_, i) => 1950 + i);
+  
+  // Wrap the change handlers to sanitize inputs
+  const handleFromYearChange = (e) => {
+    const sanitizedValue = sanitizeContent(e.target.value);
+    onChangeFrom({ ...e, target: { ...e.target, value: sanitizedValue } });
+  };
+  
+  const handleToYearChange = (e) => {
+    const sanitizedValue = sanitizeContent(e.target.value);
+    onChangeTo({ ...e, target: { ...e.target, value: sanitizedValue } });
+  };
 
   return (
     <Box sx={{ mt: 2, mb: 1, display: 'flex', gap: '0.5rem', width: '100%' }}>
       <FormControl sx={{ width: '100%' }}>
         <Select
           value={fromYear}
-          onChange={onChangeFrom}
+          onChange={handleFromYearChange}
           displayEmpty
           input={<OutlinedInput />}
           MenuProps={MenuProps}
@@ -55,7 +67,7 @@ const YearSelection = ({ fromYear, toYear, onChangeFrom, onChangeTo }) => {
       <FormControl sx={{ width: '100%' }}>
         <Select
           value={toYear}
-          onChange={onChangeTo}
+          onChange={handleToYearChange}
           displayEmpty
           input={<OutlinedInput />}
           MenuProps={MenuProps}

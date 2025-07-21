@@ -6,6 +6,7 @@ import LockResetIcon from '@mui/icons-material/LockReset';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useNavigate } from 'react-router-dom';
 import { GenreTags } from '../Book/BookUtils';
+import { sanitizeContent } from '../../utils/sanitize';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -32,7 +33,7 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
       day: 'numeric'
     });
   };
-
+  
   return (
     <StyledPaper elevation={2}>
       <Box sx={{
@@ -61,7 +62,7 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
                 fontSize: { xs: '1.25rem', sm: '1.5rem' },
               }}
             >
-              {user?.username}
+              {sanitizeContent(user?.username)}
             </Typography>
             <Typography
               variant="body2"

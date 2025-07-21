@@ -38,14 +38,14 @@ users_collection = db['users']
 
 # Redis key for user-item matrix
 USER_ITEM_MATRIX_KEY = 'user_item_matrix'
-# Path to initial user-item matrix JSON file
-INITIAL_MATRIX_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'backend', 'data', 'initial-user-item-matrix.json')
+# Path to initial user-item matrix JSON file (now located in recommender/data directory)
+INITIAL_MATRIX_PATH = os.path.join('/app', 'data', 'initial-user-item-matrix.json')
 # Update interval in seconds
 UPDATE_INTERVAL = int(os.getenv('UPDATE_INTERVAL', 3600))  # Default: update every hour
 
 # Sample input format
 class RecommendRequest(BaseModel):
-    user_id: str
+    username: str
     
 # Response format
 class RecommendResponse(BaseModel):
@@ -171,16 +171,20 @@ def update_matrix_with_reviews():
         for review in reviews:
             # Ensure user_id and book_id are strings
             # Use userId as the user identifier (which should be the username in your system)
-            user_id = str(review['userId'])
+            username = str(review['userId'])
             book_id = str(review['bookId'])
             rating = review['rating']
             
+            # Skip reviews with null/None ratings
+            if rating is None:
+                continue
+                
             # Initialize user entry if not exists (should already be done above)
-            if user_id not in matrix_data:
-                matrix_data[user_id] = {}
+            if username not in matrix_data:
+                matrix_data[username] = {}
             
             # Update rating
-            matrix_data[user_id][book_id] = rating
+            matrix_data[username][book_id] = rating
         
         # Store updated matrix back to Redis
         redis_client.setex(
@@ -209,7 +213,8 @@ def update_matrix_with_reviews():
 
 @app.post("/recommend")
 def recommend_books(data: RecommendRequest):
-    user_id = str(data.user_id)
+    username = str(data.username)
+    user_item_matrix = None
 
     # Try to get user-item matrix from Redis
     try:
@@ -222,11 +227,30 @@ def recommend_books(data: RecommendRequest):
         matrix_dict = json.loads(cached_data)
         
         # Check if user exists in the matrix directly from the dictionary
-        if user_id not in matrix_dict:
-            raise HTTPException(status_code=404, detail=f"User ID {user_id} not found in recommendation matrix")
+        if username not in matrix_dict:
+            raise HTTPException(status_code=404, detail=f"User {username} not found in recommendation matrix")
             
+        print(f"User {username} found in matrix_dict. Matrix has {len(matrix_dict)} users.")
+        print(f"User's data in matrix_dict: {matrix_dict.get(username, 'NOT_FOUND')}")
+            
+        # Fix: Ensure users with empty rating dictionaries are preserved
+        # Add a dummy rating for users with empty dictionaries to prevent pandas from dropping them
+        matrix_dict_fixed = {}
+        for user_id, ratings in matrix_dict.items():
+            if not ratings:  # If user has empty ratings dictionary
+                # Add a dummy entry that will be filtered out later
+                matrix_dict_fixed[user_id] = {'__dummy__': 0}
+            else:
+                matrix_dict_fixed[user_id] = ratings
+        
         # Convert the dictionary to a DataFrame for collaborative filtering
-        user_item_matrix = pd.DataFrame.from_dict(matrix_dict, orient='index')
+        user_item_matrix = pd.DataFrame.from_dict(matrix_dict_fixed, orient='index')
+        
+        # Remove the dummy column if it exists
+        if '__dummy__' in user_item_matrix.columns:
+            user_item_matrix = user_item_matrix.drop(columns=['__dummy__'])
+        
+        print(f"After DataFrame conversion: {len(user_item_matrix.index)} users in DataFrame")
     except Exception as e:
         if isinstance(e, HTTPException):
             raise e
@@ -244,9 +268,9 @@ def recommend_books(data: RecommendRequest):
     item_mapping = {iid: i for i, iid in enumerate(item_ids)}
     
     # Check if user exists in mapping
-    if user_id not in user_mapping:
-        print(f"User {user_id} not found in user mapping. Available users: {user_ids[:10]}...")
-        raise HTTPException(status_code=404, detail=f"User ID {user_id} not found in recommendation matrix")
+    if username not in user_mapping:
+        print(f"User {username} not found in user mapping.")
+        raise HTTPException(status_code=404, detail=f"User {username} not found in recommendation matrix")
     
     # Convert to sparse matrix format for LightFM
     interactions = []
@@ -258,7 +282,7 @@ def recommend_books(data: RecommendRequest):
     for user, user_idx in user_mapping.items():
         user_ratings = matrix_dict.get(user, {})
         for item, rating in user_ratings.items():
-            if item in item_mapping:
+            if item in item_mapping and rating is not None:
                 row_indices.append(user_idx)
                 col_indices.append(item_mapping[item])
                 ratings.append(float(rating))
@@ -280,15 +304,15 @@ def recommend_books(data: RecommendRequest):
         print("LightFM model trained successfully")
         
         # Get user index
-        user_idx = user_mapping[user_id]
+        user_idx = user_mapping[username]
         
         # Predict scores for all items
         scores = model.predict(user_idx, np.arange(n_items))
         
         # Get items the user has already interacted with
         user_items = set()
-        if user_id in matrix_dict:
-            user_items = set(matrix_dict[user_id].keys())
+        if username in matrix_dict:
+            user_items = set(matrix_dict[username].keys())
         
         # Create list of (item_id, score) tuples, excluding items the user has already rated
         item_scores = []
@@ -302,7 +326,7 @@ def recommend_books(data: RecommendRequest):
         # Get top 20 recommendations
         top_items = [item_id for item_id, _ in item_scores[:20]]
         
-        print(f"Generated {len(top_items)} recommendations for user {user_id}")
+        print(f"Generated {len(top_items)} recommendations for user {username}")
         
     except Exception as e:
         print(f"Error training LightFM model: {e}")
@@ -329,8 +353,8 @@ def recommend_books(data: RecommendRequest):
         
         # Get user's items to exclude
         user_items = set()
-        if user_id in matrix_dict:
-            user_items = set(matrix_dict[user_id].keys())
+        if username in matrix_dict:
+            user_items = set(matrix_dict[username].keys())
         
         # Get top items excluding what the user has already rated
         top_items = []
@@ -343,7 +367,7 @@ def recommend_books(data: RecommendRequest):
     # Return recommendations using the defined response model
     return RecommendResponse(
         recommendations=top_items,
-        message=f"Generated {len(top_items)} recommendations for user {user_id}"
+        message=f"Generated {len(top_items)} recommendations for user {username}"
     )
 
 # API endpoint to manually trigger matrix update
