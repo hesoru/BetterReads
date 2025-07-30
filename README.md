@@ -231,3 +231,51 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 - **File to Patch:** `index.js` (backend).
 - **Issue:** The application does not set security headers like `X-XSS-Protection` and `X-Content-Type-Options` which can provide additional protection against XSS attacks and MIME-type sniffing vulnerabilities.
 - **Patch:** Added the `X-XSS-Protection` and `X-Content-Type-Options` security headers to the Helmet configuration.
+
+### Milestone 5:
+
+### Demo
+
+#### Key features
+
+1. Book detail page people can write and delete a review for a book.
+<img src="img/book_detail.png" alt="book_detail" style="width:200px;"/>
+
+2. Book search page with keywords and genre filtering.
+<img src="img/book_search.png" alt="book_search" style="width:200px;"/>
+
+3. User profile page with book wishlist.
+<img src="img/user_profile.png" alt="user_profile" style="width:200px;"/>
+
+4. Book recommendation system based on user previous rating
+<img src="img/book_recommendation.png" alt="book_recommendation" style="width:200px;"/>
+
+5. AI Match feature that user can enter text in the input box, select year and book genre, the system will filter the books based on the book genre and year, then find the semantic similarity between the user input text and book description based on natural language processing, then return the matched books with scores ranking from highest to the lowest.
+<img src="img/AI_Match.png" alt="ai_match" style="width:200px;"/>
+
+### Goals Update
+
+#### Standard Goals
+- _Allow users with an account to write, edit, and delete reviews for books._ – Completed.
+- _Implement a reading recommendation system (possibly content-based filtering and/or user profile-based filtering). If the user has an account, book recommendations are given using a recommendation system based on the user’s past reviews and/or user profile._ – Completed.
+- _Implement standard cybersecurity practices eg. HTTPS connection, database encryption, sanitizing database inputs, etc. Will refer to OWASP resources._ – Completed.
+- _Basic reading list functionality. Add/remove books from personal reading list._ – Completed.
+
+
+#### Stretch Goals
+- _The user’s rich-text input is analyzed using natural language processing (NLP), to identify semantic similarities between keywords in the user’s input and book descriptions._ – **Completed**. Viewable in /nlpsearch page.
+- _Summarize book reviews. Possibly identify if the user’s overall sentiment on a specific book is positive or negative & possibly find common themes among reviews for a book (ie. clustering)._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
+- _Ability to scrape book data and add new books to the database._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
+- _Users can create a non-existent book in the app and add related information._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
+- _Allow users to post current reads on their profiles. Let users post or mark what they’re currently reading. Optionally timestamp or add commentary._ – **Dropped**. This feature requires substantial refactoring of both the database and UI. We recently discovered that implementing it would be more time-consuming than initially anticipated. Given that we have already achieved one of our stretch goals, we’ve decided to drop this additional stretch feature in order to better prepare for the final demo. 
+
+
+#### Non-trivial elements
+
+| Element                       | Stage of Completion |
+| ----------------------------- | ------------------- |
+| Book Recommendation System  | Completed           |
+| Semantic NLP Search Engine    | Completed           |
+
+
+Our app features two non-trivial systems. The **Hybrid Recommendation System** uses collaborative filtering on a Python microservice to generate personalized suggestions, with genre and popularity-based fallbacks. The **Semantic NLP Search Engine** processes book metadata (titles and descriptions) through the Sentence-transformers library using the 'all-MiniLM-L6-v2' model to create vector embeddings. These embeddings are indexed in our database, allowing users to perform semantic searches where query results are ranked by cosine similarity to find the most contextually relevant books.
