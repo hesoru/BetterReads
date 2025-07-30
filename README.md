@@ -239,16 +239,16 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 #### Key features
 
 1. Book detail page people can write and delete a review for a book.
-<img src="img/book_detail.png" alt="book_detail" style="width:200px;"/>
+<img src="img/book_detail.png" alt="book_detail" style="width:400px;"/>
 
 2. Book search page with keywords and genre filtering.
-<img src="img/book_search.png" alt="book_search" style="width:200px;"/>
+<img src="img/book_search.png" alt="book_search" style="width:400px;"/>
 
 3. User profile page with book wishlist.
-<img src="img/user_profile.png" alt="user_profile" style="width:200px;"/>
+<img src="img/user_profile.png" alt="user_profile" style="width:400px;"/>
 
 4. Book recommendation system based on user previous rating
-<img src="img/book_recommendation.png" alt="book_recommendation" style="width:200px;"/>
+<img src="img/book_recommendation.png" alt="book_recommendation" style="width:400px;"/>
 
 5. AI Match feature that user can enter text in the input box, select year and book genre, the system will filter the books based on the book genre and year, then find the semantic similarity between the user input text and book description based on natural language processing, then return the matched books with scores ranking from highest to the lowest.
 <img src="img/AI_Match.png" alt="ai_match" style="width:200px;"/>
