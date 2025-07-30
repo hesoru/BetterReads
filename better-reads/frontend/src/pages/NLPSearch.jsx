@@ -65,7 +65,7 @@ const NLPSearch = () => {
       flexDirection: 'column',
       backgroundColor: '#fff',
     }}>
-    <HeroBanner title="Use our Natural Language Processing engine to find books" />
+    <HeroBanner title="Use our AI Natural Language Processing engine to find books" />
     <Box component="section" sx={{ backgroundColor: "white", padding: "2rem" }}>
         <Box sx={{ display: "flex", flexDirection: { xs: 'column', md: 'row' }, gap: "1rem", alignItems: "center", marginBottom: "1rem" }}>
             <Box sx={{ flex: 1, width: '100%' }}>
