@@ -26,7 +26,14 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  wishList: [
+  wantToRead: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Book',
+      required: true,
+    }
+  ],
+  finished: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Book',

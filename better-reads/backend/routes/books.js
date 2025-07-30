@@ -328,42 +328,124 @@ router.post('/:id/reviews', [paramValidation.bookId, ...reviewValidationRules.cr
 });
 
 
-// add book to wishlist
-router.post('/:bookId/wishlist', async (req, res) => {
+// add book to want to read list
+router.post('/:bookId/wantToRead', async (req, res) => {
     try {
         const { userId } = req.body;
         if (!userId) return res.status(400).json({ error: 'userId is required' });
 
         const updatedUser = await Users.findByIdAndUpdate(
             userId,
-            { $addToSet: { wishList: req.params.bookId } },
+            { $addToSet: { wantToRead: req.params.bookId } },
             { new: true }
         );
 
         if (!updatedUser) return res.status(404).json({ error: 'User not found' });
-        res.json(updatedUser.wishList);
+        res.json({ wantToRead: updatedUser.wantToRead, finished: updatedUser.finished });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to add to wishlist', details: err.message });
+        res.status(500).json({ error: 'Failed to add to want to read list', details: err.message });
     }
 });
 
-router.delete('/:bookId/wishlist', async (req, res) => {
+// add book to finished list
+router.post('/:bookId/finished', async (req, res) => {
     try {
         const { userId } = req.body;
         if (!userId) return res.status(400).json({ error: 'userId is required' });
 
         const updatedUser = await Users.findByIdAndUpdate(
             userId,
-            { $pull: { wishList: req.params.bookId } },
+            { $addToSet: { finished: req.params.bookId } },
             { new: true }
         );
 
         if (!updatedUser) return res.status(404).json({ error: 'User not found' });
-        res.json(updatedUser.wishList);
+        res.json({ wantToRead: updatedUser.wantToRead, finished: updatedUser.finished });
     } catch (err) {
-        res.status(500).json({ error: 'Failed to remove from wishlist', details: err.message });
+        res.status(500).json({ error: 'Failed to add to finished list', details: err.message });
     }
 });
 
+// remove book from want to read list
+router.delete('/:bookId/wantToRead', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        if (!userId) return res.status(400).json({ error: 'userId is required' });
+
+        const updatedUser = await Users.findByIdAndUpdate(
+            userId,
+            { $pull: { wantToRead: req.params.bookId } },
+            { new: true }
+        );
+
+        if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+        res.json({ wantToRead: updatedUser.wantToRead, finished: updatedUser.finished });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to remove from want to read list', details: err.message });
+    }
+});
+
+// remove book from finished list
+router.delete('/:bookId/finished', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        if (!userId) return res.status(400).json({ error: 'userId is required' });
+
+        const updatedUser = await Users.findByIdAndUpdate(
+            userId,
+            { $pull: { finished: req.params.bookId } },
+            { new: true }
+        );
+
+        if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+        res.json({ wantToRead: updatedUser.wantToRead, finished: updatedUser.finished });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to remove from finished list', details: err.message });
+    }
+});
+
+// move book from want to read to finished
+router.patch('/:bookId/markAsFinished', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        if (!userId) return res.status(400).json({ error: 'userId is required' });
+
+        const updatedUser = await Users.findByIdAndUpdate(
+            userId,
+            {
+                $pull: { wantToRead: req.params.bookId },
+                $addToSet: { finished: req.params.bookId }
+            },
+            { new: true }
+        );
+
+        if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+        res.json({ wantToRead: updatedUser.wantToRead, finished: updatedUser.finished });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to mark book as finished', details: err.message });
+    }
+});
+
+// move book from finished back to want to read
+router.patch('/:bookId/markAsWantToRead', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        if (!userId) return res.status(400).json({ error: 'userId is required' });
+
+        const updatedUser = await Users.findByIdAndUpdate(
+            userId,
+            {
+                $pull: { finished: req.params.bookId },
+                $addToSet: { wantToRead: req.params.bookId }
+            },
+            { new: true }
+        );
+
+        if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+        res.json({ wantToRead: updatedUser.wantToRead, finished: updatedUser.finished });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to mark book as want to read', details: err.message });
+    }
+});
 
 export default router;

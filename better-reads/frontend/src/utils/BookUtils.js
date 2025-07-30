@@ -49,14 +49,93 @@ const BookUtils = {
         };
     },
 
-    async updateWishlist(bookId, userId, operation) {
-        const res = await fetch(`${BASE_URL}/users/update-wishlist/${userId}`, {
+    // Update want to read list
+    async updateWantToRead(bookId, userId, operation) {
+        const res = await fetch(`${BASE_URL}/users/update-wantToRead/${userId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ bookId, operation }),
         });
 
-        if (!res.ok) throw new Error(`Failed to ${operation} wishlist`);
+        if (!res.ok) throw new Error(`Failed to ${operation} want to read list`);
+        return res.json();
+    },
+
+    // Update finished list
+    async updateFinished(bookId, userId, operation) {
+        const res = await fetch(`${BASE_URL}/users/update-finished/${userId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bookId, operation }),
+        });
+
+        if (!res.ok) throw new Error(`Failed to ${operation} finished list`);
+        return res.json();
+    },
+
+    // Add book to want to read list
+    async addToWantToRead(bookId, userId) {
+        const res = await fetch(`${BASE_URL}/books/${bookId}/wantToRead`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId }),
+        });
+        if (!res.ok) throw new Error('Failed to add to want to read list');
+        return res.json();
+    },
+
+    // Add book to finished list
+    async addToFinished(bookId, userId) {
+        const res = await fetch(`${BASE_URL}/books/${bookId}/finished`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId }),
+        });
+        if (!res.ok) throw new Error('Failed to add to finished list');
+        return res.json();
+    },
+
+    // Remove book from want to read list
+    async removeFromWantToRead(bookId, userId) {
+        const res = await fetch(`${BASE_URL}/books/${bookId}/wantToRead`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId }),
+        });
+        if (!res.ok) throw new Error('Failed to remove from want to read list');
+        return res.json();
+    },
+
+    // Remove book from finished list
+    async removeFromFinished(bookId, userId) {
+        const res = await fetch(`${BASE_URL}/books/${bookId}/finished`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId }),
+        });
+        if (!res.ok) throw new Error('Failed to remove from finished list');
+        return res.json();
+    },
+
+    // Mark book as finished (move from want to read to finished)
+    async markAsFinished(bookId, userId) {
+        const res = await fetch(`${BASE_URL}/books/${bookId}/markAsFinished`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId }),
+        });
+        if (!res.ok) throw new Error('Failed to mark book as finished');
+        return res.json();
+    },
+
+    // Mark book as want to read (move from finished to want to read)
+    async markAsWantToRead(bookId, userId) {
+        const res = await fetch(`${BASE_URL}/books/${bookId}/markAsWantToRead`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId }),
+        });
+        if (!res.ok) throw new Error('Failed to mark book as want to read');
         return res.json();
     },
 

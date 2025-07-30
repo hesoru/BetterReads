@@ -256,8 +256,8 @@ router.put('/:id', paramValidation.userId, validateRequest, async (req, res) => 
     }
 });
 
-// PATCH /users/update-wishlist/:id
-router.patch('/update-wishlist/:id', [paramValidation.userId, ...userValidationRules.addToBooklist], validateRequest, async (req, res) => {
+// PATCH /users/update-wantToRead/:id
+router.patch('/update-wantToRead/:id', [paramValidation.userId, ...userValidationRules.addToBooklist], validateRequest, async (req, res) => {
     try {
         const { bookId, operation } = req.body;
         if (!['add', 'remove'].includes(operation)) {
@@ -267,20 +267,48 @@ router.patch('/update-wishlist/:id', [paramValidation.userId, ...userValidationR
         const user = await Users.findById(req.params.id);
         if (!user) return res.status(404).json({ error: 'User not found' });
 
-        const exists = user.wishList.some(id => id.toString() === bookId.toString());
+        const exists = user.wantToRead.some(id => id.toString() === bookId.toString());
 
         if (operation === 'add' && !exists) {
-            user.wishList.push(bookId);
+            user.wantToRead.push(bookId);
         }
 
         if (operation === 'remove' && exists) {
-            user.wishList = user.wishList.filter(id => id.toString() !== bookId.toString());
+            user.wantToRead = user.wantToRead.filter(id => id.toString() !== bookId.toString());
         }
 
         await user.save();
-        res.json(user);
+        res.json({ wantToRead: user.wantToRead, finished: user.finished });
     } catch (err) {
-        res.status(400).json({ error: 'Failed to update wishlist', details: err.message });
+        res.status(400).json({ error: 'Failed to update want to read list', details: err.message });
+    }
+});
+
+// PATCH /users/update-finished/:id
+router.patch('/update-finished/:id', [paramValidation.userId, ...userValidationRules.addToBooklist], validateRequest, async (req, res) => {
+    try {
+        const { bookId, operation } = req.body;
+        if (!['add', 'remove'].includes(operation)) {
+            return res.status(400).json({ error: 'Invalid operation' });
+        }
+
+        const user = await Users.findById(req.params.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        const exists = user.finished.some(id => id.toString() === bookId.toString());
+
+        if (operation === 'add' && !exists) {
+            user.finished.push(bookId);
+        }
+
+        if (operation === 'remove' && exists) {
+            user.finished = user.finished.filter(id => id.toString() !== bookId.toString());
+        }
+
+        await user.save();
+        res.json({ wantToRead: user.wantToRead, finished: user.finished });
+    } catch (err) {
+        res.status(400).json({ error: 'Failed to update finished list', details: err.message });
     }
 });
 
