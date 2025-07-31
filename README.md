@@ -118,9 +118,9 @@ The test report can be reviewed by opening mochawesome.html by browser. The moch
 
 #### Stretch Goals 
 - _The user’s rich-text input is analyzed using natural language processing (NLP), to identify semantic similarities between keywords in the user’s input and book descriptions._ – **Completed**. Viewable in /nlpsearch page.
-- _Summarize book reviews. Possibly identify if the user’s overall sentiment on a specific book is positive or negative & possibly find common themes among reviews for a book (ie. clustering)._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
-- _Ability to scrape book data and add new books to the database._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
-- _Users can create a non-existent book in the app and add related information._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
+- _Summarize book reviews. Possibly identify if the user’s overall sentiment on a specific book is positive or negative & possibly find common themes among reviews for a book (ie. clustering)._ – **Dropped**. We did't have enough time to implement this feature before the deadline.
+- _Ability to scrape book data and add new books to the database._ – **Dropped**. We did't have enough time to implement this feature before the deadline.
+- _Users can create a non-existent book in the app and add related information._ – **Dropped**. We did't have enough time to implement this feature before the deadline.
 - _Allow users to post current reads on their profiles. Let users post or mark what they’re currently reading. Optionally timestamp or add commentary._ – **In-development**. This feature requires significant database and UI refactoring and is being developed on a separate branch. It will be merged into `main` upon successful completion within the project timeline. 
 
 
@@ -232,6 +232,7 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 - **Issue:** The application does not set security headers like `X-XSS-Protection` and `X-Content-Type-Options` which can provide additional protection against XSS attacks and MIME-type sniffing vulnerabilities.
 - **Patch:** Added the `X-XSS-Protection` and `X-Content-Type-Options` security headers to the Helmet configuration.
 
+
 ### Milestone 5:
 
 ### Demo
@@ -290,4 +291,4 @@ Our app features two non-trivial systems. The **Hybrid Recommendation System** u
 - We have refined our recommendation system to give user more accurate book recommendation.
 
 - Initially, we planned to implement an additional stretch feature that would allow users to post their current reads on their profiles. We considered pursuing this goal for Milestone 5 since we had already completed all the required features and one stretch goal at Milestone 4. However, after further evaluation, we realized that implementing this feature would be more time-consuming and complex than we had anticipated. Given our focus on delivering a polished final product and preparing for the final demo, we have decided to drop this stretch goal.
- 
+

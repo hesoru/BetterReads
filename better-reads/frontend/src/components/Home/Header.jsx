@@ -66,7 +66,7 @@ const Header = ({ userAvatar }) => {
             >
               <MenuItem component={RouterLink} to="/search" onClick={handleMenuClose}>Search</MenuItem>
               <MenuItem component={RouterLink} to="/recommendations" onClick={handleMenuClose}>Recommendations</MenuItem>
-              <MenuItem component={RouterLink} to="/nlpsearch" onClick={handleMenuClose}>NLP Match</MenuItem>
+              <MenuItem component={RouterLink} to="/nlpsearch" onClick={handleMenuClose}>AI Match</MenuItem>
               <MenuItem component={RouterLink} to="/profile" onClick={handleMenuClose}>Profile</MenuItem>
             </Menu>
           </>
