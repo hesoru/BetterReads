@@ -238,19 +238,19 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 
 #### Key features
 
-1. The book detail page displays comprehensive information about the selected book, including its title, description, genre, and more. It also lists all reviews related to the book. Users have the ability to write a new review or delete their existing review for the book.
+1. The **book detail page** displays comprehensive information about the selected book, including its title, description, genre, and more. It also lists all reviews related to the book. Users have the ability to write a new review or delete their existing review for the book.
 <img src="img/book_detail.png" alt="book_detail" style="width:800px;"/>
 
-2. The book search page allows users to search for books using keywords and filter results by genre. Users can click on an individual book to navigate to its detail page. Additionally, users can click the heart icon to add a book to their wishlist.
+2. The **book search page** allows users to search for books using keywords and filter results by genre. Users can click on an individual book to navigate to its detail page. Additionally, users can click the heart icon to add a book to their wishlist.
 <img src="img/book_search.png" alt="book_search" style="width:800px;"/>
 
-3. The user profile page displays the user's information and their wishlist. Users can also update their password directly from this page.
+3. The **user profile page** displays the user's information and their wishlist. Users can also update their password directly from this page.
 <img src="img/user_profile.png" alt="user_profile" style="width:800px;"/>
 
-4. The book recommendation page displays personalized book recommendations for users based on their previous ratings.
+4. The **book recommendation page** displays personalized book recommendations for users based on their previous ratings.
 <img src="img/book_recommendation.png" alt="book_recommendation" style="width:800px;"/>
 
-5. The AI Match feature allows users to enter a text query, select a publication year, and choose a book genre. The system first filters books based on the selected genre and year, then uses Natural Language Processing (NLP) to compute the semantic similarity between the user's input and each book’s description. The matched books are then returned, ranked by similarity score from highest to lowest.
+5. The **AI match page** allows users to enter a text query, select a publication year, and choose a book genre. The system first filters books based on the selected genre and year, then uses Natural Language Processing (NLP) to compute the semantic similarity between the user's input and each book’s description. The matched books are then returned, ranked by similarity score from highest to lowest.
 
 <img src="img/AI_Match.png" alt="ai_match" style="width:800px;"/>
 
