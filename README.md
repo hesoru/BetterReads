@@ -238,22 +238,28 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 
 #### Key features
 
-1. Book detail page people can write and delete a review for a book.
-<img src="img/book_detail.png" alt="book_detail" style="width:400px;"/>
+1. The book detail page displays comprehensive information about the selected book, including its title, description, genre, and more. It also lists all reviews related to the book. Users have the ability to write a new review or delete their existing review for the book.
+<img src="img/book_detail.png" alt="book_detail" style="width:500px;"/>
 
-2. Book search page with keywords and genre filtering.
-<img src="img/book_search.png" alt="book_search" style="width:400px;"/>
+2. The book search page allows users to search for books using keywords and filter results by genre. Users can click on an individual book to navigate to its detail page. Additionally, users can click the heart icon to add a book to their wishlist.
+<img src="img/book_search.png" alt="book_search" style="width:500px;"/>
 
-3. User profile page with book wishlist.
-<img src="img/user_profile.png" alt="user_profile" style="width:400px;"/>
+3. The user profile page displays the user's information and their wishlist. Users can also update their password directly from this page.
+<img src="img/user_profile.png" alt="user_profile" style="width:500px;"/>
 
-4. Book recommendation system based on user previous rating
-<img src="img/book_recommendation.png" alt="book_recommendation" style="width:400px;"/>
+4. The book recommendation page displays personalized book recommendations for users based on their previous ratings.
+<img src="img/book_recommendation.png" alt="book_recommendation" style="width:500px;"/>
 
-5. AI Match feature that user can enter text in the input box, select year and book genre, the system will filter the books based on the book genre and year, then find the semantic similarity between the user input text and book description based on natural language processing, then return the matched books with scores ranking from highest to the lowest.
-<img src="img/AI_Match.png" alt="ai_match" style="width:200px;"/>
+5. The AI Match feature allows users to enter a text query, select a publication year, and choose a book genre. The system first filters books based on the selected genre and year, then uses Natural Language Processing (NLP) to compute the semantic similarity between the user's input and each book’s description. The matched books are then returned, ranked by similarity score from highest to lowest.
+
+<img src="img/AI_Match.png" alt="ai_match" style="width:500px;"/>
 
 ### Goals Update
+#### Minimal Goals
+- _Persist user and book data to a database._ - Completed.
+- _Search for books based on keyword matching and genre filtering._ - Completed.
+- _User account creation and login functionality._ - Completed.
+- _Select a book to read its detailed information._ - Completed.
 
 #### Standard Goals
 - _Allow users with an account to write, edit, and delete reviews for books._ – Completed.
@@ -279,3 +285,9 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 
 
 Our app features two non-trivial systems. The **Hybrid Recommendation System** uses collaborative filtering on a Python microservice to generate personalized suggestions, with genre and popularity-based fallbacks. The **Semantic NLP Search Engine** processes book metadata (titles and descriptions) through the Sentence-transformers library using the 'all-MiniLM-L6-v2' model to create vector embeddings. These embeddings are indexed in our database, allowing users to perform semantic searches where query results are ranked by cosine similarity to find the most contextually relevant books.
+
+#### M5 highlights
+- We have refined our recommendation system to give user more accurate book recommendation.
+
+- Initially, we planned to implement an additional stretch feature that would allow users to post their current reads on their profiles. We considered pursuing this goal for Milestone 5 since we had already completed all the required features and one stretch goal at Milestone 4. However, after further evaluation, we realized that implementing this feature would be more time-consuming and complex than we had anticipated. Given our focus on delivering a polished final product and preparing for the final demo, we have decided to drop this stretch goal.
+ 
