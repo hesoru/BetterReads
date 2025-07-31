@@ -239,23 +239,23 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 
 #### Key features
 
-1. The **book detail page** displays comprehensive information about the selected book, including its title, description, genre, and more. It also lists all reviews related to the book. Users have the ability to write a new review or delete their existing review for the book.
+1. The **Book Details page** displays comprehensive information about the selected book, including its title, description, genres, ISBN and more. It also lists all reviews related to the book. Users have the ability to write a new, review or delete and edit their existing review.
 <img src="img/book_detail.png" alt="book_detail" style="width:800px;"/>
 
-2. The **book search page** allows users to search for books using keywords and filter results by genre. Users can click on an individual book to navigate to its detail page. Additionally, users can click the heart icon to add a book to their wishlist.
+2. The **Book Search page** allows users to search for books using keywords and filter their results by genre. Users can click on an individual book card to navigate to its detail page. Additionally, users can click on the heart icon to add the book to their wishlist.
 <img src="img/book_search.png" alt="book_search" style="width:800px;"/>
 
-3. The **user profile page** displays the user's information and their wishlist. Users can also update their password directly from this page.
+3. The **User Profile page** displays the user's information and the books in their wishlist. Users can also update their password directly from this page. If the user is not signed up, then the page is defaulted to a guest profile, which also displays the booklist of their guest session with the option to sign up and persist the booklist from their guest session into the wishlist of the created user account.
 <img src="img/user_profile.png" alt="user_profile" style="width:800px;"/>
 
-4. The **book recommendation page** displays personalized book recommendations for users based on their previous ratings.
+4. The **Book Recommendation page** displays book recommendations for users based on their previous review ratings. By default, if the user is new without any reviews, the recomendations are displayed based on their favorite genres selected upon signup. If the user is not signed up, the recommendations displayed are based on book popularity by default.
 <img src="img/book_recommendation.png" alt="book_recommendation" style="width:800px;"/>
 
-5. The **AI match page** allows users to enter a text query, select a publication year, and choose a book genre. The system first filters books based on the selected genre and year, then uses Natural Language Processing (NLP) to compute the semantic similarity between the user's input and each book’s description. The matched books are then returned, ranked by similarity score from highest to lowest.
+5. The **AI Match page** allows users to describe what they'd like to read in short sentences, with optional filters to narrow down candidates based on publication year ranges and genres. Books in our database are first filtered by genre/publication year if applicable, then Natural Language Processing (NLP) is used to compute the semantic similarity between the user's input and each of the filtered candidate books. Books are returned and sorted by their cosine similarity score in descending order.
 
 <img src="img/AI_Match.png" alt="ai_match" style="width:800px;"/>
 
-### Goals Update
+### Updated Goals
 #### Minimal Goals
 - _Persist user and book data to a database._ - Completed.
 - _Search for books based on keyword matching and genre filtering._ - Completed.
@@ -271,10 +271,10 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 
 #### Stretch Goals
 - _The user’s rich-text input is analyzed using natural language processing (NLP), to identify semantic similarities between keywords in the user’s input and book descriptions._ – **Completed**. Viewable in /nlpsearch page.
-- _Summarize book reviews. Possibly identify if the user’s overall sentiment on a specific book is positive or negative & possibly find common themes among reviews for a book (ie. clustering)._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
-- _Ability to scrape book data and add new books to the database._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
-- _Users can create a non-existent book in the app and add related information._ – **Dropped**. We don't have enough time to impliment this feature before deadline.
-- _Allow users to post current reads on their profiles. Let users post or mark what they’re currently reading. Optionally timestamp or add commentary._ – **Dropped**. This feature requires substantial refactoring of both the database and UI. We recently discovered that implementing it would be more time-consuming than initially anticipated. Given that we have already achieved one of our stretch goals, we’ve decided to drop this additional stretch feature in order to better prepare for the final demo. 
+- _Summarize book reviews. Possibly identify if the user’s overall sentiment on a specific book is positive or negative & possibly find common themes among reviews for a book (ie. clustering)._ – **Dropped**. We didn't have enough time to impliment this feature before deadline.
+- _Ability to scrape book data and add new books to the database._ – **Dropped**. We didn't have enough time to impliment this feature before deadline.
+- _Users can create a non-existent book in the app and add related information._ – **Dropped**. We didn't have enough time to impliment this feature before deadline.
+- _Allow users to post current reads on their profiles. Let users post or mark what they’re currently reading. Optionally timestamp or add commentary._ – **Dropped**. This feature required substantial refactoring of both the database and UI. We recently discovered that implementing it would be more time-consuming than initially anticipated and too close to the deadline for such heavy restructuring. Given that we have already achieved one of our stretch goals, we’ve decided to drop this additional stretch feature to better prepare for the final demo. 
 
 
 ### Non-trivial elements
@@ -285,10 +285,9 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 | Semantic NLP Search Engine    | Completed           |
 
 
-Our app features two non-trivial systems. The **Hybrid Recommendation System** uses collaborative filtering on a Python microservice to generate personalized suggestions, with genre and popularity-based fallbacks. The **Semantic NLP Search Engine** processes book metadata (titles and descriptions) through the Sentence-transformers library using the 'all-MiniLM-L6-v2' model to create vector embeddings. These embeddings are indexed in our database, allowing users to perform semantic searches where query results are ranked by cosine similarity to find the most contextually relevant books.
+Our app features two non-trivial features. The **Hybrid Recommendation System** uses collaborative filtering on a Python microservice to generate personalized suggestions, with genre and popularity-based fallbacks. The **Semantic NLP Search Engine** processes book metadata (title and description) through the Sentence-transformers library using the 'all-MiniLM-L6-v2' model to create vector embeddings. These embeddings are indexed in our database, allowing users to perform semantic searches where query results are ranked by cosine similarity to find the most contextually relevant books.
 
 ### M5 highlights
 - We have refined our recommendation system to give user more accurate book recommendation.
 
-- Initially, we planned to implement an additional stretch feature that would allow users to post their current reads on their profiles. We considered pursuing this goal for Milestone 5 since we had already completed all the required features and one stretch goal at Milestone 4. However, after further evaluation, we realized that implementing this feature would be more time-consuming and complex than we had anticipated. Given our focus on delivering a polished final product and preparing for the final demo, we have decided to drop this stretch goal.
-
+- Initially, we planned to implement an additional stretch feature that would allow users to showcase their current reads on their profiles. We considered pursuing this for Milestone 5, as we had already completed all required features and one stretch goal by Milestone 4. However, after further evaluation, we realized that the feature would be more time-consuming and complex than anticipated. To prioritize a polished final product, avoid introducing major bugs close to the deadline, and ensure we had sufficient time to prepare for the final demo, we ultimately decided to forgo this stretch goal.
