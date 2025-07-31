@@ -4,7 +4,7 @@ import { getRecommendations } from '../services/recommendations.js';
 const router = express.Router();
 
 /**
- * @route   GET /api/recommend/:username
+ * @route   GET /api/recommendations/:username
  * @desc    Get book recommendations for a specific user
  * @access  Public
  */

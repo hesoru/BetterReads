@@ -51,14 +51,13 @@ async function getRecommendations(fn_username) {
     );
 
     // If we have enough API recommendations, use those
-    if (filteredApiRecs.length >= 5) {
-      const books = await Book.find({ _id: { $in: filteredApiRecs } }).limit(10).exec();
+    if (filteredApiRecs.length >= 10) {
+      const books = await Book.find({ _id: { $in: filteredApiRecs } }).limit(20).exec();
       return books;
     }
 
     // Otherwise, combine multiple recommendation strategies
     const combinedRecommendations = await getCombinedRecommendations(
-      user._id, 
       user.favoriteGenres, 
       interactedBookIds,
       filteredApiRecs
@@ -67,8 +66,8 @@ async function getRecommendations(fn_username) {
     return combinedRecommendations;
   } catch (error) {
     console.error('Error in getRecommendations:', error);
-    // Return fallback recommendations in case of any error
-    return getFallbackRecommendations([]);
+    // Return popularity-based recommendations in case of any error
+    return getPopularityBasedRecommendations([]);
   }
 }
 
@@ -86,23 +85,19 @@ async function getInteractedBookIds(userId) {
  * @param {Array} apiRecs - Recommendations from the API
  * @returns {Promise<Array>} - Combined book recommendations
  */
-async function getCombinedRecommendations(userId, favoriteGenres, excludeIds, apiRecs = []) {
+async function getCombinedRecommendations(favoriteGenres, excludeIds, apiRecs = []) {
   // Get genre-based recommendations
   const genreRecs = await getGenreBasedRecommendations(favoriteGenres, excludeIds);
   
-  // // Get collaborative filtering recommendations
-  // const collaborativeRecs = await getCollaborativeFilteringRecommendations(userId, excludeIds);
-  
   // Get popular books as fallback
-  const popularRecs = await getFallbackRecommendations(excludeIds);
+  const popularRecs = await getPopularityBasedRecommendations(excludeIds);
   
   // Combine all recommendation sources with weights
-  // API recommendations get highest priority, then genre, then collaborative, then popular
+  // API recommendations get highest priority, then genre, then popular
   const allRecommendationIds = [
     ...apiRecs,                // API recommendations (highest priority)
     ...genreRecs.slice(0, 5),  // Top 5 genre recommendations
-    // ...collaborativeRecs.slice(0, 3), // Top 3 collaborative recommendations
-    ...popularRecs.slice(0, 2)  // Top 2 popular recommendations as fallback
+    ...popularRecs.slice(0, 5)  // Top 5 popular recommendations as fallback
   ];
   
   // Remove duplicates
@@ -111,7 +106,7 @@ async function getCombinedRecommendations(userId, favoriteGenres, excludeIds, ap
   // Fetch full book details
   const books = await Book.find({
     _id: { $in: uniqueRecommendationIds }
-  }).limit(10).exec();
+  }).limit(20).exec();
   
   return books;
 }
@@ -140,103 +135,12 @@ async function getGenreBasedRecommendations(favoriteGenres, excludeIds) {
   return genreBooks.map(book => book._id.toString());
 }
 
-// /**
-//  * Get recommendations based on similar users' preferences
-//  * @param {string} userId - User ID
-//  * @param {Array} excludeIds - Book IDs to exclude
-//  * @returns {Promise<Array>} - Array of book IDs
-//  */
-// async function getCollaborativeFilteringRecommendations(userId, excludeIds) {
-//   try {
-//     // Get the user's reviews/ratings
-//     const userReviews = await Review.find({ userId }).exec();
-    
-//     if (userReviews.length === 0) {
-//       return [];
-//     }
-    
-//     // Find users who rated the same books
-//     const userBookIds = userReviews.map(review => review.bookId);
-    
-//     // Try to get user-item matrix from Redis
-//     const REDIS_KEY = 'user_item_matrix';
-//     let allInteractions = await getFromRedis(REDIS_KEY);
-    
-//     // If not in Redis, build it from reviews
-//     if (!allInteractions) {
-//       console.log('Building user-item matrix for collaborative filtering...');
-//       const allReviews = await Review.find({}).exec();
-      
-//       allInteractions = allReviews.map(review => ({
-//         userId: review.userId.toString(),
-//         bookId: review.bookId.toString(),
-//         rating: review.rating || 3
-//       }));
-      
-//       // Store in Redis for future use (expires in 24 hours to match Python service)
-//       await storeInRedis(REDIS_KEY, allInteractions, 86400);
-//       console.log('User-item matrix stored in Redis');
-//     }
-    
-//     // Filter interactions to find similar users
-//     const similarUserReviews = allInteractions.filter(interaction => 
-//       interaction.userId !== userId.toString() && 
-//       userBookIds.some(bookId => bookId.toString() === interaction.bookId)
-//     );
-    
-//     // Group by user to find users with most overlap
-//     const userOverlap = {};
-//     similarUserReviews.forEach(review => {
-//       if (!userOverlap[review.userId]) {
-//         userOverlap[review.userId] = 0;
-//       }
-//       userOverlap[review.userId]++;
-//     });
-    
-//     // Get top similar users
-//     const similarUsers = Object.entries(userOverlap)
-//       .sort((a, b) => b[1] - a[1])
-//       .slice(0, 5)
-//       .map(entry => entry[0]);
-    
-//     if (similarUsers.length === 0) {
-//       return [];
-//     }
-    
-//     // Find books that similar users rated highly using the cached matrix
-//     const similarUserHighRatings = allInteractions.filter(interaction => 
-//       similarUsers.includes(interaction.userId) &&
-//       interaction.rating >= 4 &&
-//       !excludeIds.includes(interaction.bookId)
-//     );
-    
-//     // Count book occurrences to find most recommended
-//     const bookCounts = {};
-//     similarUserHighRatings.forEach(review => {
-//       const bookId = review.bookId.toString();
-//       if (!bookCounts[bookId]) {
-//         bookCounts[bookId] = 0;
-//       }
-//       bookCounts[bookId]++;
-//     });
-    
-//     // Sort by frequency and return top books
-//     return Object.entries(bookCounts)
-//       .sort((a, b) => b[1] - a[1])
-//       .slice(0, 10)
-//       .map(entry => entry[0]);
-//   } catch (error) {
-//     console.error('Error in collaborative filtering:', error);
-//     return [];
-//   }
-// }
-
 /**
  * Get fallback recommendations based on popular books
  * @param {Array} excludeIds - Book IDs to exclude
  * @returns {Promise<Array>} - Array of book objects
  */
-async function getFallbackRecommendations(excludeIds) {
+async function getPopularityBasedRecommendations(excludeIds) {
   try {
     // Try to get popular books from Redis first
     const REDIS_KEY = 'popular_books';
@@ -257,11 +161,11 @@ async function getFallbackRecommendations(excludeIds) {
         },
         { $match: { avgRating: { $gte: 4 }, count: { $gte: 2 } } },
         { $sort: { count: -1, avgRating: -1 } },
-        { $limit: 15 }
+        { $limit: 10 }
       ]);
       
-      // Store in Redis for future use (expires in 6 hours since popularity changes less frequently)
-      await storeInRedis(REDIS_KEY, topBooks, 21600);
+      // Store in Redis for future use (expires in 24 hours since popularity changes less frequently)
+      await storeInRedis(REDIS_KEY, topBooks, 86400);
       console.log('Popular books stored in Redis');
     } else {
       console.log('Using popular books from Redis cache');
@@ -274,7 +178,7 @@ async function getFallbackRecommendations(excludeIds) {
         averageRating: { $gte: 4 }
       })
       .sort({ ratingsCount: -1, averageRating: -1 })
-      .limit(15)
+      .limit(10)
       .exec();
       
       return popularBooks.map(book => book._id.toString());
@@ -287,7 +191,7 @@ async function getFallbackRecommendations(excludeIds) {
     return filtered;
   } catch (error) {
     console.error('Error in fallback recommendations:', error);
-    // Last resort fallback - just get some books
+    // Last resort fallback - just get any books
     const lastResortBooks = await Book.find({})
       .sort({ averageRating: -1 })
       .limit(10)

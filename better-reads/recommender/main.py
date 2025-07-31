@@ -15,6 +15,8 @@ from dotenv import load_dotenv
 from datetime import datetime
 from lightfm import LightFM
 from sklearn.metrics.pairwise import cosine_similarity
+import pickle
+import base64
 
 # Load environment variables
 load_dotenv()
@@ -36,8 +38,12 @@ db = mongo_client['bookdb']
 reviews_collection = db['reviews']
 users_collection = db['users']
 
-# Redis key for user-item matrix
+# Redis keys for caching
 USER_ITEM_MATRIX_KEY = 'user_item_matrix'
+LIGHTFM_MODEL_KEY = 'lightfm_model'
+USER_MAPPING_KEY = 'user_mapping'
+ITEM_MAPPING_KEY = 'item_mapping'
+MODEL_METADATA_KEY = 'model_metadata'
 # Path to initial user-item matrix JSON file (now located in recommender/data directory)
 INITIAL_MATRIX_PATH = os.path.join('/app', 'data', 'initial-user-item-matrix.json')
 # Update interval in seconds
@@ -51,6 +57,70 @@ class RecommendRequest(BaseModel):
 class RecommendResponse(BaseModel):
     recommendations: List[str]
     message: str = "Recommendations generated successfully"
+
+# Helper functions for model caching
+def serialize_model(model):
+    """Serialize LightFM model to base64 string for Redis storage"""
+    model_bytes = pickle.dumps(model)
+    return base64.b64encode(model_bytes).decode('utf-8')
+
+def deserialize_model(model_str):
+    """Deserialize LightFM model from base64 string"""
+    model_bytes = base64.b64decode(model_str.encode('utf-8'))
+    return pickle.loads(model_bytes)
+
+def cache_trained_model(model, user_mapping, item_mapping, matrix_version):
+    """Cache trained model and mappings in Redis"""
+    try:
+        # Serialize and cache the model
+        model_str = serialize_model(model)
+        redis_client.setex(LIGHTFM_MODEL_KEY, 86400, model_str)
+        
+        # Cache the mappings
+        redis_client.setex(USER_MAPPING_KEY, 86400, json.dumps(user_mapping))
+        redis_client.setex(ITEM_MAPPING_KEY, 86400, json.dumps(item_mapping))
+        
+        # Cache metadata
+        metadata = {
+            'timestamp': datetime.now().isoformat(),
+            'matrix_version': matrix_version,
+            'n_users': len(user_mapping),
+            'n_items': len(item_mapping)
+        }
+        redis_client.setex(MODEL_METADATA_KEY, 86400, json.dumps(metadata))
+        
+        print(f"Cached trained LightFM model with {len(user_mapping)} users and {len(item_mapping)} items")
+        return True
+    except Exception as e:
+        print(f"Error caching trained model: {e}")
+        return False
+
+def get_cached_model():
+    """Retrieve cached model and mappings from Redis"""
+    try:
+        # Check if all components exist
+        if not all([
+            redis_client.exists(LIGHTFM_MODEL_KEY),
+            redis_client.exists(USER_MAPPING_KEY),
+            redis_client.exists(ITEM_MAPPING_KEY),
+            redis_client.exists(MODEL_METADATA_KEY)
+        ]):
+            return None, None, None, None
+        
+        # Retrieve and deserialize model
+        model_str = redis_client.get(LIGHTFM_MODEL_KEY)
+        model = deserialize_model(model_str)
+        
+        # Retrieve mappings
+        user_mapping = json.loads(redis_client.get(USER_MAPPING_KEY))
+        item_mapping = json.loads(redis_client.get(ITEM_MAPPING_KEY))
+        metadata = json.loads(redis_client.get(MODEL_METADATA_KEY))
+        
+        print(f"Retrieved cached LightFM model from {metadata['timestamp']}")
+        return model, user_mapping, item_mapping, metadata
+    except Exception as e:
+        print(f"Error retrieving cached model: {e}")
+        return None, None, None, None
 
 # Initialize user-item matrix from JSON file and start background update task
 @app.on_event("startup")
@@ -193,6 +263,13 @@ def update_matrix_with_reviews():
             json.dumps(matrix_data)
         )
         
+        # Invalidate cached model since matrix has changed
+        redis_client.delete(LIGHTFM_MODEL_KEY)
+        redis_client.delete(USER_MAPPING_KEY) 
+        redis_client.delete(ITEM_MAPPING_KEY)
+        redis_client.delete(MODEL_METADATA_KEY)
+        print("Invalidated cached LightFM model due to matrix update")
+        
         print(f"User-item matrix updated with {len(reviews)} reviews")
         return True
     except Exception as e:
@@ -272,97 +349,112 @@ def recommend_books(data: RecommendRequest):
         print(f"User {username} not found in user mapping.")
         raise HTTPException(status_code=404, detail=f"User {username} not found in recommendation matrix")
     
-    # Convert to sparse matrix format for LightFM
-    interactions = []
-    row_indices = []
-    col_indices = []
-    ratings = []
+    # Try to retrieve cached model
+    cached_model, cached_user_mapping, cached_item_mapping, metadata = get_cached_model()
     
-    # Build sparse matrix data
-    for user, user_idx in user_mapping.items():
-        user_ratings = matrix_dict.get(user, {})
-        for item, rating in user_ratings.items():
-            if item in item_mapping and rating is not None:
-                row_indices.append(user_idx)
-                col_indices.append(item_mapping[item])
-                ratings.append(float(rating))
-    
-    # Create sparse matrix
-    n_users = len(user_mapping)
-    n_items = len(item_mapping)
-    interaction_matrix = sp.coo_matrix((ratings, (row_indices, col_indices)), 
-                                     shape=(n_users, n_items))
-    
-    print(f"Created sparse interaction matrix with shape {interaction_matrix.shape}")
-    
-    # Train LightFM model
-    model = LightFM(loss='warp')
-    
-    try:
-        # Train for a few epochs - adjust as needed for performance vs. accuracy
-        model.fit(interaction_matrix, epochs=5, verbose=True)
-        print("LightFM model trained successfully")
+    if cached_model is not None:
+        # Use cached model
+        model = cached_model
+        user_mapping = cached_user_mapping
+        item_mapping = cached_item_mapping
+        n_items = len(item_mapping)
+        print("Using cached LightFM model for predictions")
+    else:
+        # Convert to sparse matrix format for LightFM
+        interactions = []
+        row_indices = []
+        col_indices = []
+        ratings = []
         
-        # Get user index
-        user_idx = user_mapping[username]
-        
-        # Predict scores for all items
-        scores = model.predict(user_idx, np.arange(n_items))
-        
-        # Get items the user has already interacted with
-        user_items = set()
-        if username in matrix_dict:
-            user_items = set(matrix_dict[username].keys())
-        
-        # Create list of (item_id, score) tuples, excluding items the user has already rated
-        item_scores = []
-        for item_id, item_idx in item_mapping.items():
-            if item_id not in user_items:  # Only recommend items the user hasn't rated
-                item_scores.append((item_id, scores[item_idx]))
-        
-        # Sort by score in descending order
-        item_scores.sort(key=lambda x: x[1], reverse=True)
-        
-        # Get top 20 recommendations
-        top_items = [item_id for item_id, _ in item_scores[:20]]
-        
-        print(f"Generated {len(top_items)} recommendations for user {username}")
-        
-    except Exception as e:
-        print(f"Error training LightFM model: {e}")
-        # Fall back to a simpler approach if LightFM fails
-        print("Falling back to popularity-based recommendations")
-        
-        # Get all ratings
-        all_ratings = {}
-        for user_ratings in matrix_dict.values():
+        # Build sparse matrix data
+        for user, user_idx in user_mapping.items():
+            user_ratings = matrix_dict.get(user, {})
             for item, rating in user_ratings.items():
-                if item not in all_ratings:
-                    all_ratings[item] = []
-                all_ratings[item].append(rating)
+                if item in item_mapping and rating is not None:
+                    row_indices.append(user_idx)
+                    col_indices.append(item_mapping[item])
+                    ratings.append(float(rating))
         
-        # Calculate average rating and count for each item
-        item_popularity = {}
-        for item, ratings in all_ratings.items():
-            avg_rating = sum(ratings) / len(ratings)
-            count = len(ratings)
-            item_popularity[item] = avg_rating * count
+        # Create sparse matrix
+        n_users = len(user_mapping)
+        n_items = len(item_mapping)
+        interaction_matrix = sp.coo_matrix((ratings, (row_indices, col_indices)), 
+                                         shape=(n_users, n_items))
         
-        # Sort items by popularity
-        sorted_items = sorted(item_popularity.items(), key=lambda x: x[1], reverse=True)
+        print(f"Created sparse interaction matrix with shape {interaction_matrix.shape}")
         
-        # Get user's items to exclude
-        user_items = set()
-        if username in matrix_dict:
-            user_items = set(matrix_dict[username].keys())
+        # Train LightFM model
+        model = LightFM(loss='warp')
         
-        # Get top items excluding what the user has already rated
-        top_items = []
-        for item, _ in sorted_items:
-            if item not in user_items:
-                top_items.append(item)
-                if len(top_items) >= 20:
-                    break
+        try:
+            # Train for a few epochs - adjust as needed for performance vs. accuracy
+            model.fit(interaction_matrix, epochs=5, verbose=True)
+            print("LightFM model trained successfully")
+            
+            # Cache the trained model
+            cache_trained_model(model, user_mapping, item_mapping, "v1")
+        except Exception as e:
+            print(f"Error training LightFM model: {e}")
+            raise HTTPException(status_code=500, detail=f"Error training LightFM model: {str(e)}")
+    
+    # Get user index
+    user_idx = user_mapping[username]
+    
+    # Predict scores for all items
+    scores = model.predict(user_idx, np.arange(n_items))
+    
+    # Get items the user has already interacted with
+    user_items = set()
+    if username in matrix_dict:
+        user_items = set(matrix_dict[username].keys())
+    
+    # Create list of (item_id, score) tuples, excluding items the user has already rated
+    item_scores = []
+    for item_id, item_idx in item_mapping.items():
+        if item_id not in user_items:  # Only recommend items the user hasn't rated
+            item_scores.append((item_id, scores[item_idx]))
+    
+    # Sort by score in descending order
+    item_scores.sort(key=lambda x: x[1], reverse=True)
+    
+    # Get top 20 recommendations
+    top_items = [item_id for item_id, _ in item_scores[:20]]
+    
+    print(f"Generated {len(top_items)} recommendations for user {username}")
+    
+        # # Fall back to a simpler approach if LightFM fails
+        # print("Falling back to popularity-based recommendations")
+        
+        # # Get all ratings
+        # all_ratings = {}
+        # for user_ratings in matrix_dict.values():
+        #     for item, rating in user_ratings.items():
+        #         if item not in all_ratings:
+        #             all_ratings[item] = []
+        #         all_ratings[item].append(rating)
+        
+        # # Calculate average rating and count for each item
+        # item_popularity = {}
+        # for item, ratings in all_ratings.items():
+        #     avg_rating = sum(ratings) / len(ratings)
+        #     count = len(ratings)
+        #     item_popularity[item] = avg_rating * count
+        
+        # # Sort items by popularity
+        # sorted_items = sorted(item_popularity.items(), key=lambda x: x[1], reverse=True)
+        
+        # # Get user's items to exclude
+        # user_items = set()
+        # if username in matrix_dict:
+        #     user_items = set(matrix_dict[username].keys())
+        
+        # # Get top items excluding what the user has already rated
+        # top_items = []
+        # for item, _ in sorted_items:
+        #     if item not in user_items:
+        #         top_items.append(item)
+        #         if len(top_items) >= 20:
+        #             break
     
     # Return recommendations using the defined response model
     return RecommendResponse(
