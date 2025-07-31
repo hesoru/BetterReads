@@ -239,20 +239,20 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 #### Key features
 
 1. The book detail page displays comprehensive information about the selected book, including its title, description, genre, and more. It also lists all reviews related to the book. Users have the ability to write a new review or delete their existing review for the book.
-<img src="img/book_detail.png" alt="book_detail" style="width:500px;"/>
+<img src="img/book_detail.png" alt="book_detail" style="width:800px;"/>
 
 2. The book search page allows users to search for books using keywords and filter results by genre. Users can click on an individual book to navigate to its detail page. Additionally, users can click the heart icon to add a book to their wishlist.
-<img src="img/book_search.png" alt="book_search" style="width:500px;"/>
+<img src="img/book_search.png" alt="book_search" style="width:800px;"/>
 
 3. The user profile page displays the user's information and their wishlist. Users can also update their password directly from this page.
-<img src="img/user_profile.png" alt="user_profile" style="width:500px;"/>
+<img src="img/user_profile.png" alt="user_profile" style="width:800px;"/>
 
 4. The book recommendation page displays personalized book recommendations for users based on their previous ratings.
-<img src="img/book_recommendation.png" alt="book_recommendation" style="width:500px;"/>
+<img src="img/book_recommendation.png" alt="book_recommendation" style="width:800px;"/>
 
 5. The AI Match feature allows users to enter a text query, select a publication year, and choose a book genre. The system first filters books based on the selected genre and year, then uses Natural Language Processing (NLP) to compute the semantic similarity between the user's input and each book’s description. The matched books are then returned, ranked by similarity score from highest to lowest.
 
-<img src="img/AI_Match.png" alt="ai_match" style="width:500px;"/>
+<img src="img/AI_Match.png" alt="ai_match" style="width:800px;"/>
 
 ### Goals Update
 #### Minimal Goals
@@ -276,7 +276,7 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 - _Allow users to post current reads on their profiles. Let users post or mark what they’re currently reading. Optionally timestamp or add commentary._ – **Dropped**. This feature requires substantial refactoring of both the database and UI. We recently discovered that implementing it would be more time-consuming than initially anticipated. Given that we have already achieved one of our stretch goals, we’ve decided to drop this additional stretch feature in order to better prepare for the final demo. 
 
 
-#### Non-trivial elements
+### Non-trivial elements
 
 | Element                       | Stage of Completion |
 | ----------------------------- | ------------------- |
@@ -286,7 +286,7 @@ See our [script](security_assessment/xss-test-payloads.md) for the payloads we u
 
 Our app features two non-trivial systems. The **Hybrid Recommendation System** uses collaborative filtering on a Python microservice to generate personalized suggestions, with genre and popularity-based fallbacks. The **Semantic NLP Search Engine** processes book metadata (titles and descriptions) through the Sentence-transformers library using the 'all-MiniLM-L6-v2' model to create vector embeddings. These embeddings are indexed in our database, allowing users to perform semantic searches where query results are ranked by cosine similarity to find the most contextually relevant books.
 
-#### M5 highlights
+### M5 highlights
 - We have refined our recommendation system to give user more accurate book recommendation.
 
 - Initially, we planned to implement an additional stretch feature that would allow users to post their current reads on their profiles. We considered pursuing this goal for Milestone 5 since we had already completed all the required features and one stretch goal at Milestone 4. However, after further evaluation, we realized that implementing this feature would be more time-consuming and complex than we had anticipated. Given our focus on delivering a polished final product and preparing for the final demo, we have decided to drop this stretch goal.
