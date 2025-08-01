@@ -64,7 +64,7 @@ async function createBookIdToIsbnMap() {
     });
     
     // Write to file
-    const outputPath = path.join(__dirname, '../data/bookIdToIsbnMap.json');
+    const outputPath = path.join(__dirname, '../../../data/bookIdToIsbnMap.json');
     
     // Ensure directory exists
     const dir = path.dirname(outputPath);

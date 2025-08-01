@@ -1,3 +1,11 @@
+"""
+Recommendation system microservice:
+- Uses collaborative filtering with a user-item matrix to generate recommendations for users.
+- Uses Redis to cache the user-item matrix and the trained model.
+- Trains a LightFM implicit feedback model, which optimizes precision@k using WARP (Weighted Approximate Ranking Pairwise) loss.
+- Distances between user ratings calculated using cosine similarity.
+"""
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from typing import List, Dict, Any
@@ -15,21 +23,24 @@ from dotenv import load_dotenv
 from datetime import datetime
 from lightfm import LightFM
 from sklearn.metrics.pairwise import cosine_similarity
-import pickle
-import base64
+
+# Import utility functions
+from utils import (
+    cache_trained_model,
+    get_cached_model,
+    invalidate_cached_model,
+    get_redis_client,
+    get_redis_keys,
+    train_model
+)
 
 # Load environment variables
 load_dotenv()
 
 app = FastAPI()
 
-# Initialize Redis client
-redis_client = redis.Redis(
-    host=os.getenv('REDIS_HOST', 'localhost'),
-    port=int(os.getenv('REDIS_PORT', 6379)),
-    db=int(os.getenv('REDIS_DB', 0)),
-    decode_responses=True
-)
+# Get Redis client from utils
+redis_client = get_redis_client()
 
 # MongoDB connection
 mongo_uri = os.getenv('MONGO_URI', 'mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/bookdb?retryWrites=true&w=majority&appName=Sandbox')
@@ -38,89 +49,25 @@ db = mongo_client['bookdb']
 reviews_collection = db['reviews']
 users_collection = db['users']
 
-# Redis keys for caching
-USER_ITEM_MATRIX_KEY = 'user_item_matrix'
-LIGHTFM_MODEL_KEY = 'lightfm_model'
-USER_MAPPING_KEY = 'user_mapping'
-ITEM_MAPPING_KEY = 'item_mapping'
-MODEL_METADATA_KEY = 'model_metadata'
-# Path to initial user-item matrix JSON file (now located in recommender/data directory)
-INITIAL_MATRIX_PATH = os.path.join('/app', 'data', 'initial-user-item-matrix.json')
-# Update interval in seconds
-UPDATE_INTERVAL = int(os.getenv('UPDATE_INTERVAL', 3600))  # Default: update every hour
+# Get Redis keys from utils
+redis_keys = get_redis_keys()
+USER_ITEM_MATRIX_KEY = redis_keys['USER_ITEM_MATRIX_KEY']
+# Path to initial user-item matrix Parquet file (located in project root data directory)
+INITIAL_MATRIX_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'initial-user-item-matrix.parquet')
+# Update interval in seconds (1 hour)
+REDIS_UPDATE_INTERVAL = int(os.getenv('REDIS_UPDATE_INTERVAL', 3600))
+# Default expiration time in seconds (24 hours)
+REDIS_EXPIRE_TIME = int(os.getenv('REDIS_EXPIRE_TIME', 86400))
 
-# Sample input format
+# Request format
 class RecommendRequest(BaseModel):
     username: str
     
 # Response format
 class RecommendResponse(BaseModel):
-    recommendations: List[str]
+    recommendations: List[str]      # list of book IDs
     message: str = "Recommendations generated successfully"
 
-# Helper functions for model caching
-def serialize_model(model):
-    """Serialize LightFM model to base64 string for Redis storage"""
-    model_bytes = pickle.dumps(model)
-    return base64.b64encode(model_bytes).decode('utf-8')
-
-def deserialize_model(model_str):
-    """Deserialize LightFM model from base64 string"""
-    model_bytes = base64.b64decode(model_str.encode('utf-8'))
-    return pickle.loads(model_bytes)
-
-def cache_trained_model(model, user_mapping, item_mapping, matrix_version):
-    """Cache trained model and mappings in Redis"""
-    try:
-        # Serialize and cache the model
-        model_str = serialize_model(model)
-        redis_client.setex(LIGHTFM_MODEL_KEY, 86400, model_str)
-        
-        # Cache the mappings
-        redis_client.setex(USER_MAPPING_KEY, 86400, json.dumps(user_mapping))
-        redis_client.setex(ITEM_MAPPING_KEY, 86400, json.dumps(item_mapping))
-        
-        # Cache metadata
-        metadata = {
-            'timestamp': datetime.now().isoformat(),
-            'matrix_version': matrix_version,
-            'n_users': len(user_mapping),
-            'n_items': len(item_mapping)
-        }
-        redis_client.setex(MODEL_METADATA_KEY, 86400, json.dumps(metadata))
-        
-        print(f"Cached trained LightFM model with {len(user_mapping)} users and {len(item_mapping)} items")
-        return True
-    except Exception as e:
-        print(f"Error caching trained model: {e}")
-        return False
-
-def get_cached_model():
-    """Retrieve cached model and mappings from Redis"""
-    try:
-        # Check if all components exist
-        if not all([
-            redis_client.exists(LIGHTFM_MODEL_KEY),
-            redis_client.exists(USER_MAPPING_KEY),
-            redis_client.exists(ITEM_MAPPING_KEY),
-            redis_client.exists(MODEL_METADATA_KEY)
-        ]):
-            return None, None, None, None
-        
-        # Retrieve and deserialize model
-        model_str = redis_client.get(LIGHTFM_MODEL_KEY)
-        model = deserialize_model(model_str)
-        
-        # Retrieve mappings
-        user_mapping = json.loads(redis_client.get(USER_MAPPING_KEY))
-        item_mapping = json.loads(redis_client.get(ITEM_MAPPING_KEY))
-        metadata = json.loads(redis_client.get(MODEL_METADATA_KEY))
-        
-        print(f"Retrieved cached LightFM model from {metadata['timestamp']}")
-        return model, user_mapping, item_mapping, metadata
-    except Exception as e:
-        print(f"Error retrieving cached model: {e}")
-        return None, None, None, None
 
 # Initialize user-item matrix from JSON file and start background update task
 @app.on_event("startup")
@@ -128,7 +75,7 @@ async def startup_event():
     # Initialize the user-item matrix from the JSON file
     initialize_user_item_matrix()
 
-    update_matrix_with_reviews()
+    update_matrix()
     
     # Start background task for periodic updates
     # asyncio.create_task(periodic_update_matrix())
@@ -136,141 +83,123 @@ async def startup_event():
 # Initialize user-item matrix from JSON file
 def initialize_user_item_matrix():
     try:
-        print(f"Initializing user-item matrix from {INITIAL_MATRIX_PATH}")
+        print(f"Initializing user-item matrix")
         
         # Check if the matrix already exists in Redis
         if redis_client.exists(USER_ITEM_MATRIX_KEY):
             print("User-item matrix already exists in Redis, skipping initialization")
             return
         
-        # Load the initial matrix from JSON file
+        # Load the initial matrix from Parquet file
         if os.path.exists(INITIAL_MATRIX_PATH):
-            # Load the JSON file - handle both pandas to_json format and dictionary format
             try:
-                # First try to load as a pandas DataFrame JSON format
-                df = pd.read_json(INITIAL_MATRIX_PATH)
-                # Convert to the dictionary format we need
+                df = pd.read_parquet(INITIAL_MATRIX_PATH)
+                print(f"Loaded Parquet file with shape: {df.shape}")
+                
+                # Convert to the dictionary format we need for Redis storage
                 matrix_data = {}
                 for user_id in df.index:
                     user_ratings = {}
                     for book_id in df.columns:
                         rating = df.loc[user_id, book_id]
-                        if rating > 0:  # Only include non-zero ratings
-                            user_ratings[book_id] = float(rating)
-                    if user_ratings:  # Only include users with ratings
-                        matrix_data[user_id] = user_ratings
-                        
-                print(f"Loaded initial matrix data from pandas format with {len(matrix_data)} users")
+                        if pd.notna(rating) and rating > 0:  
+                            user_ratings[str(book_id)] = float(rating)  
+                    if user_ratings:   
+                        matrix_data[str(user_id)] = user_ratings  
+                print(f"Loaded initial matrix data from Parquet with {len(matrix_data)} users")
+                
+                # Store the matrix in Redis
+                redis_client.setex(USER_ITEM_MATRIX_KEY, REDIS_EXPIRE_TIME, json.dumps(matrix_data))
+                print("Initial user-item matrix stored in Redis")
             except Exception as e:
-                print(f"Could not load as pandas format, trying as dictionary: {e}")
-                # Try loading as a regular dictionary
-                with open(INITIAL_MATRIX_PATH, 'r') as f:
-                    matrix_data = json.load(f)
-                print(f"Loaded initial matrix data as dictionary with {len(matrix_data)} entries")
-            
-            # Store the matrix in Redis
-            redis_client.setex(
-                USER_ITEM_MATRIX_KEY,
-                86400,  # Cache for 24 hours
-                json.dumps(matrix_data)
-            )
-            print("Initial user-item matrix stored in Redis")
+                print(f"Error loading Parquet file: {e}")
+                # Create empty matrix as fallback
+                redis_client.setex(USER_ITEM_MATRIX_KEY, REDIS_EXPIRE_TIME, json.dumps({}))
+                print("Created empty matrix as fallback due to Parquet loading error")
         else:
             print(f"Warning: Initial matrix file not found at {INITIAL_MATRIX_PATH}")
-    except Exception as e:
-        print(f"Error initializing user-item matrix: {e}")
+            # Create empty matrix as fallback
+            redis_client.setex(USER_ITEM_MATRIX_KEY, REDIS_EXPIRE_TIME, json.dumps({}))
+            print("Created empty matrix as fallback due to missing file")
+            
+    except Exception as e1:
+        print(f"Error initializing user-item matrix: {e1}")
         # Create empty matrix as fallback
         try:
-            redis_client.setex(
-                USER_ITEM_MATRIX_KEY,
-                86400,  # Cache for 24 hours
-                json.dumps({})
-            )
+            redis_client.setex(USER_ITEM_MATRIX_KEY, REDIS_EXPIRE_TIME, json.dumps({}))
             print("Created empty matrix as fallback")
         except Exception as e2:
             print(f"Failed to create fallback matrix: {e2}")
 
-# Fetch reviews from MongoDB and update the user-item matrix
-def update_matrix_with_reviews():
+# Fetch users and reviews from MongoDB and update the user-item matrix
+def update_matrix():
     try:
         print("Updating user-item matrix with reviews from MongoDB")
         
-        # Get the current matrix from Redis
-        cached_data = redis_client.get(USER_ITEM_MATRIX_KEY)
-        if not cached_data:
+        cached_matrix = redis_client.get(USER_ITEM_MATRIX_KEY)
+        if not cached_matrix:
             print("No existing matrix found in Redis, initializing first")
             initialize_user_item_matrix()
-            cached_data = redis_client.get(USER_ITEM_MATRIX_KEY)
-            if not cached_data:
+            cached_matrix = redis_client.get(USER_ITEM_MATRIX_KEY)
+            if not cached_matrix:
                 print("Failed to initialize matrix, skipping update")
                 return
         
-        # Parse the current matrix
-        matrix_data = json.loads(cached_data)
+        matrix_data = json.loads(cached_matrix)
         
-        # Get all users from MongoDB first
         users = list(users_collection.find({}, {'_id': 1, 'username': 1}))
         print(f"Found {len(users)} users in MongoDB")
         
         # Add all users to the matrix (even those without reviews)
         for user in users:
             # Use username as the user identifier if available, otherwise use _id
-            user_id = str(user.get('username', user['_id']))
-            if user_id not in matrix_data:
-                matrix_data[user_id] = {}
+            username = str(user.get('username', user['_id']))
+            if username not in matrix_data:
+                matrix_data[username] = {}
         
-        # Get all reviews from MongoDB
-        reviews = list(reviews_collection.find({}, {
-            'userId': 1, 
-            'bookId': 1, 
-            'rating': 1
-        }))
-        
+        reviews = list(reviews_collection.find({}, {'userId': 1, 'bookId': 1, 'rating': 1}))
         print(f"Found {len(reviews)} reviews in MongoDB")
         
-        # Convert ObjectId to string for JSON serialization
+        # Convert ObjectId for bookId and userId to string for JSON serialization
         for review in reviews:
-            # Convert bookId to string if it's an ObjectId
             if isinstance(review['bookId'], type(review['_id'])):
                 review['bookId'] = str(review['bookId'])
-            # Ensure userId is always a string
             if 'userId' in review:
                 review['userId'] = str(review['userId'])
         
-        # Update the matrix with reviews
+        # Update the matrix with ratings
         for review in reviews:
-            # Ensure user_id and book_id are strings
-            # Use userId as the user identifier (which should be the username in your system)
-            username = str(review['userId'])
+            username = str(review['userId']) # Use userId as the user identifier (which is username in the db)
             book_id = str(review['bookId'])
             rating = review['rating']
             
-            # Skip reviews with null/None ratings
             if rating is None:
                 continue
-                
-            # Initialize user entry if not exists (should already be done above)
-            if username not in matrix_data:
-                matrix_data[username] = {}
-            
-            # Update rating
+                        
             matrix_data[username][book_id] = rating
         
         # Store updated matrix back to Redis
-        redis_client.setex(
-            USER_ITEM_MATRIX_KEY,
-            86400,  # Cache for 24 hours
-            json.dumps(matrix_data)
-        )
+        redis_client.setex(USER_ITEM_MATRIX_KEY, REDIS_EXPIRE_TIME, json.dumps(matrix_data))
+        print(f"User-item matrix updated with {len(reviews)} reviews")
         
         # Invalidate cached model since matrix has changed
-        redis_client.delete(LIGHTFM_MODEL_KEY)
-        redis_client.delete(USER_MAPPING_KEY) 
-        redis_client.delete(ITEM_MAPPING_KEY)
-        redis_client.delete(MODEL_METADATA_KEY)
-        print("Invalidated cached LightFM model due to matrix update")
+        invalidate_cached_model()
+        print("Cached model invalidated")
+
+        # Create mappings for training new model
+        user_ids = list(matrix_data.keys())
+        all_book_ids = set()
+        for user_ratings in matrix_data.values():
+            all_book_ids.update(user_ratings.keys())
+        book_ids = list(all_book_ids)
+        user_mapping = {uid: i for i, uid in enumerate(user_ids)}
+        item_mapping = {bid: i for i, bid in enumerate(book_ids)}
         
-        print(f"User-item matrix updated with {len(reviews)} reviews")
+        # Train and cache new model
+        model = train_model(matrix_data, user_mapping, item_mapping)
+        cache_trained_model(model, user_mapping, item_mapping, "v1")
+        print("New model trained and cached")
+    
         return True
     except Exception as e:
         print(f"Error updating matrix with reviews: {e}")
@@ -288,8 +217,10 @@ def update_matrix_with_reviews():
 #         # Wait for the next update interval
 #         await asyncio.sleep(UPDATE_INTERVAL)
 
+# Generate recommendations for a user
 @app.post("/recommend")
 def recommend_books(data: RecommendRequest):
+    # Get username from request
     username = str(data.username)
     user_item_matrix = None
 
@@ -298,29 +229,20 @@ def recommend_books(data: RecommendRequest):
         cached_data = redis_client.get(USER_ITEM_MATRIX_KEY)
         if not cached_data:
             raise HTTPException(status_code=404, detail="User-item matrix not found in Redis")
-
         print("Using cached user-item matrix from Redis")
-        # Convert the cached JSON string to a dictionary
+        
         matrix_dict = json.loads(cached_data)
         
-        # Check if user exists in the matrix directly from the dictionary
         if username not in matrix_dict:
             raise HTTPException(status_code=404, detail=f"User {username} not found in recommendation matrix")
-            
-        print(f"User {username} found in matrix_dict. Matrix has {len(matrix_dict)} users.")
-        print(f"User's data in matrix_dict: {matrix_dict.get(username, 'NOT_FOUND')}")
-            
-        # Fix: Ensure users with empty rating dictionaries are preserved
+                        
         # Add a dummy rating for users with empty dictionaries to prevent pandas from dropping them
         matrix_dict_fixed = {}
         for user_id, ratings in matrix_dict.items():
-            if not ratings:  # If user has empty ratings dictionary
-                # Add a dummy entry that will be filtered out later
+            if not ratings:
                 matrix_dict_fixed[user_id] = {'__dummy__': 0}
             else:
                 matrix_dict_fixed[user_id] = ratings
-        
-        # Convert the dictionary to a DataFrame for collaborative filtering
         user_item_matrix = pd.DataFrame.from_dict(matrix_dict_fixed, orient='index')
         
         # Remove the dummy column if it exists
@@ -334,22 +256,18 @@ def recommend_books(data: RecommendRequest):
         print(f"Error retrieving from Redis: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing recommendation matrix: {str(e)}")
             
-    # Fill NaN values with 0 to ensure matrix operations work correctly
     user_item_matrix = user_item_matrix.fillna(0)
     
-    # Create mappings between user/item IDs and matrix indices
     user_ids = list(user_item_matrix.index)
     item_ids = list(user_item_matrix.columns)
     
     user_mapping = {uid: i for i, uid in enumerate(user_ids)}
     item_mapping = {iid: i for i, iid in enumerate(item_ids)}
     
-    # Check if user exists in mapping
     if username not in user_mapping:
         print(f"User {username} not found in user mapping.")
         raise HTTPException(status_code=404, detail=f"User {username} not found in recommendation matrix")
     
-    # Try to retrieve cached model
     cached_model, cached_user_mapping, cached_item_mapping, metadata = get_cached_model()
     
     if cached_model is not None:
@@ -360,102 +278,34 @@ def recommend_books(data: RecommendRequest):
         n_items = len(item_mapping)
         print("Using cached LightFM model for predictions")
     else:
-        # Convert to sparse matrix format for LightFM
-        interactions = []
-        row_indices = []
-        col_indices = []
-        ratings = []
-        
-        # Build sparse matrix data
-        for user, user_idx in user_mapping.items():
-            user_ratings = matrix_dict.get(user, {})
-            for item, rating in user_ratings.items():
-                if item in item_mapping and rating is not None:
-                    row_indices.append(user_idx)
-                    col_indices.append(item_mapping[item])
-                    ratings.append(float(rating))
-        
-        # Create sparse matrix
-        n_users = len(user_mapping)
+        # Train and cache new model
+        model = train_model(matrix_dict, user_mapping, item_mapping)
+        cache_trained_model(model, user_mapping, item_mapping, "v1")
         n_items = len(item_mapping)
-        interaction_matrix = sp.coo_matrix((ratings, (row_indices, col_indices)), 
-                                         shape=(n_users, n_items))
-        
-        print(f"Created sparse interaction matrix with shape {interaction_matrix.shape}")
-        
-        # Train LightFM model
-        model = LightFM(loss='warp')
-        
-        try:
-            # Train for a few epochs - adjust as needed for performance vs. accuracy
-            model.fit(interaction_matrix, epochs=5, verbose=True)
-            print("LightFM model trained successfully")
-            
-            # Cache the trained model
-            cache_trained_model(model, user_mapping, item_mapping, "v1")
-        except Exception as e:
-            print(f"Error training LightFM model: {e}")
-            raise HTTPException(status_code=500, detail=f"Error training LightFM model: {str(e)}")
+        print("New model trained and cached")
     
-    # Get user index
+    # predict scores for all items by user
     user_idx = user_mapping[username]
-    
-    # Predict scores for all items
     scores = model.predict(user_idx, np.arange(n_items))
     
-    # Get items the user has already interacted with
+    # find books to exclude, that the user has already rated
     user_items = set()
     if username in matrix_dict:
         user_items = set(matrix_dict[username].keys())
     
-    # Create list of (item_id, score) tuples, excluding items the user has already rated
+    # Create list of (item_id, score) tuples, excluding books the user has already rated
     item_scores = []
     for item_id, item_idx in item_mapping.items():
-        if item_id not in user_items:  # Only recommend items the user hasn't rated
+        if item_id not in user_items:
             item_scores.append((item_id, scores[item_idx]))
-    
-    # Sort by score in descending order
     item_scores.sort(key=lambda x: x[1], reverse=True)
     
-    # Get top 20 recommendations
-    top_items = [item_id for item_id, _ in item_scores[:20]]
+    # Get top (RECOMMENDATIONS_LENGTH) recommendations
+    RECOMMENDATIONS_LENGTH = 20
+    top_items = [item_id for item_id, _ in item_scores[:RECOMMENDATIONS_LENGTH]]
     
     print(f"Generated {len(top_items)} recommendations for user {username}")
-    
-        # # Fall back to a simpler approach if LightFM fails
-        # print("Falling back to popularity-based recommendations")
-        
-        # # Get all ratings
-        # all_ratings = {}
-        # for user_ratings in matrix_dict.values():
-        #     for item, rating in user_ratings.items():
-        #         if item not in all_ratings:
-        #             all_ratings[item] = []
-        #         all_ratings[item].append(rating)
-        
-        # # Calculate average rating and count for each item
-        # item_popularity = {}
-        # for item, ratings in all_ratings.items():
-        #     avg_rating = sum(ratings) / len(ratings)
-        #     count = len(ratings)
-        #     item_popularity[item] = avg_rating * count
-        
-        # # Sort items by popularity
-        # sorted_items = sorted(item_popularity.items(), key=lambda x: x[1], reverse=True)
-        
-        # # Get user's items to exclude
-        # user_items = set()
-        # if username in matrix_dict:
-        #     user_items = set(matrix_dict[username].keys())
-        
-        # # Get top items excluding what the user has already rated
-        # top_items = []
-        # for item, _ in sorted_items:
-        #     if item not in user_items:
-        #         top_items.append(item)
-        #         if len(top_items) >= 20:
-        #             break
-    
+
     # Return recommendations using the defined response model
     return RecommendResponse(
         recommendations=top_items,
@@ -465,7 +315,7 @@ def recommend_books(data: RecommendRequest):
 # API endpoint to manually trigger matrix update
 @app.post("/update-matrix")
 def trigger_matrix_update():
-    success = update_matrix_with_reviews()
+    success = update_matrix()
     if success:
         return {"status": "success", "message": "User-item matrix updated successfully"}
     else:

@@ -4,6 +4,7 @@ import Reviews from '../model/reviews.js';
 import Users from "../model/users.js";
 import axios from 'axios';
 import { validateRequest, queryValidation, paramValidation, reviewValidationRules } from '../middleware/validators.js';
+import { getPopularityBasedRecommendations } from '../services/recommendations.js';
 const router = express.Router();
 
 // retrieve books via a generic main.py query
@@ -202,17 +203,13 @@ router.get('/genres', async (req, res) => {
     }
 });
 
-// GET /books/popular - Get popular books sorted by average rating
+// GET /books/popular - Get popular books using the recommendations service
 router.get('/popular', async (req, res) => {
     try {
-        const limit = parseInt(req.query.limit) || 20; // Default to 20 books
-        
-        // Find books with at least some reviews and sort by average rating
-        const popularBooks = await Books.find({ reviewCount: { $gt: 0 } })
-            .sort({ averageRating: -1 }) // Sort by highest rating first
-            .limit(limit);
-                
-        res.json(popularBooks);
+        const RECOMMENDATIONS_LENGTH = 20;
+        // Use the existing popularity-based recommendations function
+        const popularBooks = await getPopularityBasedRecommendations([]);
+        res.json(popularBooks.slice(0, RECOMMENDATIONS_LENGTH));
     } catch (err) {
         console.error('Failed to fetch popular books:', err);
         res.status(500).json({ error: 'Failed to fetch popular books', details: err.message });

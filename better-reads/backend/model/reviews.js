@@ -7,7 +7,7 @@ const ReviewSchema = new mongoose.Schema({
     ref: 'Book',
     required: true,
   },
-  userId: {   // username string, not ObjectId
+  userId: {       // username string, not user ObjectId
     type: String,
     ref: 'User',
     required: true,

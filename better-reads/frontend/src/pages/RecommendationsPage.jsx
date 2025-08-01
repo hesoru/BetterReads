@@ -84,7 +84,7 @@ const RecommendationsPage = () => {
     fetchRecommendations();
   }, [isGuest]);
 
-  // Fetch popular books as a fallback
+  // Fetch popular books
   useEffect(() => {
     const fetchPopularBooks = async () => {
       try {
@@ -97,7 +97,6 @@ const RecommendationsPage = () => {
         console.error('Failed to fetch popular books:', err);
       }
     };
-    
     fetchPopularBooks();
   }, []);
 
@@ -139,7 +138,7 @@ const RecommendationsPage = () => {
                   Guest user: log in to see personalized recommendations.
                 </Typography>
               ) : recommendations.length > 0 ? (
-                <BookGalleryManager books={recommendations} limit={10} />
+                <BookGalleryManager books={recommendations} limit={20} />
               ) : error ? (
                 <Typography color="error">{error}</Typography>
               ) : (
@@ -152,7 +151,7 @@ const RecommendationsPage = () => {
                 Top-Rated Books
               </Typography>
               {popularBooks.length > 0 ? (
-                <BookGalleryManager books={popularBooks} limit={10} />
+                <BookGalleryManager books={popularBooks} limit={20} />
               ) : (
                 <Typography sx={{ fontWeight: 'bold' }}>Loading top-rated books...</Typography>
               )}
