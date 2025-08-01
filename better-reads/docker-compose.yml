@@ -86,6 +86,7 @@ services:
       - betterreads-network
     volumes:
       - ./recommender:/app
+      - ./recommender/data:/app/data
 
   # Frontend service
   frontend:

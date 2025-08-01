@@ -52,8 +52,8 @@ users_collection = db['users']
 # Get Redis keys from utils
 redis_keys = get_redis_keys()
 USER_ITEM_MATRIX_KEY = redis_keys['USER_ITEM_MATRIX_KEY']
-# Path to initial user-item matrix Parquet file (located in project root data directory)
-INITIAL_MATRIX_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'initial-user-item-matrix.parquet')
+# Path to initial user-item matrix Parquet file (absolute path in container)
+INITIAL_MATRIX_PATH = '/app/data/initial-user-item-matrix.parquet'
 # Update interval in seconds (1 hour)
 REDIS_UPDATE_INTERVAL = int(os.getenv('REDIS_UPDATE_INTERVAL', 3600))
 # Default expiration time in seconds (24 hours)
@@ -73,7 +73,7 @@ class RecommendResponse(BaseModel):
 @app.on_event("startup")
 async def startup_event():
     # Initialize the user-item matrix from the JSON file
-    initialize_user_item_matrix()
+    initialize_user_item_matrix(force_reload=True)
 
     update_matrix()
     
@@ -81,12 +81,12 @@ async def startup_event():
     # asyncio.create_task(periodic_update_matrix())
 
 # Initialize user-item matrix from JSON file
-def initialize_user_item_matrix():
+def initialize_user_item_matrix(force_reload=False):
     try:
-        print(f"Initializing user-item matrix")
+        print(f"Initializing user-item matrix from {INITIAL_MATRIX_PATH}")
         
-        # Check if the matrix already exists in Redis
-        if redis_client.exists(USER_ITEM_MATRIX_KEY):
+        # Check if the matrix already exists in Redis (skip if force_reload is True)
+        if not force_reload and redis_client.exists(USER_ITEM_MATRIX_KEY):
             print("User-item matrix already exists in Redis, skipping initialization")
             return
         
