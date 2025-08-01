@@ -22,7 +22,7 @@ const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
     ? ['https://betterreads.com', 'https://www.betterreads.com'] // Restrict to production domains
     : ['http://localhost:3000', 'http://localhost:5173'], // Allow local development
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   maxAge: 86400 // 24 hours
