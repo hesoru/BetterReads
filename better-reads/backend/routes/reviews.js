@@ -41,6 +41,9 @@ router.put('/:reviewId', [paramValidation.reviewId, ...reviewValidationRules.upd
 router.delete('/:reviewId', paramValidation.reviewId, validateRequest, async (req, res) => {
     try {
         const { reviewId } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(reviewId)) {
+            return res.status(400).json({ error: 'Invalid review ID' });
+        }
         const review = await Reviews.findByIdAndDelete(reviewId);
         if (!review) return res.status(404).json({ error: 'Review not found' });
 

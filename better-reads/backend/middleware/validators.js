@@ -122,17 +122,17 @@ export const reviewValidationRules = {
 // Parameter validation
 export const paramValidation = {
   userId: [
-    param('id')
+    param('userId')
       .isMongoId().withMessage('Invalid user ID format'),
   ],
     
   bookId: [
-    param('id')
+    param('bookId')
       .isMongoId().withMessage('Invalid book ID format'),
   ],
     
   reviewId: [
-    param('id')
+    param('reviewId')
       .isMongoId().withMessage('Invalid review ID format'),
   ],
 };
