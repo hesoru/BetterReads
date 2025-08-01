@@ -79,7 +79,7 @@ const Header = ({ userAvatar }) => {
               Recommendations
             </Button>
             <Button color="inherit" component={RouterLink} to="/nlpsearch">
-              NLP Match
+              AI Match
             </Button>
             <IconButton component={RouterLink} to="/profile">
               <Avatar src={userAvatar} alt="User Avatar" sx={{ width: 40, height: 40 }} />

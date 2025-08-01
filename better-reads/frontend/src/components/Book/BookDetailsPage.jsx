@@ -168,10 +168,10 @@ export default function BookDetailsPage() {
     if (!book) return <Typography sx={{ textAlign: 'center', mt: 4 }}>Book not found.</Typography>;
 
     const handleWishlistToggle = async () => {
-        if (isGuest || !userId) {
-            alert('Please log in to manage your wishlist.');
-            return;
-        }
+        // if (isGuest || !userId) {
+        //     alert('Please log in to manage your wishlist.');
+        //     return;
+        // }
         setWishlistLoading(true);
         try {
             const thunk = isInWishlist ? removeFromBookListThunk : addToBookListThunk;
@@ -208,7 +208,7 @@ export default function BookDetailsPage() {
                             variant="contained"
                             startIcon={isInWishlist ? <FavoriteIcon sx={{ color: 'red' }} /> : <FavoriteBorderIcon />}
                             onClick={handleWishlistToggle}
-                            disabled={wishlistLoading || isGuest}
+                            disabled={wishlistLoading}
                             sx={{
                                 backgroundColor: '#151B54', // NovellaNavy
                                 borderRadius: '10px', // Match 'Make Review' button
