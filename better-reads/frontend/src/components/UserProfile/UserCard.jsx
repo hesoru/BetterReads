@@ -84,20 +84,23 @@ const UserCard = ({ user, onChangePassword, onSignOut }) => {
             justifyContent: 'flex-end'
           }}
         >
-          <Button
-            variant="text"
-            startIcon={<LockResetIcon />}
-            onClick={onChangePassword}
-            sx={{
-              fontStyle: 'italic',
-              textTransform: 'none',
-              color: 'text.secondary',
-              p: { xs: '4px 8px', sm: '6px 16px' },
-              fontSize: { xs: '0.8rem', sm: '0.875rem' },
-            }}
-          >
-            Change Password
-          </Button>
+            {!isGuest && (
+                <Button
+                    variant="text"
+                    startIcon={<LockResetIcon />}
+                    onClick={onChangePassword}
+                    sx={{
+                        fontStyle: 'italic',
+                        textTransform: 'none',
+                        color: 'text.secondary',
+                        p: { xs: '4px 8px', sm: '6px 16px' },
+                        fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                    }}
+                >
+                    Change Password
+                </Button>
+            )}
+
           {isGuest ? (
             <Button
               variant="text"

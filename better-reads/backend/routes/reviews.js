@@ -117,7 +117,7 @@ router.get('/user/:username', async (req, res) => {
     }
 });
 
-router.patch('/update-review-couunt/:reviewId/:userId/:action', async (req, res) => {
+router.patch('/update-review-count/:reviewId/:userId/:action', async (req, res) => {
     try {
         const { reviewId, userId, action } = req.params;
 

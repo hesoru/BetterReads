@@ -220,9 +220,9 @@ router.get('/popular', async (req, res) => {
 });
 
 // GET /books/:id/reviews - Get all reviews for a book
-router.get('/:id/reviews', async (req, res) => {
+router.get('/:bookId/reviews', async (req, res) => {
     try {
-        const { id: bookId } = req.params;
+        const { bookId: bookId } = req.params;
         const reviews = await Reviews.find({ bookId }).sort({ createdAt: -1 });
         res.json(reviews);
     } catch (err) {
@@ -231,9 +231,9 @@ router.get('/:id/reviews', async (req, res) => {
 });
 
 // retrieve a book by bookId
-router.get('/:id', paramValidation.bookId, validateRequest, async (req, res) => {
+router.get('/:bookId', paramValidation.bookId, validateRequest, async (req, res) => {
     try {
-        const book = await Books.findById(req.params.id);
+        const book = await Books.findById(req.params.bookId);
         if (!book) return res.status(404).json({ error: 'Book not found' });
         res.json(book);
     } catch (err) {
@@ -253,9 +253,9 @@ router.get('/', async (req, res) => {
 
 
 // POST /books/:id/reviews - Create or update a review for a book
-router.post('/:id/reviews', [paramValidation.bookId, ...reviewValidationRules.create], validateRequest, async (req, res) => {
+router.post('/:bookId/reviews', [paramValidation.bookId, ...reviewValidationRules.create], validateRequest, async (req, res) => {
     try {
-        const { id: bookId } = req.params;
+        const { bookId: bookId } = req.params;
         const { username, rating, description } = req.body;
 
         if (!username) {

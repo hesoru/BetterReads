@@ -68,9 +68,9 @@ router.get('/details/:identifier', param('identifier').customSanitizer(sanitizeI
 });
 
 // GET /users/:id - get profile
-router.get('/:id', paramValidation.userId, validateRequest, async (req, res) => {
+router.get('/:userId', paramValidation.userId, validateRequest, async (req, res) => {
     try {
-        const user = await Users.findById(req.params.id);
+        const user = await Users.findById(req.params.userId);
         if (!user) return res.status(404).json({ error: 'User not found' });
 
         res.json(user);
@@ -223,7 +223,7 @@ router.post('/logout', (req, res) => {
 
 
 // PUT /users/:id/genres/add-multiple
-router.put('/:id/genres/add-multiple', paramValidation.userId, validateRequest, async (req, res) => {
+router.put('/:userId/genres/add-multiple', paramValidation.userId, validateRequest, async (req, res) => {
     try {
         const { genres } = req.body;
 
@@ -232,7 +232,7 @@ router.put('/:id/genres/add-multiple', paramValidation.userId, validateRequest, 
         }
 
         const updated = await Users.findByIdAndUpdate(
-            req.params.id,
+            req.params.userId,
             { $addToSet: { favoriteGenres: { $each: genres } } },
             { new: true }
         );
@@ -245,9 +245,9 @@ router.put('/:id/genres/add-multiple', paramValidation.userId, validateRequest, 
 });
 
 // PUT /users/:id - update a total user
-router.put('/:id', paramValidation.userId, validateRequest, async (req, res) => {
+router.put('/:userId', paramValidation.userId, validateRequest, async (req, res) => {
     try {
-        const updated = await Users.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const updated = await Users.findByIdAndUpdate(req.params.userId, req.body, { new: true });
         if (!updated) return res.status(404).json({ error: 'User not found' });
 
         res.json(updated);
@@ -257,14 +257,14 @@ router.put('/:id', paramValidation.userId, validateRequest, async (req, res) => 
 });
 
 // PATCH /users/update-wishlist/:id
-router.patch('/update-wishlist/:id', [paramValidation.userId, ...userValidationRules.addToBooklist], validateRequest, async (req, res) => {
+router.patch('/update-wishlist/:userId', [paramValidation.userId, ...userValidationRules.addToBooklist], validateRequest, async (req, res) => {
     try {
         const { bookId, operation } = req.body;
         if (!['add', 'remove'].includes(operation)) {
             return res.status(400).json({ error: 'Invalid operation' });
         }
 
-        const user = await Users.findById(req.params.id);
+        const user = await Users.findById(req.params.userId);
         if (!user) return res.status(404).json({ error: 'User not found' });
 
         const exists = user.wishList.some(id => id.toString() === bookId.toString());
@@ -286,9 +286,9 @@ router.patch('/update-wishlist/:id', [paramValidation.userId, ...userValidationR
 
 
 // DELETE /users/:id - delete user (optional/admin)
-router.delete('/:id', paramValidation.userId, validateRequest, async (req, res) => {
+router.delete('/:userId', paramValidation.userId, validateRequest, async (req, res) => {
     try {
-        const deleted = await Users.findByIdAndDelete(req.params.id);
+        const deleted = await Users.findByIdAndDelete(req.params.userId);
         if (!deleted) return res.status(404).json({ error: 'User not found' });
 
         res.status(204).send();
