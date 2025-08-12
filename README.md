@@ -1,14 +1,118 @@
 # BetterReads
 ### Reading is good for you, but we can make it *better*.
 
+Our application is an intelligent, social book discovery platform tailored to passionate readers who want a more engaging and personalized experience than traditional apps like Goodreads. It allows users to explore and write reviews for books; receive personalized reading recommendations; and curate reading wishlists. By storing book metadata, user preferences, and behavioral insights, the platform delivers a highly individualized user experience. Built on MongoDB, it features account management, a natural language processing (NLP)–powered search engine, a reading recommendation system, and interactive user features.
+
 ### Datababes (Team 25)
 
 **Team members:** Oreoluwa Akinwunmi, Renbo Xu, Helena Sokolovska, and Marvel Hariadi
 
-## App Summary
-Our application is an intelligent, social book discovery platform tailored to passionate readers who want a more engaging and personalized experience than traditional apps like Goodreads. It allows users to explore and write reviews for books; receive personalized reading recommendations; and curate reading wishlists. By storing book metadata, user preferences, and behavioral insights, the platform delivers a highly individualized user experience. Built on MongoDB, it features account management, a natural language processing (NLP)–powered search engine, a reading recommendation system, and interactive user features.
+## Features
 
-## Instructions for Running the App with Docker
+### **Microservices Architecture**
+BetterReads is built using a containerized microservices architecture with Docker Compose, featuring:
+- **Frontend Service** (React + Vite) - Port 5173
+- **Backend API** (Node.js + Express) - Port 3000  
+- **NLP Search Engine** (Python + FastAPI) - Port 5002
+- **Recommendation System** (Python + FastAPI) - Port 5001
+- **Redis Cache** - Port 6379
+- **MongoDB Database** - Port 27017
+
+### **Advanced Search Capabilities**
+
+#### **Semantic NLP Search Engine**
+- **Technology**: Python FastAPI microservice with Sentence-Transformers
+- **Model**: `all-MiniLM-L6-v2` for vector embeddings
+- **Features**: 
+  - Semantic similarity search using cosine similarity
+  - Vector embeddings of book titles and descriptions
+  - Advanced filtering by genre and publication year
+  - Real-time query processing with contextual relevance ranking
+
+#### **Traditional Keyword Search**
+- MongoDB text indexing for fast keyword matching
+- Multi-field search across titles, authors, and descriptions
+- Pagination and sorting capabilities
+
+### **Intelligent Recommendation System**
+
+#### **Hybrid Recommendation Engine**
+- **Collaborative Filtering**: LightFM model for personalized recommendations
+- **Content-Based Filtering**: Genre preference analysis
+- **Popularity-Based Fallback**: Trending books for new users
+- **Redis Caching**: Optimized performance with cached user-item matrices
+
+#### **Recommendation Types**
+- Personalized recommendations based on user ratings and reviews
+- Genre-specific suggestions matching user preferences
+- Popular books trending among similar users
+
+### **Security & Authentication**
+
+#### **Comprehensive Security Implementation**
+- **JWT Authentication**: Secure token-based user sessions
+- **Password Security**: bcrypt hashing and salting
+- **Input Sanitization**: DOMPurify for XSS prevention
+- **OWASP Compliance**: Following security best practices
+- **Penetration Testing**: ZAP security assessment completed
+
+#### **Data Protection**
+- Sanitized database inputs and outputs
+- Secure API endpoints with authentication middleware
+- Protected user data and session management
+
+### **Database & Caching**
+
+#### **MongoDB Database Design**
+- **Collections**: Users, Books, Reviews
+- **Indexing**: Optimized queries with compound indexes
+- **Data Volume**: 3,625+ books with comprehensive metadata
+- **Relationships**: User reviews, wishlists, and rating systems
+
+#### **Redis Caching Strategy**
+- User-item interaction matrices for recommendations
+- Popular book rankings and trending data
+- Session management and temporary data storage
+- Performance optimization for frequent queries
+
+### **Frontend Features**
+
+#### **Modern React Application**
+- **Framework**: React 18 with Vite build tool
+- **State Management**: Redux Toolkit for global state
+- **Responsive Design**: Mobile-first approach with dark mode support
+- **UI Components**: Reusable component library
+
+#### **Interactive Features**
+- Real-time book search with instant results
+- Dynamic review system with half-star ratings
+- Wishlist management with persistent storage
+- User profile customization and password management
+- Pagination for large datasets
+
+### **Development & Testing**
+
+#### **Quality Assurance**
+- **Test Suite**: 39+ comprehensive tests using Mocha, Chai, and Supertest
+- **Test Coverage**: API endpoints, database operations, and user workflows
+- **Automated Testing**: MongoDB Memory Server for isolated testing
+- **Test Reporting**: Mochawesome HTML reports
+
+#### **Development Tools**
+- Docker containerization for consistent environments
+- Hot reload development with volume mounting
+- Environment configuration management
+- Automated dependency management
+
+### **Performance Optimizations**
+
+- **Lazy Loading**: Dynamic content loading with pagination
+- **Caching Strategy**: Multi-layer caching with Redis
+- **Database Optimization**: Indexed queries and aggregation pipelines
+- **API Efficiency**: Optimized endpoints with minimal data transfer
+- **Frontend Optimization**: Code splitting and asset optimization
+
+## Setup Instructions
 
 Clone the repository and run with Docker Compose. In your bash terminal, run:
 
@@ -33,7 +137,7 @@ The Docker Compose files include default environment variables. For custom confi
 
 Example `.env` file:
 ```
-MONGO_URI=mongodb://root:rootpassword@mongodb:27017/betterreads?authSource=admin
+MONGO_URI=mongodb://root:your_password@mongodb:27017/betterreads?authSource=admin
 REDIS_HOST=redis
 REDIS_PORT=6379
 REDIS_DB=0
