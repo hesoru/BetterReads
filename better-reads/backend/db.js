@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Use environment variable for MongoDB URI or fall back to the original URI
-const mongoURI = process.env.MONGO_URI || 'mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/bookdb?retryWrites=true&w=majority&appName=Sandbox';
+const mongoURI = process.env.MONGODB_URI || 'mongodb://mongodb:27017/betterreads';
 
 const connectDB = async () => {
     try {
@@ -34,7 +34,7 @@ mongoose.connection.on('disconnected', () => {
 
 //connectDB();
 // BetterReads mongoURI
-// const mongoURI = 'mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/?retryWrites=true&w=majority&appName=Sandbox';
+// const mongoURI = 'mongodb://mongodb:27017/betterreads';
 //
 // mongoose.connect(mongoURI, {
 //     useNewUrlParser: true,

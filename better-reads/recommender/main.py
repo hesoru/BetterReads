@@ -30,7 +30,7 @@ redis_client = redis.Redis(
 )
 
 # MongoDB connection
-mongo_uri = os.getenv('MONGO_URI', 'mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/bookdb?retryWrites=true&w=majority&appName=Sandbox')
+mongo_uri = os.getenv('MONGO_URI', 'mongodb://mongodb:27017/betterreads')
 mongo_client = MongoClient(mongo_uri)
 db = mongo_client['bookdb']
 reviews_collection = db['reviews']

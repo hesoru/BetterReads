@@ -9,7 +9,7 @@ import { getRecommendations } from '../services/recommendations.js';
 dotenv.config();
 
 // Connect to MongoDB
-const uri = process.env.MONGODB_URI || 'mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/bookdb?retryWrites=true&w=majority&appName=Sandbox';
+const uri = process.env.MONGODB_URI || 'mongodb://mongodb:27017/betterreads';
 console.log('Connecting to MongoDB with URI:', uri.replace(/mongodb\+srv:\/\/([^:]+):[^@]+@/, 'mongodb+srv://$1:***@'));
 
 mongoose.connect(uri)

@@ -2,6 +2,11 @@ better-reads/.DS_Store
 .DS_Store
 .idea/.name
 
+# Environment variables
+.env
+.env.local
+.env.production
+
 # Python cache files
 __pycache__/
 *.py[cod]

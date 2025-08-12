@@ -3,7 +3,8 @@ from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 # === CONFIGURATION ===
-MONGO_URI = "mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/retryWrites=true&w=majority&appName=Sandbox"
+import os
+MONGO_URI = os.getenv('MONGO_URI', 'mongodb://mongodb:27017/betterreads')
 DB_NAME = "bookdb"
 COLLECTION_NAME = "books_with_embeddings"
 MODEL_NAME = "all-MiniLM-L6-v2"

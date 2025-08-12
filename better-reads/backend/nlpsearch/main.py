@@ -1,13 +1,16 @@
 from sentence_transformers import SentenceTransformer
+import os
 from pymongo import MongoClient
-from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer
 import numpy as np
-from fastapi import FastAPI, Query
-from typing import Optional
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sklearn.metrics.pairwise import cosine_similarity
+from typing import Optional
+from fastapi import Query
 
 app = FastAPI()
-client = MongoClient("mongodb+srv://rex015:iDPU4rvt5HjtDrW1@sandbox.bcebozm.mongodb.net/retryWrites=true&w=majority&appName=Sandbox")
+client = MongoClient(os.getenv('MONGO_URI', 'mongodb://mongodb:27017/betterreads'))
 books = client.bookdb.books_with_embeddings
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
